@@ -1,8 +1,9 @@
 import { Request } from 'express'
 import { AuthService } from '../services/auth.service'
+import { User } from '../db/schema/user.schema'
 
 export interface AuthContext {
-  user?: any
+  user?: User
 }
 
 export async function authMiddleware(req: Request): Promise<AuthContext> {

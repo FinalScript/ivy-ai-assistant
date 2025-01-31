@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "ivy-ai-server",
   "main": "app.ts",
   "version": "1.0.0",
   "license": "MIT",
