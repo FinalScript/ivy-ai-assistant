@@ -5,6 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import { schema } from './src/graphql/schemas/index';
+import { context } from './src/graphql/context';
 dotenv.config();
 
 const app = express();
@@ -27,7 +28,7 @@ const init = async () => {
     cors<cors.CorsRequest>(),
     json(),
     expressMiddleware(server, {
-      context: async ({ req }) => ({ token: req.headers.authorization }),
+      context: context,
     })
   );
 

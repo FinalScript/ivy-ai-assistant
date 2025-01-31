@@ -2,6 +2,7 @@ import { supabase } from '../db/supabase'
 import { AuthenticationError, UserInputError } from 'apollo-server-express'
 import { User as SupabaseAuthUser } from '@supabase/supabase-js'
 import { createUser, findUserById } from '../controllers/User.controller'
+import { User } from '../db/schema'
 
 export interface SignUpInput {
   email: string
@@ -15,7 +16,7 @@ export interface SignInInput {
 }
 
 export interface AuthResponse {
-  user: SupabaseAuthUser
+  user: User
   token: string
 }
 
@@ -32,7 +33,7 @@ export class AuthService {
 
     try {
       // 2. Create user profile in our database using Drizzle
-      await createUser({
+      const newUser = await createUser({
         id: authData.user.id, // Use Supabase auth user id
         email,
         fullName: fullName || email.split('@')[0], // Fallback to email username
@@ -44,7 +45,7 @@ export class AuthService {
       }
 
       return {
-        user: authData.user,
+        user: newUser,
         token: authData.session.access_token,
       }
     } catch (error) {
@@ -74,12 +75,12 @@ export class AuthService {
     }
 
     return {
-      user: authData.user,
+      user,
       token: authData.session.access_token,
     }
   }
 
-  static async validateToken(token: string): Promise<SupabaseAuthUser> {
+  static async validateToken(token: string): Promise<User> {
     const { data: { user }, error } = await supabase.auth.getUser(token)
     
     if (error || !user) {
@@ -92,6 +93,6 @@ export class AuthService {
       throw new AuthenticationError('User profile not found')
     }
 
-    return user
+    return dbUser
   }
 } 

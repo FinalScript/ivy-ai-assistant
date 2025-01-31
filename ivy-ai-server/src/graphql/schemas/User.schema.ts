@@ -7,8 +7,8 @@ export const UserSchema = gql`
     id: ID!
     email: String!
     fullName: String
-    createdAt: DateTime!
-    updatedAt: DateTime!
+    createdAt: Date!
+    updatedAt: Date!
   }
 
   type AuthResponse {
