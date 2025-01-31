@@ -1,8 +1,8 @@
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
-import { context } from './graphql/context'
-import { typeDefs } from './graphql/schemas'
-import { resolvers } from './graphql/resolvers'
+import { context } from './src/graphql/context'
+import { schema } from './src/graphql/schemas'
+import { resolvers } from './src/graphql/resolvers'
 import cors from 'cors'
 
 /**
@@ -16,7 +16,7 @@ app.use(express.json())
 
 // Initialize Apollo Server with GraphQL schema and context
 const server = new ApolloServer({
-  typeDefs,
+  typeDefs: schema,
   resolvers,
   context,
 })
