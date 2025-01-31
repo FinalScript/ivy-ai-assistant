@@ -60,6 +60,17 @@ npm run migrate
 npm run dev
 ```
 
+### Environment Variables
+
+```env
+# Database connection string
+DATABASE_URL=postgresql://postgres:[PASSWORD]@[HOST]/postgres
+
+# Supabase configuration
+SUPABASE_URL=your-project-url
+SUPABASE_ANON_KEY=your-anon-key
+``` 
+
 ### Project Structure
 
 ```
@@ -116,14 +127,3 @@ query Me {
   }
 }
 ```
-
-### Environment Variables
-
-```env
-# Database connection string
-DATABASE_URL=postgresql://postgres:[PASSWORD]@[HOST]/postgres
-
-# Supabase configuration
-SUPABASE_URL=your-project-url
-SUPABASE_ANON_KEY=your-anon-key
-``` 
