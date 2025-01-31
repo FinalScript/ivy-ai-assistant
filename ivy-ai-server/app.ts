@@ -1,45 +1,35 @@
-import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
-import { json } from 'body-parser';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import express from 'express';
-import { schema } from './src/graphql/schemas/index';
-import { context } from './src/graphql/context';
-dotenv.config();
+import express from 'express'
+import { ApolloServer } from 'apollo-server-express'
+import { context } from './graphql/context'
+import { typeDefs } from './graphql/schemas'
+import { resolvers } from './graphql/resolvers'
+import cors from 'cors'
 
-const app = express();
+/**
+ * Main application setup
+ * Configures Express with Apollo Server and necessary middleware
+ */
+const app = express()
 
-app.use(express.json({}));
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors())
+app.use(express.json())
 
-const server = new ApolloServer({ schema });
+// Initialize Apollo Server with GraphQL schema and context
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context,
+})
 
-const init = async () => {
-  const graphqlUploadExress = (await import('graphql-upload/graphqlUploadExpress.mjs')).default;
+// Start the server
+const startServer = async () => {
+  await server.start()
+  server.applyMiddleware({ app })
+  
+  const PORT = process.env.PORT || 4000
+  app.listen(PORT, () => {
+    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`)
+  })
+}
 
-  app.use(graphqlUploadExress());
-
-  await server.start();
-
-  app.use(
-    '/graphql',
-    cors<cors.CorsRequest>(),
-    json(),
-    expressMiddleware(server, {
-      context: context,
-    })
-  );
-
-  const port = process.env.PORT || 54321;
-
-  await new Promise<void>((resolve) => app.listen({ port }, resolve));
-  console.log(`🚀 Server ready at http://localhost:${port}/graphql`);
-
-  app.get('/health', (req, res) => {
-    res.status(200).send('Okay!');
-  });
-};
-
-init();
+startServer().catch(console.error)

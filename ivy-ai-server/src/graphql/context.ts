@@ -1,6 +1,20 @@
 import { AuthService } from '../services/auth.service'
+import { User } from '../db/schema/user.schema'
+import { Request } from 'express'
 
-export const context = async ({ req }) => {
+interface Context {
+  user: User | null
+}
+
+interface ContextFunctionArgs {
+  req: Request
+}
+
+/**
+ * Creates the GraphQL context for each request
+ * Handles authentication by validating the Authorization header
+ */
+export const context = async ({ req }: ContextFunctionArgs): Promise<Context> => {
   const token = req.headers.authorization?.replace('Bearer ', '')
   
   if (!token) {
