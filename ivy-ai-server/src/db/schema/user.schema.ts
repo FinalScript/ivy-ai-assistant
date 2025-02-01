@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, uuid, boolean } from 'drizzle-orm/pg-core'
 
 /**
  * Database schema for the users table
@@ -7,7 +7,12 @@ import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 export const users = pgTable('users', {
   id: uuid('id').primaryKey(), // Links to Supabase auth user id
   email: text('email').notNull().unique(),
-  fullName: text('full_name').notNull(),
+  firstName: text('first_name'),
+  lastName: text('last_name'),
+  school: text('school'),
+  major: text('major'),
+  graduationYear: text('graduation_year'),
+  onboardingCompleted: boolean('onboarding_completed').notNull().default(false),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })

@@ -1,6 +1,6 @@
 import { AuthenticationError } from 'apollo-server-express'
 import { AuthService, SignUpInput, SignInInput, AuthResponse } from '../../services/auth.service'
-import { findUserById } from '../../controllers/User.controller'
+import { findUserById, updateUser } from '../../controllers/User.controller'
 import { User } from '../../db/schema/user.schema'
 
 /**
@@ -30,6 +30,19 @@ interface SignInArgs {
  */
 interface UserArgs {
   id: string
+}
+
+/**
+ * Arguments for onboarding mutation
+ */
+interface OnboardingArgs {
+  input: {
+    firstName: string
+    lastName: string
+    school: string
+    major: string
+    graduationYear: string
+  }
 }
 
 /**
@@ -74,14 +87,54 @@ export const UserResolver = {
     signIn: async (_: unknown, { input }: SignInArgs): Promise<AuthResponse> => {
       return AuthService.signIn(input)
     },
+
+    /**
+     * Completes the user onboarding process
+     * @param input - User onboarding data
+     * @returns Updated user profile
+     */
+    completeOnboarding: async (_: unknown, { input }: OnboardingArgs, context: Context): Promise<User> => {
+      if (!context.user) throw new AuthenticationError('Not authenticated')
+      
+      const fullName = `${input.firstName} ${input.lastName}`.trim()
+      
+      return updateUser(context.user.id, {
+        firstName: input.firstName,
+        lastName: input.lastName,
+        school: input.school,
+        major: input.major,
+        graduationYear: input.graduationYear,
+        onboardingCompleted: true,
+      })
+    },
   },
 
   // Field resolvers for the User type
   User: {
     /**
-     * Resolves the user's full name
+     * Resolves the user's first name
      */
-    fullName: (parent: User): string | null => parent.fullName,
+    firstName: (parent: User): string | null => parent.firstName,
+
+    /**
+     * Resolves the user's last name
+     */
+    lastName: (parent: User): string | null => parent.lastName,
+
+    /**
+     * Resolves the user's school
+     */
+    school: (parent: User): string | null => parent.school,
+
+    /**
+     * Resolves the user's major
+     */
+    major: (parent: User): string | null => parent.major,
+
+    /**
+     * Resolves the user's graduation year
+     */
+    graduationYear: (parent: User): string | null => parent.graduationYear,
 
     /**
      * Resolves the user's creation date

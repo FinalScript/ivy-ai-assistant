@@ -12,7 +12,12 @@ export const UserSchema = gql`
   type User {
     id: ID!
     email: String!
-    fullName: String
+    firstName: String
+    lastName: String
+    school: String
+    major: String
+    graduationYear: String
+    onboardingCompleted: Boolean!
     createdAt: Date!
     updatedAt: Date!
   }
@@ -27,13 +32,21 @@ export const UserSchema = gql`
   input SignUpInput {
     email: String!
     password: String!
-    fullName: String
   }
 
   # Input type for user authentication
   input SignInInput {
     email: String!
     password: String!
+  }
+
+  # Input type for onboarding profile update
+  input OnboardingInput {
+    firstName: String!
+    lastName: String!
+    school: String!
+    major: String!
+    graduationYear: String!
   }
 
   # Input type for profile updates
@@ -50,6 +63,7 @@ export const UserSchema = gql`
   type Mutation {
     signUp(input: SignUpInput!): AuthResponse!
     signIn(input: SignInInput!): AuthResponse!
+    completeOnboarding(input: OnboardingInput!): User!
     updateProfile(input: UpdateProfileInput!): User!
   }
 

@@ -75,8 +75,14 @@ function Auth() {
                 localStorage.setItem('auth_token', response.data.signIn.token);
                 // Update user context
                 setUser(response.data.signIn.user);
-                // Redirect to dashboard
-                navigate({ to: '/' });
+
+                if (!response.data.signIn.user.onboardingCompleted) {
+                    // Redirect to onboarding for new users
+                    navigate({ to: '/onboarding' });
+                } else {
+                    // Redirect to dashboard
+                    navigate({ to: '/' });
+                }
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Invalid credentials');
@@ -100,8 +106,8 @@ function Auth() {
                 localStorage.setItem('auth_token', response.data.signUp.token);
                 // Update user context
                 setUser(response.data.signUp.user);
-                // Redirect to dashboard
-                navigate({ to: '/' });
+                // Redirect to onboarding for new users
+                navigate({ to: '/onboarding' });
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to create account');

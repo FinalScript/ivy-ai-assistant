@@ -1,8 +1,12 @@
-import { StrictMode } from 'react';
+import { StrictMode, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import './global.css';
-
+import { ThemeProvider } from './providers/ThemeProvider';
+import { AuthProvider } from './providers/AuthProvider';
+import { ApolloProvider } from '@apollo/client';
+import { apolloClient } from './lib/apollo';
+import LoadingScreen from './components/LoadingScreen';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
 
@@ -22,7 +26,15 @@ if (!rootElement.innerHTML) {
     const root = ReactDOM.createRoot(rootElement);
     root.render(
         <StrictMode>
-            <RouterProvider router={router} />
+            <ThemeProvider>
+                <ApolloProvider client={apolloClient}>
+                    <AuthProvider>
+                        <Suspense fallback={<LoadingScreen />}>
+                            <RouterProvider router={router} />
+                        </Suspense>
+                    </AuthProvider>
+                </ApolloProvider>
+            </ThemeProvider>
         </StrictMode>
     );
 }

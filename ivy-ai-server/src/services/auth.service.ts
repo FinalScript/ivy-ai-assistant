@@ -7,7 +7,6 @@ import { User } from '../db/schema'
 export interface SignUpInput {
   email: string
   password: string
-  fullName?: string
 }
 
 export interface SignInInput {
@@ -32,7 +31,7 @@ export class AuthService {
    * @param fullName - Optional user's full name
    * @returns Auth response containing user data and access token
    */
-  static async signUp({ email, password, fullName }: SignUpInput): Promise<AuthResponse> {
+  static async signUp({ email, password }: SignUpInput): Promise<AuthResponse> {
     // Create auth user in Supabase
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
@@ -47,7 +46,6 @@ export class AuthService {
       const newUser = await createUser({
         id: authData.user.id,
         email,
-        fullName: fullName || email.split('@')[0], // Use email username as fallback
       })
 
       if (!authData.session?.access_token) {

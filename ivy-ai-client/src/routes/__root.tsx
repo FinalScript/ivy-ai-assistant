@@ -1,18 +1,41 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router';
+import { createRootRoute, Outlet, redirect } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import Navbar from '../components/Navbar';
-import { ApolloProvider } from '@apollo/client';
-import { apolloClient } from '../lib/apollo';
-import { AuthProvider } from '../providers/AuthProvider';
+
+function Root() {
+    return (
+        <>
+            <Navbar />
+            <Outlet />
+            <TanStackRouterDevtools />
+        </>
+    );
+}
 
 export const Route = createRootRoute({
-    component: () => (
-        <ApolloProvider client={apolloClient}>
-            <AuthProvider>
-                <Navbar />
-                <Outlet />
-                <TanStackRouterDevtools />
-            </AuthProvider>
-        </ApolloProvider>
-    ),
+    component: Root,
+    beforeLoad: ({ location }) => {
+        const token = localStorage.getItem('auth_token');
+        const publicRoutes = ['/auth', '/onboarding', '/'];
+
+        // Allow access to public routes
+        if (publicRoutes.includes(location.pathname)) {
+            return;
+        }
+
+        // Redirect to auth if not logged in
+        if (!token) {
+            throw redirect({
+                to: '/auth',
+            });
+        }
+
+        // Check if user has completed onboarding
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user.onboardingCompleted && location.pathname !== '/onboarding') {
+            throw redirect({
+                to: '/onboarding',
+            });
+        }
+    },
 });

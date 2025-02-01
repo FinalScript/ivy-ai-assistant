@@ -21,11 +21,11 @@ export default function Navbar() {
                 {/* Desktop Navigation */}
                 {isAuthenticated && (
                     <div className='hidden md:flex navbar-center gap-6'>
-                        <Link to='/' className='flex items-center gap-2 link link-hover'>
+                        <Link to='/calendar' className='flex items-center gap-2 link link-hover'>
                             <Calendar className='w-4 h-4' />
                             <span>Calendar</span>
                         </Link>
-                        <Link to='/' className='flex items-center gap-2 link link-hover'>
+                        <Link to='/courses' className='flex items-center gap-2 link link-hover'>
                             <BookOpen className='w-4 h-4' />
                             <span>Courses</span>
                         </Link>

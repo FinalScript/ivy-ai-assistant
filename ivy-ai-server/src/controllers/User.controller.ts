@@ -1,7 +1,6 @@
 import { db } from "../db"
 import { eq } from "drizzle-orm"
-import { NewUser, User } from "../db/schema/user.schema"
-import { users } from "../db/schema"
+import { NewUser, User, users } from "../db/schema"
 
 /**
  * Retrieves a user by their ID
@@ -29,7 +28,7 @@ export const createUser = async (user: NewUser): Promise<User> => {
  * @param user - Partial user data to update
  * @returns The updated user object
  */
-export const updateUser = async (id: string, user: Partial<NewUser>): Promise<User> => {
+export const updateUser = async (id: string, user: Partial<Omit<NewUser, 'id' | 'email' | 'createdAt' | 'updatedAt'>>): Promise<User> => {
   const [updatedUser] = await db.update(users)
     .set(user)
     .where(eq(users.id, id))

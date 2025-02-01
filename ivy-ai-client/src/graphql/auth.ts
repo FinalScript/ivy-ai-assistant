@@ -7,7 +7,7 @@ export const SIGN_UP_MUTATION = gql`
       user {
         id
         email
-        fullName
+        onboardingCompleted
       }
     }
   }
@@ -20,7 +20,7 @@ export const SIGN_IN_MUTATION = gql`
       user {
         id
         email
-        fullName
+        onboardingCompleted
       }
     }
   }
@@ -31,7 +31,7 @@ export const ME_QUERY = gql`
     me {
       id
       email
-      fullName
+      onboardingCompleted
     }
   }
 `
@@ -39,7 +39,7 @@ export const ME_QUERY = gql`
 export interface User {
   id: string
   email: string
-  fullName: string | null
+  onboardingCompleted: boolean
 }
 
 export interface AuthResponse {
@@ -50,7 +50,6 @@ export interface AuthResponse {
 export interface SignUpInput {
   email: string
   password: string
-  fullName?: string
 }
 
 export interface SignInInput {

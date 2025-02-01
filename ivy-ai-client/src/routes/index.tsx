@@ -40,15 +40,15 @@ function Index() {
                             <Bot className='w-12 h-12 sm:w-16 sm:h-16 text-primary' />
                         </div>
 
-                        <h1 className='animate-fade-in'>
-                            <span className='block text-5xl sm:text-6xl font-bold mb-2'>Meet Ivy,</span>
-                            <span className='block text-2xl sm:text-4xl text-base-content/80'>Your new AI Study Assistant</span>
+                        <h1>
+                            <span className='block text-5xl sm:text-6xl font-bold mb-2 animate-slide-up'>Meet Ivy,</span>
+                            <span className='block text-2xl sm:text-4xl text-base-content/80 animate-slide-up-delayed'>Your new AI Study Assistant</span>
                         </h1>
 
-                        <p className='py-4 sm:py-6 text-base sm:text-xl animate-fade-in animation-delay-200 max-w-2xl mx-auto'>
+                        <p className='py-4 sm:py-6 text-base sm:text-xl animate-slide-up-delayed max-w-2xl mx-auto'>
                             Upload your syllabi once, and watch as your entire semester transforms into a perfectly structured schedule.
                         </p>
-                        <div className='flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-fade-in animation-delay-400'>
+                        <div className='flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-slide-up-delayed'>
                             <Link to='/auth' className='btn btn-primary btn-lg'>
                                 Get Started
                             </Link>
