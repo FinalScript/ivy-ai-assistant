@@ -1,30 +1,69 @@
 import { useEffect, useState, useRef } from 'react';
-import { Sun, Moon, Sparkles, Candy, Box, Skull, Snowflake, Leaf } from 'lucide-react';
+import { Sun, Moon, Sparkles, Candy, Box, Skull, Snowflake, Leaf, Check } from 'lucide-react';
 
-// Define available themes with their icons and display names
 const THEMES = [
-    { id: 'light', label: 'Light', icon: Sun },
-    { id: 'dark', label: 'Dark', icon: Moon },
-    { id: 'retro', label: 'Retro', icon: Sparkles },
-    { id: 'cupcake', label: 'Cupcake', icon: Candy },
-    { id: 'wireframe', label: 'Wireframe', icon: Box },
-    { id: 'dracula', label: 'Dracula', icon: Skull },
-    { id: 'winter', label: 'Winter', icon: Snowflake },
-    { id: 'emerald', label: 'Emerald', icon: Leaf },
+    {
+        name: 'light',
+        label: 'Light',
+        icon: Sun,
+        color: '#570df8', // primary color for light theme
+    },
+    {
+        name: 'dark',
+        label: 'Dark',
+        icon: Moon,
+        color: '#661AE6', // primary color for dark theme
+    },
+    {
+        name: 'retro',
+        label: 'Retro',
+        icon: Sparkles,
+        color: '#ef4444', // primary color for retro theme
+    },
+    {
+        name: 'cupcake',
+        label: 'Cupcake',
+        icon: Candy,
+        color: '#65c3c8', // primary color for cupcake theme
+    },
+    {
+        name: 'wireframe',
+        label: 'Wireframe',
+        icon: Box,
+        color: '#b8b8b8', // primary color for wireframe theme
+    },
+    {
+        name: 'dracula',
+        label: 'Dracula',
+        icon: Skull,
+        color: '#ff79c6', // primary color for dracula theme
+    },
+    {
+        name: 'winter',
+        label: 'Winter',
+        icon: Snowflake,
+        color: '#5bc0de', // primary color for winter theme
+    },
+    {
+        name: 'emerald',
+        label: 'Emerald',
+        icon: Leaf,
+        color: '#66cc8a', // primary color for emerald theme
+    },
 ] as const;
 
-type Theme = (typeof THEMES)[number]['id'];
+type Theme = (typeof THEMES)[number]['name'];
 
-const ThemeSwitcher = () => {
+export default function ThemeSwitcher() {
     const [theme, setTheme] = useState<Theme>('light');
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // Get the initial theme from localStorage or default to 'light'
-        const savedTheme = (localStorage.getItem('theme') as Theme) || 'light';
-        setTheme(savedTheme);
+        // Get theme from localStorage or system preference
+        const savedTheme = localStorage.getItem('theme') as Theme || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
+        setTheme(savedTheme);
 
         // Add click outside listener
         const handleClickOutside = (event: MouseEvent) => {
@@ -38,35 +77,42 @@ const ThemeSwitcher = () => {
     }, []);
 
     const handleThemeChange = (newTheme: Theme) => {
-        setTheme(newTheme);
-        localStorage.setItem('theme', newTheme);
         document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        setTheme(newTheme);
         setIsOpen(false);
     };
 
-    // Get current theme object
-    const currentTheme = THEMES.find((t) => t.id === theme) || THEMES[0];
-    const ThemeIcon = currentTheme.icon;
+    const currentTheme = THEMES.find(t => t.name === theme) || THEMES[0];
+    const Icon = currentTheme.icon;
 
     return (
-        <div className='dropdown dropdown-bottom flex justify-center' ref={dropdownRef}>
-            <div tabIndex={0} role='button' className='btn btn-sm' onClick={() => setIsOpen(!isOpen)}>
-                <div className='flex items-center gap-2'>
-                    <ThemeIcon className='w-5 h-5' />
-                    <span className='text-sm'>Theme</span>
+        <div className="dropdown dropdown-bottom flex justify-center" ref={dropdownRef}>
+            <div 
+                tabIndex={0} 
+                role="button" 
+                className="btn btn-sm"
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                <div className="flex items-center gap-2">
+                    <Icon className="w-5 h-5" style={{ color: currentTheme.color }} />
+                    <span className="text-sm">Theme</span>
                 </div>
             </div>
             {isOpen && (
-                <ul tabIndex={0} className='dropdown-content mx-auto mt-3 z-[1] p-2 shadow-lg bg-base-100 rounded-box w-52 menu menu-sm'>
-                    {THEMES.map((themeOption) => {
-                        const Icon = themeOption.icon;
+                <ul tabIndex={0} className="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box w-56 p-2 shadow-lg mt-4">
+                    {THEMES.map((t) => {
+                        const ThemeIcon = t.icon;
                         return (
-                            <li key={themeOption.id}>
+                            <li key={t.name}>
                                 <button
-                                    className={`flex items-center gap-3 ${theme === themeOption.id ? 'active' : ''}`}
-                                    onClick={() => handleThemeChange(themeOption.id)}>
-                                    <Icon className='w-4 h-4' />
-                                    {themeOption.label}
+                                    className={'flex items-center gap-3'}
+                                    onClick={() => handleThemeChange(t.name)}
+                                >
+                                    <ThemeIcon className="w-4 h-4" style={{ color: t.color }} />
+                                    {t.label}
+
+                                    {theme === t.name && <Check className="w-4 h-4 mt-auto" />}
                                 </button>
                             </li>
                         );
@@ -75,6 +121,4 @@ const ThemeSwitcher = () => {
             )}
         </div>
     );
-};
-
-export default ThemeSwitcher;
+}
