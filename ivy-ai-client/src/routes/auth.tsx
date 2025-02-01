@@ -115,18 +115,18 @@ function Auth() {
   const isLoading = signInLoading || signUpLoading
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-base-200 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Animated background pattern */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute w-96 h-96 -top-48 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
-        <div className="absolute w-96 h-96 -top-48 -right-48 bg-secondary rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
-        <div className="absolute w-96 h-96 -bottom-48 -left-48 bg-accent rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
-        <div className="absolute w-96 h-96 -bottom-48 -right-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+        <div className="absolute w-72 sm:w-96 h-72 sm:h-96 -top-48 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+        <div className="absolute w-72 sm:w-96 h-72 sm:h-96 -top-48 -right-48 bg-secondary rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+        <div className="absolute w-72 sm:w-96 h-72 sm:h-96 -bottom-48 -left-48 bg-accent rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        <div className="absolute w-72 sm:w-96 h-72 sm:h-96 -bottom-48 -right-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
       </div>
 
-      <div className="card max-w-sm w-full bg-base-100 shadow-xl relative z-10 animate-fade-in">
-        <div className="card-body p-6">
-          <div className="flex justify-center">
+      <div className="card w-full max-w-sm bg-base-100 shadow-xl relative z-10 animate-fade-in">
+        <div className="card-body p-6 sm:p-8">
+          <div className="flex justify-center mb-6">
             <Bot className="w-12 h-12 text-primary animate-bounce-slow" />
           </div>
 
@@ -138,7 +138,7 @@ function Auth() {
           </div>
 
           {error && (
-            <div className="alert alert-error mb-4 py-2 animate-fade-in">
+            <div className="alert alert-error py-2 animate-fade-in">
               <AlertCircle className="w-5 h-5 shrink-0" />
               <span className="text-sm">{error}</span>
             </div>
@@ -148,7 +148,7 @@ function Auth() {
             <>
               <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                 <div className="form-control">
-                  <label className="label">
+                  <label className="label pt-0">
                     <span className="label-text">Email</span>
                   </label>
                   <input
@@ -158,14 +158,14 @@ function Auth() {
                     {...loginForm.register('email')}
                   />
                   {loginForm.formState.errors.email && (
-                    <label className="label">
+                    <label className="label py-1">
                       <span className="label-text-alt text-error">{loginForm.formState.errors.email.message}</span>
                     </label>
                   )}
                 </div>
 
                 <div className="form-control">
-                  <label className="label">
+                  <label className="label pt-0">
                     <span className="label-text">Password</span>
                   </label>
                   <input
@@ -175,11 +175,11 @@ function Auth() {
                     {...loginForm.register('password')}
                   />
                   {loginForm.formState.errors.password && (
-                    <label className="label">
+                    <label className="label py-1">
                       <span className="label-text-alt text-error">{loginForm.formState.errors.password.message}</span>
                     </label>
                   )}
-                  <label className="label">
+                  <label className="label py-1">
                     <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                   </label>
                 </div>
@@ -209,7 +209,7 @@ function Auth() {
             <>
               <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
                 <div className="form-control">
-                  <label className="label py-1">
+                  <label className="label pt-0">
                     <span className="label-text">Email</span>
                   </label>
                   <input
@@ -222,14 +222,14 @@ function Auth() {
                     {...registerForm.register('email')}
                   />
                   {registerForm.formState.errors.email && (
-                    <label className="label py-0">
+                    <label className="label py-1">
                       <span className="label-text-alt text-error">{registerForm.formState.errors.email.message}</span>
                     </label>
                   )}
                 </div>
 
                 <div className="form-control">
-                  <label className="label py-1">
+                  <label className="label pt-0">
                     <span className="label-text">Password</span>
                   </label>
                   <input
@@ -239,14 +239,14 @@ function Auth() {
                     {...registerForm.register('password')}
                   />
                   {registerForm.formState.errors.password && (
-                    <label className="label py-0">
+                    <label className="label py-1">
                       <span className="label-text-alt text-error">{registerForm.formState.errors.password.message}</span>
                     </label>
                   )}
                 </div>
 
                 <div className="form-control">
-                  <label className="label py-1">
+                  <label className="label pt-0">
                     <span className="label-text">Confirm Password</span>
                   </label>
                   <input
@@ -256,7 +256,7 @@ function Auth() {
                     {...registerForm.register('confirmPassword')}
                   />
                   {registerForm.formState.errors.confirmPassword && (
-                    <label className="label py-0">
+                    <label className="label py-1">
                       <span className="label-text-alt text-error">{registerForm.formState.errors.confirmPassword.message}</span>
                     </label>
                   )}

@@ -40,6 +40,15 @@
   }
 }
 
+@keyframes slide-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
 /* Custom Animation Classes */
 .animate-blob {
   animation: blob 7s infinite;
@@ -51,6 +60,10 @@
 
 .animate-fade-in {
   animation: fade-in 1s ease-out forwards;
+}
+
+.animate-slide-left {
+  animation: slide-left 0.3s ease-out forwards;
 }
 
 /* Animation Delays */
@@ -68,4 +81,32 @@
 
 .animation-delay-400 {
   animation-delay: 400ms;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+  .hero {
+    padding: 2rem 1rem;
+  }
+
+  .hero-content {
+    padding: 1rem;
+  }
+
+  .card {
+    margin: 0.5rem;
+  }
+
+  .text-5xl {
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+
+  .stats {
+    padding: 1rem;
+  }
+
+  .grid {
+    gap: 1rem;
+  }
 }

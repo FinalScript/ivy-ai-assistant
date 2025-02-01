@@ -24,44 +24,54 @@ function Index() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section with animated background */}
-      <div className="hero min-h-[80vh] bg-base-200 relative overflow-hidden">
+      {/* Hero Section */}
+      <div className="hero h-screen bg-base-200 relative overflow-hidden">
         {/* Animated background pattern */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute w-96 h-96 -top-48 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
-          <div className="absolute w-96 h-96 -top-48 -right-48 bg-secondary rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
-          <div className="absolute w-96 h-96 -bottom-48 -left-48 bg-accent rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
-          <div className="absolute w-96 h-96 -bottom-48 -right-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute w-72 sm:w-96 h-72 sm:h-96 top-1/4 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute w-72 sm:w-96 h-72 sm:h-96 top-1/4 -right-48 bg-secondary rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute w-72 sm:w-96 h-72 sm:h-96 bottom-1/4 -left-48 bg-accent rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+          <div className="absolute w-72 sm:w-96 h-72 sm:h-96 bottom-1/4 -right-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
         </div>
         
-        <div className="hero-content text-center z-10">
-          <div className="max-w-2xl">
+        <div className="hero-content text-center z-10 w-full max-w-4xl px-4 mt-16 sm:mt-0">
+          <div className="w-full">
             <div className="flex justify-center mb-6 animate-bounce-slow">
-              <Bot className="w-16 h-16 text-primary" />
+              <Bot className="w-12 h-12 sm:w-16 sm:h-16 text-primary" />
             </div>
 
-            <h1 className="text-5xl font-bold mb-4 animate-fade-in">Your AI Study Assistant</h1>
+            <h1 className="animate-fade-in">
+              <span className="block text-5xl sm:text-6xl font-bold mb-2">Meet Ivy,</span>
+              <span className="block text-2xl sm:text-4xl text-base-content/80">Your new AI Study Assistant</span>
+            </h1>
             
-            <p className="py-6 text-lg animate-fade-in animation-delay-200">
-              Let Ivy AI organize your academic life. Upload your course schedules and syllabi, 
-              and get an instantly organized calendar for your entire term - synced across all your devices.
+            <p className="py-4 sm:py-6 text-base sm:text-xl animate-fade-in animation-delay-200 max-w-2xl mx-auto">
+              Upload your syllabi once, and watch as your entire semester transforms 
+              into a perfectly structured schedule.
             </p>
-            <div className="flex gap-4 justify-center animate-fade-in animation-delay-400">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-fade-in animation-delay-400">
               <Link to="/auth" className="btn btn-primary btn-lg">Get Started</Link>
               <Link to="/" className="btn btn-outline btn-lg">See Demo</Link>
             </div>
           </div>
         </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-8 h-8 rounded-full border-2 border-base-content/20 flex items-center justify-center">
+            <div className="w-1 h-3 bg-base-content/20 rounded-full"></div>
+          </div>
+        </div>
       </div>
 
-      {/* Features Section with hover effects */}
-      <div className="py-24 px-4 bg-base-100">
+      {/* Features Section */}
+      <div className="py-16 sm:py-24 px-4 bg-base-100">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-4">Smart Student Organization</h2>
-          <p className="text-center text-lg text-base-content/70 mb-16 max-w-2xl mx-auto">
+          <p className="text-center text-base sm:text-lg text-base-content/70 mb-8 sm:mb-16 max-w-2xl mx-auto">
             Powerful features designed to make your academic life easier and more organized.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Feature 1 */}
             <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
               <div className="card-body items-center text-center">
@@ -99,13 +109,13 @@ function Index() {
       </div>
 
       {/* Testimonials Section */}
-      <div className="py-24 px-4 bg-base-200">
+      <div className="py-16 sm:py-24 px-4 bg-base-200">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-4">What Students Say</h2>
-          <p className="text-center text-lg text-base-content/70 mb-16 max-w-2xl mx-auto">
+          <p className="text-center text-base sm:text-lg text-base-content/70 mb-8 sm:mb-16 max-w-2xl mx-auto">
             Join thousands of students who have transformed their academic life with Ivy AI.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Testimonial 1 */}
             <div className="card bg-base-100 shadow-xl">
               <div className="card-body">
@@ -185,7 +195,7 @@ function Index() {
       </div>
 
       {/* Stats Section */}
-      <div className="py-16 bg-base-100">
+      <div className="py-12 sm:py-16 bg-base-100">
         <div className="max-w-6xl mx-auto px-4">
           <div className="stats stats-vertical lg:stats-horizontal shadow w-full">
             <div className="stat">
@@ -219,8 +229,8 @@ function Index() {
       </div>
 
       {/* Demo Section */}
-      <div className="bg-base-200 py-16">
-        <div className="max-w-6xl mx-auto px-4">
+      <div className="bg-base-200 py-12 sm:py-16 px-4">
+        <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="card bg-base-100 shadow-xl">
               <div className="card-body">
@@ -259,16 +269,16 @@ function Index() {
       </div>
 
       {/* Pricing Section */}
-      <div className="py-24 px-4 bg-base-200">
+      <div className="py-16 sm:py-24 px-4 bg-base-200">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 sm:mb-16">
             <h2 className="text-3xl font-bold mb-4">Simple, Transparent Pricing</h2>
-            <p className="text-lg max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg max-w-2xl mx-auto">
               Choose the plan that best fits your needs. All plans include core features.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
             {/* Free Tier */}
             <div className="card bg-base-100 shadow-xl">
               <div className="card-body">
@@ -397,7 +407,7 @@ function Index() {
 
           {/* Billing Toggle */}
           <div className="text-center mt-8 select-none">
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <span>Monthly</span>
               <input 
                 type="checkbox" 
@@ -407,7 +417,7 @@ function Index() {
               />
               <span>Annually (Save {annualDiscount * 100}%)</span>
             </div>
-            <p className="text-sm text-base-content/70 mt-5">
+            <p className="text-sm text-base-content/70 mt-4">
               Save {annualDiscount * 100}% on all plans when billed annually!
             </p>
           </div>
@@ -422,16 +432,16 @@ function Index() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-16">
+      <div className="py-12 sm:py-16">
         <div className="max-w-3xl mx-auto text-center px-4">
-          <h2 className="text-3xl font-bold mb-4">Start Your Organized Semester Today</h2>
-          <p className="mb-8">Join thousands of students who are mastering their academic schedules with Ivy AI.</p>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">Start Your Organized Semester Today</h2>
+          <p className="mb-6 sm:mb-8">Join thousands of students who are mastering their academic schedules with Ivy AI.</p>
           <Link to="/auth" className="btn btn-primary btn-lg">Try Ivy Now - It's Free</Link>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="footer p-10 bg-base-200 text-base-content">
+      <footer className="footer p-6 sm:p-10 bg-base-200 text-base-content">
         <div>
           <div className="flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
