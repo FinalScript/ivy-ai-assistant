@@ -268,7 +268,7 @@ function Index() {
           </div>
 
           {/* Billing Toggle */}
-          <div className="text-center mt-8">
+          <div className="text-center mt-8 select-none">
             <div className="flex items-center justify-center gap-4">
               <span>Monthly</span>
               <input 

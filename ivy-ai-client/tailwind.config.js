@@ -8,6 +8,6 @@ export default {
     },
     plugins: [daisyui, require('@tailwindcss/typography')],
     daisyui: {
-        themes: ['light', 'dark', 'retro', 'emerald', 'sunset', 'cupcake', 'dracula', 'winter', 'bumblebee'],
+        themes: ['light', 'dark', 'retro', 'emerald', 'sunset', 'cupcake', 'dracula', 'winter', 'wireframe'],
     },
 };
