@@ -62,7 +62,7 @@ export default function ThemeSwitcher() {
         const savedTheme = localStorage.getItem('theme') as Theme;
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-        
+
         setTheme(initialTheme);
         document.documentElement.setAttribute('data-theme', initialTheme);
     }, []);
@@ -73,25 +73,22 @@ export default function ThemeSwitcher() {
         document.documentElement.setAttribute('data-theme', newTheme);
     };
 
-    const currentTheme = THEMES.find(t => t.name === theme) || THEMES[0];
+    const currentTheme = THEMES.find((t) => t.name === theme) || THEMES[0];
     const Icon = currentTheme.icon;
 
     return (
-        <div className="dropdown dropdown-bottom flex justify-center">
-            <label tabIndex={0} className="btn btn-sm">
-                <Icon className="w-5 h-5" style={{ color: currentTheme.color }} />
-                <span className="ml-2">Theme</span>
+        <div className='dropdown dropdown-bottom flex justify-center'>
+            <label tabIndex={0} className='btn btn-sm'>
+                <Icon className='w-5 h-5' style={{ color: currentTheme.color }} />
+                <span className='ml-2'>Theme</span>
             </label>
-            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+            <ul tabIndex={0} className='dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52'>
                 {THEMES.map((t) => {
                     const ThemeIcon = t.icon;
                     return (
                         <li key={t.name}>
-                            <a
-                                onClick={() => handleThemeChange(t.name)}
-                                className={theme === t.name ? 'active' : ''}
-                            >
-                                <ThemeIcon className="w-4 h-4" style={{ color: t.color }} />
+                            <a onClick={() => handleThemeChange(t.name)} className={theme === t.name ? 'active' : ''}>
+                                <ThemeIcon className='w-4 h-4' style={{ color: t.color }} />
                                 {t.label}
                             </a>
                         </li>
