@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
-import { Sun, Moon, Sparkles, Candy, Box, Skull, Snowflake, Leaf, Check } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Sun, Moon, Sparkles, Candy, Box, Skull, Snowflake, Leaf } from 'lucide-react';
 
 const THEMES = [
     {
@@ -56,69 +56,48 @@ type Theme = (typeof THEMES)[number]['name'];
 
 export default function ThemeSwitcher() {
     const [theme, setTheme] = useState<Theme>('light');
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
 
+    // Initialize theme on mount
     useEffect(() => {
-        // Get theme from localStorage or system preference
-        const savedTheme = localStorage.getItem('theme') as Theme || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        setTheme(savedTheme);
-
-        // Add click outside listener
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        const savedTheme = localStorage.getItem('theme') as Theme;
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        
+        setTheme(initialTheme);
+        document.documentElement.setAttribute('data-theme', initialTheme);
     }, []);
 
     const handleThemeChange = (newTheme: Theme) => {
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
         setTheme(newTheme);
-        setIsOpen(false);
+        localStorage.setItem('theme', newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
     };
 
     const currentTheme = THEMES.find(t => t.name === theme) || THEMES[0];
     const Icon = currentTheme.icon;
 
     return (
-        <div className="dropdown dropdown-bottom flex justify-center" ref={dropdownRef}>
-            <div 
-                tabIndex={0} 
-                role="button" 
-                className="btn btn-sm"
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                <div className="flex items-center gap-2">
-                    <Icon className="w-5 h-5" style={{ color: currentTheme.color }} />
-                    <span className="text-sm">Theme</span>
-                </div>
-            </div>
-            {isOpen && (
-                <ul tabIndex={0} className="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box w-56 p-2 shadow-lg mt-4">
-                    {THEMES.map((t) => {
-                        const ThemeIcon = t.icon;
-                        return (
-                            <li key={t.name}>
-                                <button
-                                    className={'flex items-center gap-3'}
-                                    onClick={() => handleThemeChange(t.name)}
-                                >
-                                    <ThemeIcon className="w-4 h-4" style={{ color: t.color }} />
-                                    {t.label}
-
-                                    {theme === t.name && <Check className="w-4 h-4 mt-auto" />}
-                                </button>
-                            </li>
-                        );
-                    })}
-                </ul>
-            )}
+        <div className="dropdown dropdown-bottom flex justify-center">
+            <label tabIndex={0} className="btn btn-sm">
+                <Icon className="w-5 h-5" style={{ color: currentTheme.color }} />
+                <span className="ml-2">Theme</span>
+            </label>
+            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                {THEMES.map((t) => {
+                    const ThemeIcon = t.icon;
+                    return (
+                        <li key={t.name}>
+                            <a
+                                onClick={() => handleThemeChange(t.name)}
+                                className={theme === t.name ? 'active' : ''}
+                            >
+                                <ThemeIcon className="w-4 h-4" style={{ color: t.color }} />
+                                {t.label}
+                            </a>
+                        </li>
+                    );
+                })}
+            </ul>
         </div>
     );
 }

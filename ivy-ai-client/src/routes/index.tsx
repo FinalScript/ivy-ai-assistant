@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
-import { Check } from 'lucide-react'
+import { Check, Calendar, BookOpen, Bot, Brain, Zap, Users, Star } from 'lucide-react'
 import { useState } from 'react'
 
 export const Route = createFileRoute('/')({
@@ -24,67 +24,195 @@ function Index() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <div className="hero min-h-[70vh] bg-base-200">
-        <div className="hero-content text-center">
+      {/* Hero Section with animated background */}
+      <div className="hero min-h-[80vh] bg-base-200 relative overflow-hidden">
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute w-96 h-96 -top-48 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute w-96 h-96 -top-48 -right-48 bg-secondary rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute w-96 h-96 -bottom-48 -left-48 bg-accent rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+          <div className="absolute w-96 h-96 -bottom-48 -right-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+        </div>
+        
+        <div className="hero-content text-center z-10">
           <div className="max-w-2xl">
+            <div className="flex justify-center mb-6 animate-bounce-slow">
+              <Bot className="w-16 h-16 text-primary" />
+            </div>
 
-            <h1 className="text-5xl font-bold">Your AI Study Assistant</h1>
+            <h1 className="text-5xl font-bold mb-4 animate-fade-in">Your AI Study Assistant</h1>
             
-            <p className="py-6 text-lg">
+            <p className="py-6 text-lg animate-fade-in animation-delay-200">
               Let Ivy AI organize your academic life. Upload your course schedules and syllabi, 
               and get an instantly organized calendar for your entire term - synced across all your devices.
             </p>
-            <div className="flex gap-4 justify-center">
-              <Link to="/auth" className="btn btn-primary">Get Started</Link>
-              <Link to="/" className="btn btn-outline">See Demo</Link>
+            <div className="flex gap-4 justify-center animate-fade-in animation-delay-400">
+              <Link to="/auth" className="btn btn-primary btn-lg">Get Started</Link>
+              <Link to="/" className="btn btn-outline btn-lg">See Demo</Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="py-16 px-4">
+      {/* Features Section with hover effects */}
+      <div className="py-24 px-4 bg-base-100">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Smart Student Organization</h2>
+          <h2 className="text-3xl font-bold text-center mb-4">Smart Student Organization</h2>
+          <p className="text-center text-lg text-base-content/70 mb-16 max-w-2xl mx-auto">
+            Powerful features designed to make your academic life easier and more organized.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="card bg-base-100 shadow-xl">
+            <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
               <div className="card-body items-center text-center">
-                <div className="w-16 h-16 mask mask-squircle bg-primary flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-content" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                <div className="w-16 h-16 mask mask-hexagon bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Calendar className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="card-title">Multiple Calendar Views</h3>
-                <p>Switch between month, week, and day views to plan your academic schedule effectively</p>
+                <h3 className="card-title">Smart Calendar</h3>
+                <p className="text-base-content/70">Intelligent scheduling that adapts to your learning style and preferences</p>
               </div>
             </div>
 
             {/* Feature 2 */}
-            <div className="card bg-base-100 shadow-xl">
+            <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
               <div className="card-body items-center text-center">
-                <div className="w-16 h-16 mask mask-squircle bg-primary flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-content" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
+                <div className="w-16 h-16 mask mask-hexagon bg-secondary/10 flex items-center justify-center mb-4">
+                  <Brain className="w-8 h-8 text-secondary" />
                 </div>
-                <h3 className="card-title">Seamless Sync</h3>
-                <p>Automatically sync with Google Calendar, Apple Calendar, and other popular platforms</p>
+                <h3 className="card-title">AI-Powered</h3>
+                <p className="text-base-content/70">Advanced AI that understands your academic needs and optimizes your schedule</p>
               </div>
             </div>
 
             {/* Feature 3 */}
-            <div className="card bg-base-100 shadow-xl">
+            <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
               <div className="card-body items-center text-center">
-                <div className="w-16 h-16 mask mask-squircle bg-primary flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-content" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
+                <div className="w-16 h-16 mask mask-hexagon bg-accent/10 flex items-center justify-center mb-4">
+                  <Zap className="w-8 h-8 text-accent" />
                 </div>
-                <h3 className="card-title">AI-Powered Organization</h3>
-                <p>Smart parsing of syllabi and course schedules to automatically create your term calendar</p>
+                <h3 className="card-title">Instant Setup</h3>
+                <p className="text-base-content/70">Upload your syllabi and get an organized schedule in seconds</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonials Section */}
+      <div className="py-24 px-4 bg-base-200">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-4">What Students Say</h2>
+          <p className="text-center text-lg text-base-content/70 mb-16 max-w-2xl mx-auto">
+            Join thousands of students who have transformed their academic life with Ivy AI.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Testimonial 1 */}
+            <div className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="avatar flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 !flex !items-center !justify-center">
+                      <span className="text-primary font-bold">JD</span>
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-bold truncate">John Doe</h3>
+                    <p className="text-sm text-base-content/70 truncate">Computer Science Major</p>
+                  </div>
+                </div>
+                <p className="text-base-content/70">"Ivy AI has completely transformed how I manage my coursework. The AI suggestions are incredibly helpful!"</p>
+                <div className="flex gap-1 mt-4">
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="avatar flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-secondary/10 !flex !items-center !justify-center">
+                      <span className="text-secondary font-bold">AS</span>
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-bold truncate">Alice Smith</h3>
+                    <p className="text-sm text-base-content/70 truncate">Biology Student</p>
+                  </div>
+                </div>
+                <p className="text-base-content/70">"The automatic syllabus parsing saved me hours of manual calendar entry. Best academic tool I've used!"</p>
+                <div className="flex gap-1 mt-4">
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="avatar flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-accent/10 !flex !items-center !justify-center">
+                      <span className="text-accent font-bold">MJ</span>
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-bold truncate">Mike Johnson</h3>
+                    <p className="text-sm text-base-content/70 truncate">Engineering Graduate</p>
+                  </div>
+                </div>
+                <p className="text-base-content/70">"The smart reminders and conflict detection have saved me from missing important deadlines multiple times!"</p>
+                <div className="flex gap-1 mt-4">
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Section */}
+      <div className="py-16 bg-base-100">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="stats stats-vertical lg:stats-horizontal shadow w-full">
+            <div className="stat">
+              <div className="stat-figure text-primary">
+                <Users className="w-8 h-8" />
+              </div>
+              <div className="stat-title">Active Users</div>
+              <div className="stat-value">10K+</div>
+              <div className="stat-desc">Students using Ivy AI</div>
+            </div>
+            
+            <div className="stat">
+              <div className="stat-figure text-secondary">
+                <Brain className="w-8 h-8" />
+              </div>
+              <div className="stat-title">Study Hours</div>
+              <div className="stat-value">1M+</div>
+              <div className="stat-desc">Hours of study optimized</div>
+            </div>
+            
+            <div className="stat">
+              <div className="stat-figure text-accent">
+                <Star className="w-8 h-8" />
+              </div>
+              <div className="stat-title">Satisfaction</div>
+              <div className="stat-value">98%</div>
+              <div className="stat-desc">Student satisfaction rate</div>
             </div>
           </div>
         </div>

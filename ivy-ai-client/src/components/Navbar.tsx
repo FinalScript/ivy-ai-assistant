@@ -76,10 +76,10 @@ export default function Navbar() {
                         </label>
                         <ul tabIndex={0} className='menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52'>
                             <li>
-                                <Link to='/account' className='btn btn-ghost btn-sm'>My Account</Link>
+                                <Link to='/' className='btn btn-ghost btn-sm'>My Account</Link>
                             </li>
                             <li>
-                                <Link to='/settings' className='btn btn-ghost btn-sm'>Settings</Link>
+                                <Link to='/' className='btn btn-ghost btn-sm'>Settings</Link>
                             </li>
                             <li>
                                 <button onClick={signOut} className='btn btn-ghost btn-sm text-error'>Sign out</button>
