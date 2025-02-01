@@ -1,13 +1,27 @@
 import { useEffect, useState, useRef } from 'react';
+import { Sun, Moon, Palette } from 'lucide-react';
+
+// Define available themes with their icons and display names
+const THEMES = [
+    { id: 'light', label: 'Light', icon: Sun },
+    { id: 'dark', label: 'Dark', icon: Moon },
+    { id: 'cupcake', label: 'Cupcake', icon: Palette },
+    { id: 'dracula', label: 'Dracula', icon: Moon },
+    { id: 'winter', label: 'Winter', icon: Sun },
+    { id: 'retro', label: 'Retro', icon: Palette },
+    { id: 'emerald', label: 'Emerald', icon: Palette },
+] as const;
+
+type Theme = typeof THEMES[number]['id'];
 
 const ThemeSwitcher = () => {
-    const [theme, setTheme] = useState('light');
+    const [theme, setTheme] = useState<Theme>('light');
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // Get the initial theme from localStorage or default to 'light'
-        const savedTheme = localStorage.getItem('theme') || 'light';
+        const savedTheme = localStorage.getItem('theme') as Theme || 'light';
         setTheme(savedTheme);
         document.documentElement.setAttribute('data-theme', savedTheme);
 
@@ -22,61 +36,43 @@ const ThemeSwitcher = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleThemeChange = (newTheme: string) => {
+    const handleThemeChange = (newTheme: Theme) => {
         setTheme(newTheme);
         localStorage.setItem('theme', newTheme);
         document.documentElement.setAttribute('data-theme', newTheme);
         setIsOpen(false);
     };
 
+    // Get current theme object
+    const currentTheme = THEMES.find(t => t.id === theme) || THEMES[0];
+    const ThemeIcon = currentTheme.icon;
+
     return (
-        <div className='dropdown' ref={dropdownRef}>
-            <div tabIndex={0} role='button' className='btn btn-sm' onClick={() => setIsOpen(!isOpen)}>
-                Theme
-                <svg
-                    width='12px'
-                    height='12px'
-                    className='inline-block h-2 w-2 fill-current opacity-60'
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 2048 2048'>
-                    <path d='M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z'></path>
-                </svg>
+        <div className='dropdown dropdown-end' ref={dropdownRef}>
+            <div 
+                tabIndex={0} 
+                role='button' 
+                className='btn btn-ghost btn-circle'
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                <ThemeIcon className='w-5 h-5' />
             </div>
             {isOpen && (
-                <ul tabIndex={0} className='dropdown-content right-0 bg-base-300 rounded-box z-[1] w-52 p-2 shadow-2xl'>
-                    <li>
-                        <input
-                            type='radio'
-                            name='theme-dropdown'
-                            className='theme-controller btn btn-sm btn-block btn-ghost justify-start'
-                            aria-label='Light'
-                            value='light'
-                            checked={theme === 'light'}
-                            onChange={(e) => handleThemeChange(e.target.value)}
-                        />
-                    </li>
-                    <li>
-                        <input
-                            type='radio'
-                            name='theme-dropdown'
-                            className='theme-controller btn btn-sm btn-block btn-ghost justify-start'
-                            aria-label='Dark'
-                            value='dark'
-                            checked={theme === 'dark'}
-                            onChange={(e) => handleThemeChange(e.target.value)}
-                        />
-                    </li>
-                    <li>
-                        <input
-                            type='radio'
-                            name='theme-dropdown'
-                            className='theme-controller btn btn-sm btn-block btn-ghost justify-start'
-                            aria-label='Cupcake'
-                            value='cupcake'
-                            checked={theme === 'cupcake'}
-                            onChange={(e) => handleThemeChange(e.target.value)}
-                        />
-                    </li>
+                <ul tabIndex={0} className='dropdown-content mt-3 z-[1] p-2 shadow-lg bg-base-200 rounded-box w-52 menu menu-sm'>
+                    {THEMES.map((themeOption) => {
+                        const Icon = themeOption.icon;
+                        return (
+                            <li key={themeOption.id}>
+                                <button
+                                    className={`flex items-center gap-3 ${theme === themeOption.id ? 'active' : ''}`}
+                                    onClick={() => handleThemeChange(themeOption.id)}
+                                >
+                                    <Icon className='w-4 h-4' />
+                                    {themeOption.label}
+                                </button>
+                            </li>
+                        );
+                    })}
                 </ul>
             )}
         </div>
