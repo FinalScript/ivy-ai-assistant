@@ -1,34 +1,28 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { routeTree } from './routeTree.gen';
-import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import { StrictMode } from 'react'
+import ReactDOM from 'react-dom/client'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
+import './global.css'
 
-// Set up a Router instance
-const router = createRouter({
-    routeTree,
-    defaultPreload: 'intent',
-});
+// Import the generated route tree
+import { routeTree } from './routeTree.gen'
 
-// Register things for typesafety
+// Create a new router instance
+const router = createRouter({ routeTree })
+
+// Register the router instance for type safety
 declare module '@tanstack/react-router' {
-    interface Register {
-        router: typeof router;
-    }
+  interface Register {
+    router: typeof router
+  }
 }
 
-const client = new ApolloClient({
-    uri: 'http://localhost:54321/graphql',
-    cache: new InMemoryCache(),
-});
-
-const rootElement = document.getElementById('app')!;
-
+// Render the app
+const rootElement = document.getElementById('root')!
 if (!rootElement.innerHTML) {
-    const root = ReactDOM.createRoot(rootElement);
-    root.render(
-        <ApolloProvider client={client}>
-            <RouterProvider router={router} />
-        </ApolloProvider>
-    );
+  const root = ReactDOM.createRoot(rootElement)
+  root.render(
+    <StrictMode>
+      <RouterProvider router={router} />
+    </StrictMode>,
+  )
 }
