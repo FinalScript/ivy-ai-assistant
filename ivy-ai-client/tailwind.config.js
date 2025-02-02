@@ -49,7 +49,7 @@ export default {
             },
         },
     },
-    plugins: [daisyui, require('@tailwindcss/typography')],
+    plugins: [require('@tailwindcss/typography'), daisyui],
     daisyui: {
         themes: [
             'light',
