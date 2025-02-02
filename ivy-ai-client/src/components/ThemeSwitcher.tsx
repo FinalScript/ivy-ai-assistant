@@ -3,34 +3,22 @@ import { Sun, Moon, Sparkles, Candy, Box, Skull, Snowflake, Leaf } from 'lucide-
 
 const THEMES = [
     {
-        name: 'light',
-        label: 'Light',
-        icon: Sun,
-        color: '#570df8', // primary color for light theme
-    },
-    {
-        name: 'dark',
-        label: 'Dark',
-        icon: Moon,
-        color: '#661AE6', // primary color for dark theme
-    },
-    {
-        name: 'retro',
-        label: 'Retro',
-        icon: Sparkles,
-        color: '#ef4444', // primary color for retro theme
-    },
-    {
         name: 'cupcake',
         label: 'Cupcake',
         icon: Candy,
         color: '#65c3c8', // primary color for cupcake theme
+    },    {
+        name: 'night',
+        label: 'Night',
+        icon: Moon,
+        color: '#38bdf8', // primary color for night theme
     },
+
     {
-        name: 'wireframe',
-        label: 'Wireframe',
-        icon: Box,
-        color: '#b8b8b8', // primary color for wireframe theme
+        name: 'winter',
+        label: 'Winter',
+        icon: Snowflake,
+        color: '#5bc0de', // primary color for winter theme
     },
     {
         name: 'dracula',
@@ -39,29 +27,41 @@ const THEMES = [
         color: '#ff79c6', // primary color for dracula theme
     },
     {
-        name: 'winter',
-        label: 'Winter',
-        icon: Snowflake,
-        color: '#5bc0de', // primary color for winter theme
+        name: 'wireframe',
+        label: 'Wireframe',
+        icon: Box,
+        color: '#b8b8b8', // primary color for wireframe theme
     },
     {
-        name: 'emerald',
-        label: 'Emerald',
+        name: 'halloween',
+        label: 'Halloween',
+        icon: Skull,
+        color: '#f28c18', // primary color for halloween theme
+    },
+    {
+        name: 'forest',
+        label: 'Forest',
         icon: Leaf,
-        color: '#66cc8a', // primary color for emerald theme
+        color: '#1eb854', // primary color for forest theme
+    },
+    {
+        name: 'sunset',
+        label: 'Sunset',
+        icon: Sun,
+        color: '#FF865B', // primary color for sunset theme
     },
 ] as const;
 
 type Theme = (typeof THEMES)[number]['name'];
 
 export default function ThemeSwitcher() {
-    const [theme, setTheme] = useState<Theme>('light');
+    const [theme, setTheme] = useState<Theme>('cupcake');
 
     // Initialize theme on mount
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme') as Theme;
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        const initialTheme = savedTheme || (systemPrefersDark ? 'dracula' : 'cupcake');
 
         setTheme(initialTheme);
         document.documentElement.setAttribute('data-theme', initialTheme);

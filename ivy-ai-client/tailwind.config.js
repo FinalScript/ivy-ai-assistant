@@ -7,7 +7,7 @@ export default {
         extend: {
             animation: {
                 'bounce-slow': 'bounce 2s infinite',
-                'blob': 'blob 7s infinite',
+                blob: 'blob 7s infinite',
                 'fade-in': 'fadeIn 0.3s ease-in-out',
                 'spin-once': 'spin 1.2s linear',
                 'slide-up': 'slideUp 0.5s ease-out',
@@ -37,13 +37,13 @@ export default {
                     '100%': { transform: 'rotate(360deg)' },
                 },
                 slideUp: {
-                    '0%': { 
+                    '0%': {
                         transform: 'translateY(20px)',
-                        opacity: '0'
+                        opacity: '0',
                     },
                     '100%': {
                         transform: 'translateY(0)',
-                        opacity: '1'
+                        opacity: '1',
                     },
                 },
             },
@@ -51,6 +51,39 @@ export default {
     },
     plugins: [daisyui, require('@tailwindcss/typography')],
     daisyui: {
-        themes: ['light', 'dark', 'retro', 'emerald', 'sunset', 'cupcake', 'dracula', 'winter', 'wireframe'],
+        themes: [
+            'light',
+            'dark',
+            'cupcake',
+            'bumblebee',
+            'emerald',
+            'corporate',
+            'synthwave',
+            'retro',
+            'cyberpunk',
+            'valentine',
+            'halloween',
+            'garden',
+            'forest',
+            'aqua',
+            'lofi',
+            'pastel',
+            'fantasy',
+            'wireframe',
+            'black',
+            'luxury',
+            'dracula',
+            'cmyk',
+            'autumn',
+            'business',
+            'acid',
+            'lemonade',
+            'night',
+            'coffee',
+            'winter',
+            'dim',
+            'nord',
+            'sunset'
+        ],
     },
 };
