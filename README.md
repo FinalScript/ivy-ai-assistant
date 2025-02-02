@@ -1,13 +1,87 @@
 # 🌿 Ivy AI
 
-A modern AI-powered application.
+A modern AI-powered student assistant that helps organize your academic life.
 
 ## 📦 Project Structure
 
 ```
 /
 ├── ivy-ai-server/     # GraphQL API server
-└── ivy-ai-client/     # React client (coming soon)
+└── ivy-ai-client/     # React client application
+```
+
+## 🎨 Client
+
+The client is a modern React application that provides a beautiful and intuitive interface for students to manage their academic life.
+
+### Tech Stack
+
+- **React** - UI framework
+- **TypeScript** - Type-safe programming
+- **TanStack Router** - Type-safe routing
+- **Apollo Client** - GraphQL client
+- **TailwindCSS** - Utility-first CSS
+- **DaisyUI** - UI component library
+- **React Hook Form** - Form management
+- **Zod** - Schema validation
+
+### Features
+
+- 🔐 Secure authentication with email/password
+- 👤 User onboarding flow
+- 🎨 Theme customization with multiple themes
+- 📱 Responsive design for all devices
+- 🔄 Real-time form validation
+- ⚡ Fast and intuitive navigation
+
+### Getting Started
+
+#### Prerequisites
+
+- Node.js (v16 or higher)
+- Running instance of ivy-ai-server
+
+#### Installation
+
+1. Navigate to client directory
+```bash
+cd ivy-ai-client
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Set up environment variables
+```bash
+cp .env.example .env
+# Update .env with your configuration
+```
+
+4. Start the development server
+```bash
+npm run dev
+```
+
+### Environment Variables
+
+```env
+# API configuration
+VITE_API_URL=http://localhost:4000/graphql
+```
+
+### Project Structure
+
+```
+ivy-ai-client/
+├── src/
+│   ├── components/    # Reusable UI components
+│   ├── routes/       # Route components and configuration
+│   ├── providers/    # Context providers
+│   ├── hooks/        # Custom React hooks
+│   ├── graphql/      # GraphQL queries and mutations
+│   └── lib/          # Utility functions and configurations
 ```
 
 ## 🚀 Server
@@ -49,13 +123,7 @@ cp .env.example .env
 # Update .env with your credentials
 ```
 
-4. Generate and run database migrations
-```bash
-npm run generate
-npm run migrate
-```
-
-5. Start the development server
+4. Start the development server
 ```bash
 npm run dev
 ```
