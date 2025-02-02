@@ -71,7 +71,7 @@ export default function ThemeSwitcher() {
                 <Icon className='w-5 h-5' style={{ color: currentTheme.color }} />
                 <span className='ml-2'>Theme</span>
             </label>
-            <div tabIndex={0} className='dropdown-content z-[1] p-4 shadow-xl bg-base-100 rounded-btn'>
+            <div tabIndex={0} className='dropdown-content z-[1] p-4 shadow-xl bg-base-200 rounded-btn'>
                 <div className='grid gap-3'>
                     {THEMES.map((t) => {
                         const ThemeIcon = t.icon;
@@ -79,7 +79,7 @@ export default function ThemeSwitcher() {
                             <button
                                 key={t.name}
                                 onClick={() => handleThemeChange(t.name)}
-                                className='btn btn-md shadow-md whitespace-nowrap'
+                                className='btn btn-md bg-base-100 shadow-md whitespace-nowrap'
                                 data-theme={t.name}>
                                 <div className='w-full flex justify-between gap-x-5 items-center min-w-max'>
                                     <div className='flex gap-2 items-center'>
