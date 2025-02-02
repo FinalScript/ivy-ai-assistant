@@ -1,22 +1,18 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState, useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useMutation } from '@apollo/client';
-import { Bot, ArrowLeft, ArrowRight, Check, Search, X } from 'lucide-react';
-import { useAuth } from '../providers/AuthProvider';
-import { COMPLETE_ONBOARDING_MUTATION, OnboardingInput } from '../graphql/onboarding';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { ArrowLeft, ArrowRight, Bot, Check, Search, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { COMPLETE_ONBOARDING_MUTATION } from '../graphql/onboarding';
 import { useDebounce } from '../hooks/useDebounce';
-
-// College Scorecard API key should be in your environment variables
-const COLLEGE_SCORECARD_API_KEY = import.meta.env.VITE_COLLEGE_SCORECARD_API_KEY;
+import { useAuth } from '../providers/AuthProvider';
 
 interface School {
     id: string;
     name: string;
-    city: string;
-    state: string;
+    country: string;
 }
 
 // Validation schemas
@@ -138,22 +134,18 @@ function Onboarding() {
             setIsSearching(true);
             try {
                 const response = await fetch(
-                    `https://api.data.gov/ed/collegescorecard/v1/schools?api_key=${COLLEGE_SCORECARD_API_KEY}&school.name=${encodeURIComponent(debouncedQuery)}&fields=id,school.name,school.city,school.state&per_page=10`
+                    `http://universities.hipolabs.com/search?name=${encodeURIComponent(debouncedQuery)}&limit=10`
                 );
                 
                 const data = await response.json();
 
-                const formattedSchools: School[] = data.results.map((result: any) => {
-                    console.log(result);
+                const formattedSchools: School[] = data.map((result: any) => {
                     return {
                         id: result.id,
-                        name: result['school.name'],
-                        city: result['school.city'],
-                        state: result['school.state'],
+                        name: result.name,
+                        country: result.country,
                     }
                 });
-
-                console.log(formattedSchools);
                 
                 setSchools(formattedSchools);
             } catch (error) {
@@ -333,7 +325,7 @@ function Onboarding() {
                                                                     ${index === schools.length - 1 ? 'rounded-b-lg' : ''}`}>
                                                                 <div className='font-medium'>{school.name}</div>
                                                                 <div className='text-sm text-base-content/70'>
-                                                                    {school.city}, {school.state}
+                                                                    {school.country}
                                                                 </div>
                                                             </button>
                                                         ))}

@@ -26,15 +26,15 @@ if (!rootElement.innerHTML) {
     const root = ReactDOM.createRoot(rootElement);
     root.render(
         <StrictMode>
-            <ThemeProvider>
-                <ApolloProvider client={apolloClient}>
-                    <AuthProvider>
+            <ApolloProvider client={apolloClient}>
+                <AuthProvider>
+                    <ThemeProvider>
                         <Suspense fallback={<LoadingScreen />}>
                             <RouterProvider router={router} />
                         </Suspense>
-                    </AuthProvider>
-                </ApolloProvider>
-            </ThemeProvider>
+                    </ThemeProvider>
+                </AuthProvider>
+            </ApolloProvider>
         </StrictMode>
     );
 }

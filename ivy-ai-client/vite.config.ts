@@ -9,5 +9,6 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     host: true,
+    allowedHosts: ['localhost', '127.0.0.1', 'roynul.hopto.org'],
   },
 })
