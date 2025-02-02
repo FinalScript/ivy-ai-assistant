@@ -7,7 +7,8 @@ const THEMES = [
         label: 'Cupcake',
         icon: Candy,
         color: '#65c3c8', // primary color for cupcake theme
-    },    {
+    },
+    {
         name: 'night',
         label: 'Night',
         icon: Moon,
@@ -21,28 +22,16 @@ const THEMES = [
         color: '#5bc0de', // primary color for winter theme
     },
     {
-        name: 'dracula',
-        label: 'Dracula',
-        icon: Skull,
-        color: '#ff79c6', // primary color for dracula theme
+        name: 'forest',
+        label: 'Forest',
+        icon: Leaf,
+        color: '#1eb854', // primary color for forest theme
     },
     {
         name: 'wireframe',
         label: 'Wireframe',
         icon: Box,
         color: '#b8b8b8', // primary color for wireframe theme
-    },
-    {
-        name: 'halloween',
-        label: 'Halloween',
-        icon: Skull,
-        color: '#f28c18', // primary color for halloween theme
-    },
-    {
-        name: 'forest',
-        label: 'Forest',
-        icon: Leaf,
-        color: '#1eb854', // primary color for forest theme
     },
     {
         name: 'sunset',
@@ -82,19 +71,33 @@ export default function ThemeSwitcher() {
                 <Icon className='w-5 h-5' style={{ color: currentTheme.color }} />
                 <span className='ml-2'>Theme</span>
             </label>
-            <ul tabIndex={0} className='dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52'>
-                {THEMES.map((t) => {
-                    const ThemeIcon = t.icon;
-                    return (
-                        <li key={t.name}>
-                            <a onClick={() => handleThemeChange(t.name)} className={theme === t.name ? 'active' : ''}>
-                                <ThemeIcon className='w-4 h-4' style={{ color: t.color }} />
-                                {t.label}
-                            </a>
-                        </li>
-                    );
-                })}
-            </ul>
+            <div tabIndex={0} className='dropdown-content z-[1] p-4 shadow-xl bg-base-100 rounded-btn'>
+                <div className='grid gap-3'>
+                    {THEMES.map((t) => {
+                        const ThemeIcon = t.icon;
+                        return (
+                            <button
+                                key={t.name}
+                                onClick={() => handleThemeChange(t.name)}
+                                className='btn btn-md shadow-md whitespace-nowrap'
+                                data-theme={t.name}>
+                                <div className='w-full flex justify-between gap-x-5 items-center min-w-max'>
+                                    <div className='flex gap-2 items-center'>
+                                        <ThemeIcon className='w-4 h-4' style={{ color: t.color }} />
+                                        <span className='font-medium'>{t.label}</span>
+                                    </div>
+                                    <div className='flex gap-1.5 justify-end'>
+                                        <div className='w-2 h-5 rounded-full bg-primary' />
+                                        <div className='w-2 h-5 rounded-full bg-secondary' />
+                                        <div className='w-2 h-5 rounded-full bg-accent' />
+                                        <div className='w-2 h-5 rounded-full bg-neutral' />
+                                    </div>
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
         </div>
     );
 }
