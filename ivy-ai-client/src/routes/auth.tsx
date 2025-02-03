@@ -3,9 +3,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useMutation } from '@apollo/client';
-import { SIGN_IN_MUTATION, SIGN_UP_MUTATION } from '../graphql/auth';
-import type { AuthResponse, SignInInput, SignUpInput } from '../graphql/auth';
+import { supabase } from '../lib/supabase';
 import { useAuth } from '../providers/AuthProvider';
 import { AlertCircle, Bot, ArrowLeft } from 'lucide-react';
 
@@ -31,10 +29,11 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export const Route = createFileRoute('/auth')({
     component: Auth,
-    beforeLoad: ({ location }) => {
-        // Redirect to home if already authenticated
-        const token = localStorage.getItem('auth_token');
-        if (token && location.pathname === '/auth') {
+    beforeLoad: async ({ location }) => {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        console.log(session)
+        if (session && location.pathname === '/auth') {
             throw redirect({ to: '/' });
         }
     },
@@ -43,8 +42,12 @@ export const Route = createFileRoute('/auth')({
 function Auth() {
     const [isLogin, setIsLogin] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const { setUser } = useAuth();
+    const { isLoading: isAuthLoading, fetchUserData, setUser } = useAuth();
+
+    // Don't show loading state if we're just checking auth
+    const showLoading = isLoading && !isAuthLoading;
 
     const loginForm = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -54,67 +57,99 @@ function Auth() {
         resolver: zodResolver(registerSchema),
     });
 
-    const [signIn, { loading: signInLoading }] = useMutation<{ signIn: AuthResponse }, { input: SignInInput }>(SIGN_IN_MUTATION);
-
-    const [signUp, { loading: signUpLoading }] = useMutation<{ signUp: AuthResponse }, { input: SignUpInput }>(SIGN_UP_MUTATION);
-
     const onLoginSubmit = async (data: LoginFormData) => {
-        try {
-            setError(null);
-            const response = await signIn({
-                variables: {
-                    input: {
-                        email: data.email,
-                        password: data.password,
-                    },
-                },
-            });
+        if (isLoading) return;
+        
+        setIsLoading(true);
+        setError(null);
+        
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+            email: data.email,
+            password: data.password,
+        });
 
-            if (response.data) {
-                // Store the token
-                localStorage.setItem('auth_token', response.data.signIn.token);
-                // Update user context
-                setUser(response.data.signIn.user);
+        if (authError) {
+            console.error('Login error:', authError);
+            setError(authError.message);
+            setIsLoading(false);
+            return;
+        }
 
-                if (!response.data.signIn.user.onboardingCompleted) {
-                    // Redirect to onboarding for new users
-                    navigate({ to: '/onboarding' });
-                } else {
-                    // Redirect to dashboard
-                    navigate({ to: '/' });
-                }
+        if (authData.user) {
+            const userData = await fetchUserData(authData.user.id);
+
+            if(!userData) {
+                setError('User not found');
+                setIsLoading(false);
+                return;
             }
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Invalid credentials');
+
+            setUser(userData);
+
+            // The AuthProvider will handle fetching and setting the complete user data
+            // We just need to check if we should redirect to onboarding
+            const { data: dbUser, error: dbError } = await supabase
+                .from('users')
+                .select('onboarding_completed')
+                .eq('id', authData.user.id)
+                .single();
+
+            if (dbError) {
+                console.error('Database error:', dbError);
+                setError(dbError.message);
+                setIsLoading(false);
+                return;
+            }
+
+            if (dbUser?.onboarding_completed) {
+                navigate({ to: '/' });
+            } else {
+                navigate({ to: '/onboarding' });
+            }
         }
     };
 
     const onRegisterSubmit = async (data: RegisterFormData) => {
-        try {
-            setError(null);
-            const response = await signUp({
-                variables: {
-                    input: {
-                        email: data.email,
-                        password: data.password,
-                    },
-                },
-            });
+        if (isLoading) return;
 
-            if (response.data) {
-                // Store the token
-                localStorage.setItem('auth_token', response.data.signUp.token);
-                // Update user context
-                setUser(response.data.signUp.user);
-                // Redirect to onboarding for new users
-                navigate({ to: '/onboarding' });
+        setIsLoading(true);
+        setError(null);
+        
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+            email: data.email,
+            password: data.password,
+        });
+
+        if (authError) {
+            console.error('Registration error:', authError);
+            setError(authError.message);
+            setIsLoading(false);
+            return;
+        }
+
+        if (authData.user) {
+            // Create the user profile in our database
+            const { error: dbError } = await supabase
+                .from('users')
+                .insert([
+                    {
+                        id: authData.user.id,
+                        email: authData.user.email,
+                        onboarding_completed: false,
+                    }
+                ]);
+
+            if (dbError) {
+                console.error('Database error:', dbError);
+                setError(dbError.message);
+                setIsLoading(false);
+                return;
             }
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to create account');
+            
+            // Redirect to onboarding for new users
+            navigate({ to: '/onboarding' });
         }
     };
-
-    const isLoading = signInLoading || signUpLoading;
 
     return (
         <div className='min-h-screen bg-base-200 flex flex-col items-center justify-center p-4 relative overflow-hidden'>
@@ -186,10 +221,10 @@ function Auth() {
                                     </label>
                                 </div>
 
-                                <button type='submit' className={'btn btn-primary w-full'} disabled={isLoading}>
-                                    {isLoading ? 'Signing in...' : 'Sign In'}
+                                <button type='submit' className={'btn btn-primary w-full'} disabled={showLoading}>
+                                    {showLoading ? 'Signing in...' : 'Sign In'}
 
-                                    {isLoading ? <span className='loading loading-spinner loading-sm' /> : ''}
+                                    {showLoading ? <span className='loading loading-spinner loading-sm' /> : ''}
                                 </button>
                             </form>
                             <p className='text-center text-sm mt-4'>
@@ -261,10 +296,10 @@ function Auth() {
                                     )}
                                 </div>
 
-                                <button type='submit' className={'btn btn-primary w-full'} disabled={isLoading}>
-                                    {isLoading ? 'Creating account...' : 'Create Account'}
+                                <button type='submit' className={'btn btn-primary w-full'} disabled={showLoading}>
+                                    {showLoading ? 'Creating account...' : 'Create Account'}
 
-                                    {isLoading ? <span className='loading loading-spinner loading-sm' /> : ''}
+                                    {showLoading ? <span className='loading loading-spinner loading-sm' /> : ''}
                                 </button>
                             </form>
                             <p className='text-center text-sm mt-4'>
@@ -285,7 +320,7 @@ function Auth() {
 
                     <button
                         className='btn w-full bg-white hover:bg-gray-100 text-gray-800 border-gray-300 gap-2 transition-colors duration-200'
-                        disabled={isLoading}>
+                        disabled={showLoading}>
                         <svg className='w-5 h-5' viewBox='0 0 24 24'>
                             <path
                                 fill='#4285F4'
@@ -304,7 +339,7 @@ function Auth() {
                                 d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z'
                             />
                         </svg>
-                        {isLoading ? 'Please wait...' : 'Continue with Google'}
+                        {showLoading ? 'Please wait...' : 'Continue with Google'}
                     </button>
                 </div>
             </div>
