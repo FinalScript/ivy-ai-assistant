@@ -11,16 +11,30 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TimetableSetupImport } from './routes/timetable-setup'
 import { Route as OnboardingImport } from './routes/onboarding'
+import { Route as DashboardImport } from './routes/dashboard'
 import { Route as AuthImport } from './routes/auth'
 import { Route as R404Import } from './routes/404'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
 
+const TimetableSetupRoute = TimetableSetupImport.update({
+  id: '/timetable-setup',
+  path: '/timetable-setup',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const OnboardingRoute = OnboardingImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardRoute = DashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,11 +81,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardImport
+      parentRoute: typeof rootRoute
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingImport
+      parentRoute: typeof rootRoute
+    }
+    '/timetable-setup': {
+      id: '/timetable-setup'
+      path: '/timetable-setup'
+      fullPath: '/timetable-setup'
+      preLoaderRoute: typeof TimetableSetupImport
       parentRoute: typeof rootRoute
     }
   }
@@ -83,14 +111,18 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/timetable-setup': typeof TimetableSetupRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/timetable-setup': typeof TimetableSetupRoute
 }
 
 export interface FileRoutesById {
@@ -98,15 +130,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/timetable-setup': typeof TimetableSetupRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/404' | '/auth' | '/onboarding'
+  fullPaths:
+    | '/'
+    | '/404'
+    | '/auth'
+    | '/dashboard'
+    | '/onboarding'
+    | '/timetable-setup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/404' | '/auth' | '/onboarding'
-  id: '__root__' | '/' | '/404' | '/auth' | '/onboarding'
+  to: '/' | '/404' | '/auth' | '/dashboard' | '/onboarding' | '/timetable-setup'
+  id:
+    | '__root__'
+    | '/'
+    | '/404'
+    | '/auth'
+    | '/dashboard'
+    | '/onboarding'
+    | '/timetable-setup'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,14 +161,18 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
   AuthRoute: typeof AuthRoute
+  DashboardRoute: typeof DashboardRoute
   OnboardingRoute: typeof OnboardingRoute
+  TimetableSetupRoute: typeof TimetableSetupRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
   AuthRoute: AuthRoute,
+  DashboardRoute: DashboardRoute,
   OnboardingRoute: OnboardingRoute,
+  TimetableSetupRoute: TimetableSetupRoute,
 }
 
 export const routeTree = rootRoute
@@ -137,7 +188,9 @@ export const routeTree = rootRoute
         "/",
         "/404",
         "/auth",
-        "/onboarding"
+        "/dashboard",
+        "/onboarding",
+        "/timetable-setup"
       ]
     },
     "/": {
@@ -149,8 +202,14 @@ export const routeTree = rootRoute
     "/auth": {
       "filePath": "auth.tsx"
     },
+    "/dashboard": {
+      "filePath": "dashboard.tsx"
+    },
     "/onboarding": {
       "filePath": "onboarding.tsx"
+    },
+    "/timetable-setup": {
+      "filePath": "timetable-setup.tsx"
     }
   }
 }
