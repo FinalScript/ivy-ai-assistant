@@ -1,19 +1,20 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
+import { supabase } from './supabase'
 
 const httpLink = createHttpLink({
-  uri: import.meta.env.VITE_API_URL || 'http://localhost:4000/graphql',
+  uri: import.meta.env.VITE_GRAPHQL_URL || 'http://localhost:4000/graphql',
 })
 
-const authLink = setContext((_, { headers }) => {
-  // Get the authentication token from local storage if it exists
-  const token = localStorage.getItem('auth_token')
-
-  // Return the headers to the context so httpLink can read them
+const authLink = setContext(async (_, { headers }) => {
+  // Get the Supabase session
+  const { data: { session } } = await supabase.auth.getSession()
+  
+  console.log(session)
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : "",
+      authorization: session?.access_token ? `Bearer ${session.access_token}` : '',
     }
   }
 })

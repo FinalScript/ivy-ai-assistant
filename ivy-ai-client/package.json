@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/client": "^3.12.8",
     "@hookform/resolvers": "^3.10.0",
+    "@supabase/supabase-js": "^2.48.1",
     "@tanstack/react-router": "^1.98.4",
     "graphql": "^16.10.0",
     "lucide-react": "^0.474.0",
