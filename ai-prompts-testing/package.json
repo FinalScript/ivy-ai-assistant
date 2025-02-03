@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "start": "ts-node main.ts"
+  },
+  "dependencies": {
+    "openai": "^4.82.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "dotenv": "^16.4.7",
+    "ts-node": "^10.9.2"
+  }
+}
