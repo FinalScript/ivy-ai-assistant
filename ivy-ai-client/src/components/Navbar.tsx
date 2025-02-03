@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import ThemeSwitcher from './ThemeSwitcher';
-import { Bot, Calendar, BookOpen, HelpCircle, Menu } from 'lucide-react';
+import { Bot, Calendar, BookOpen, HelpCircle, Menu, Settings, Plus } from 'lucide-react';
 import { useAuth } from '../providers/AuthProvider';
 import { useState } from 'react';
 
@@ -21,13 +21,13 @@ export default function Navbar() {
                 {/* Desktop Navigation */}
                 {isAuthenticated && (
                     <div className='hidden md:flex navbar-center gap-6'>
-                        <Link to='/calendar' className='flex items-center gap-2 link link-hover'>
+                        <Link to='/dashboard' className='flex items-center gap-2 link link-hover'>
                             <Calendar className='w-4 h-4' />
-                            <span>Calendar</span>
+                            <span>Dashboard</span>
                         </Link>
-                        <Link to='/courses' className='flex items-center gap-2 link link-hover'>
+                        <Link to='/timetable-setup' className='flex items-center gap-2 link link-hover'>
                             <BookOpen className='w-4 h-4' />
-                            <span>Courses</span>
+                            <span>Classes</span>
                         </Link>
                     </div>
                 )}
@@ -66,17 +66,19 @@ export default function Navbar() {
                                     className='menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52'
                                 >
                                     <li>
-                                        <Link to='/' className='btn btn-ghost btn-sm'>
-                                            My Account
+                                        <Link to='/dashboard' className='flex items-center gap-2'>
+                                            <Calendar className='w-4 h-4' />
+                                            Dashboard
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to='/' className='btn btn-ghost btn-sm'>
-                                            Settings
+                                        <Link to='/timetable-setup' className='flex items-center gap-2'>
+                                            <BookOpen className='w-4 h-4' />
+                                            Manage Classes
                                         </Link>
                                     </li>
                                     <li>
-                                        <button onClick={signOut} className='btn btn-ghost btn-sm text-error'>
+                                        <button onClick={signOut} className='text-error'>
                                             Sign out
                                         </button>
                                     </li>
@@ -136,36 +138,22 @@ export default function Navbar() {
                                     </div>
                                     <div className='divider my-2'></div>
                                     <Link
-                                        to='/'
+                                        to='/dashboard'
                                         className='flex items-center gap-2 p-2 hover:bg-base-200 rounded-lg'
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         <Calendar className='w-4 h-4' />
-                                        <span>Calendar</span>
+                                        <span>Dashboard</span>
                                     </Link>
                                     <Link
-                                        to='/'
+                                        to='/timetable-setup'
                                         className='flex items-center gap-2 p-2 hover:bg-base-200 rounded-lg'
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         <BookOpen className='w-4 h-4' />
-                                        <span>Courses</span>
+                                        <span>Classes</span>
                                     </Link>
                                     <div className='divider my-2'></div>
-                                    <Link
-                                        to='/'
-                                        className='flex items-center gap-2 p-2 hover:bg-base-200 rounded-lg'
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        My Account
-                                    </Link>
-                                    <Link
-                                        to='/'
-                                        className='flex items-center gap-2 p-2 hover:bg-base-200 rounded-lg'
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        Settings
-                                    </Link>
                                     <button
                                         onClick={() => {
                                             signOut();
