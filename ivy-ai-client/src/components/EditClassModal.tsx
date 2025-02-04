@@ -4,8 +4,8 @@ import { z } from 'zod';
 import { X, Plus, Trash2 } from 'lucide-react';
 
 const courseSchema = z.object({
-    name: z.string().min(1, 'Course name is required'),
-    code: z.string().min(1, 'Course code is required'),
+    courseName: z.string().min(1, 'Course name is required'),
+    courseCode: z.string().min(1, 'Course code is required'),
     instructor: z.string().optional(),
     hasScheduledClasses: z.boolean().default(false),
     schedule: z.array(z.object({
@@ -13,32 +13,9 @@ const courseSchema = z.object({
         startTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format').optional(),
         endTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format').optional(),
         location: z.string().optional(),
+        section: z.string().optional(),
+        classType: z.string().optional(),
     })).optional(),
-    type: z.string().optional(),
-}).refine((data) => {
-    // If hasScheduledClasses is true, ensure schedule has at least one valid entry
-    if (data.hasScheduledClasses) {
-        return data.schedule && data.schedule.length > 0 && 
-               data.schedule.every(s => s.days && s.startTime && s.endTime);
-    }
-    return true;
-}, {
-    message: "Schedule details are required when course has scheduled classes",
-    path: ["schedule"],
-}).refine((data) => {
-    // Validate that end time is after start time for each schedule
-    if (data.hasScheduledClasses && data.schedule) {
-        return data.schedule.every(s => {
-            if (!s.startTime || !s.endTime) return true;
-            const start = new Date(`1970-01-01T${s.startTime}`);
-            const end = new Date(`1970-01-01T${s.endTime}`);
-            return end > start;
-        });
-    }
-    return true;
-}, {
-    message: "End time must be after start time",
-    path: ["schedule"],
 });
 
 type CourseFormData = z.infer<typeof courseSchema>;
@@ -48,22 +25,26 @@ interface EditCourseModalProps {
     onClose: () => void;
     onSave: (data: CourseFormData) => void;
     courseData?: {
-        id: string;
-        name: string;
-        code: string;
-        instructor?: string;
-        schedule?: {
+        id?: string;
+        courseName: string;
+        courseCode: string;
+        instructor: string;
+        startDate: string;
+        endDate: string;
+        classes: {
+            section: string;
+            classType: string;
+            location: string;
             day: string;
             startTime: string;
             endTime: string;
-            location?: string;
+            additionalInfo: string;
         }[];
-        type?: string;
     };
 }
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const courseTypes = ['Lecture', 'Lab', 'Tutorial', 'Seminar', 'Workshop'];
+const classTypes = ['Lecture', 'Lab', 'Tutorial', 'Seminar', 'Workshop', 'Other'];
 
 export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCourseModalProps) {
     const {
@@ -76,17 +57,18 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
         resolver: zodResolver(courseSchema),
         defaultValues: courseData
             ? {
-                  name: courseData.name,
-                  code: courseData.code,
+                  courseName: courseData.courseName,
+                  courseCode: courseData.courseCode,
                   instructor: courseData.instructor,
-                  hasScheduledClasses: courseData.schedule ? courseData.schedule.length > 0 : false,
-                  schedule: courseData.schedule ? [{
-                      days: [courseData.schedule[0].day],
-                      startTime: courseData.schedule[0].startTime,
-                      endTime: courseData.schedule[0].endTime,
-                      location: courseData.schedule[0].location,
-                  }] : [],
-                  type: courseData.type,
+                  hasScheduledClasses: courseData.classes.length > 0,
+                  schedule: courseData.classes.map(classInfo => ({
+                      days: [classInfo.day],
+                      startTime: classInfo.startTime,
+                      endTime: classInfo.endTime,
+                      location: classInfo.location,
+                      section: classInfo.section,
+                      classType: classInfo.classType,
+                  })),
               }
             : {
                 hasScheduledClasses: false,
@@ -98,7 +80,14 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
     const schedule = watch('schedule') || [];
 
     const addScheduleSlot = () => {
-        setValue('schedule', [...schedule, { days: [], startTime: '', endTime: '', location: '' }]);
+        setValue('schedule', [...schedule, { 
+            days: [], 
+            startTime: '', 
+            endTime: '', 
+            location: '',
+            section: '',
+            classType: 'Lecture'
+        }]);
     };
 
     const removeScheduleSlot = (index: number) => {
@@ -131,12 +120,12 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
                                     </label>
                                     <input
                                         type='text'
-                                        className={`input input-bordered ${errors.name ? 'input-error' : ''}`}
-                                        {...register('name')}
+                                        className={`input input-bordered ${errors.courseName ? 'input-error' : ''}`}
+                                        {...register('courseName')}
                                     />
-                                    {errors.name && (
+                                    {errors.courseName && (
                                         <label className='label'>
-                                            <span className='label-text-alt text-error'>{errors.name.message}</span>
+                                            <span className='label-text-alt text-error'>{errors.courseName.message}</span>
                                         </label>
                                     )}
                                 </div>
@@ -147,12 +136,12 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
                                     </label>
                                     <input
                                         type='text'
-                                        className={`input input-bordered ${errors.code ? 'input-error' : ''}`}
-                                        {...register('code')}
+                                        className={`input input-bordered ${errors.courseCode ? 'input-error' : ''}`}
+                                        {...register('courseCode')}
                                     />
-                                    {errors.code && (
+                                    {errors.courseCode && (
                                         <label className='label'>
-                                            <span className='label-text-alt text-error'>{errors.code.message}</span>
+                                            <span className='label-text-alt text-error'>{errors.courseCode.message}</span>
                                         </label>
                                     )}
                                 </div>
@@ -198,6 +187,31 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
                                                 </div>
 
                                                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                                                    <div className='form-control'>
+                                                        <label className='label'>
+                                                            <span className='label-text'>Section</span>
+                                                        </label>
+                                                        <input
+                                                            type='text'
+                                                            className='input input-bordered'
+                                                            {...register(`schedule.${index}.section`)}
+                                                            placeholder='e.g., A1, B2'
+                                                        />
+                                                    </div>
+
+                                                    <div className='form-control'>
+                                                        <label className='label'>
+                                                            <span className='label-text'>Class Type</span>
+                                                        </label>
+                                                        <select
+                                                            className='select select-bordered'
+                                                            {...register(`schedule.${index}.classType`)}>
+                                                            {classTypes.map(type => (
+                                                                <option key={type} value={type}>{type}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+
                                                     <div className='form-control'>
                                                         <label className='label'>
                                                             <span className='label-text'>Days*</span>
@@ -249,7 +263,7 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
                                                             </select>
                                                             {errors.schedule?.[index]?.startTime && (
                                                                 <label className='label'>
-                                                                    <span className='label-text-alt text-error'>{errors.schedule[index]?.startTime?.message}</span>
+                                                                    <span className='label-text-alt text-error'>Start time is required</span>
                                                                 </label>
                                                             )}
                                                         </div>
@@ -280,13 +294,13 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
                                                             </select>
                                                             {errors.schedule?.[index]?.endTime && (
                                                                 <label className='label'>
-                                                                    <span className='label-text-alt text-error'>{errors.schedule[index]?.endTime?.message}</span>
+                                                                    <span className='label-text-alt text-error'>End time is required</span>
                                                                 </label>
                                                             )}
                                                         </div>
                                                     </div>
 
-                                                    <div className='form-control md:col-span-2'>
+                                                    <div className='form-control'>
                                                         <label className='label'>
                                                             <span className='label-text'>Location</span>
                                                         </label>
@@ -303,39 +317,17 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
 
                                     <button
                                         type='button'
-                                        className='btn btn-outline btn-block gap-2'
+                                        className='btn btn-outline gap-2 w-full'
                                         onClick={addScheduleSlot}>
                                         <Plus className='w-4 h-4' />
                                         Add Another Schedule
                                     </button>
-
-                                    {errors.schedule && typeof errors.schedule === 'object' && 'message' in errors.schedule && (
-                                        <div className='alert alert-error'>
-                                            <span>{errors.schedule.message as string}</span>
-                                        </div>
-                                    )}
                                 </div>
                             )}
-
-                            <div className='form-control'>
-                                <label className='label'>
-                                    <span className='label-text'>Course Type</span>
-                                </label>
-                                <select
-                                    className='select select-bordered'
-                                    {...register('type')}>
-                                    <option value=''>Select type</option>
-                                    {courseTypes.map((type) => (
-                                        <option key={type} value={type}>
-                                            {type}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
                         </div>
 
                         <div className='flex justify-end gap-2 mt-6'>
-                            <button type='button' className='btn btn-ghost' onClick={onClose}>
+                            <button type='button' className='btn' onClick={onClose}>
                                 Cancel
                             </button>
                             <button type='submit' className='btn btn-primary'>

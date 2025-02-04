@@ -3,49 +3,180 @@ import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Upload, FileText, Plus, Edit2, Trash2, Calendar, Clock, MapPin } from 'lucide-react';
 import { EditClassModal } from '../components/EditClassModal';
 
-interface Schedule {
+interface ClassInfo {
+    section: string;
+    classType: string;
+    location: string;
     day: string;
     startTime: string;
     endTime: string;
-    location: string;
+    additionalInfo: string;
 }
 
 interface Course {
-    id: string;
-    name: string;
-    code: string;
-    instructor?: string;
-    schedule: Schedule[];
-    type: string;
+    id?: string; // For UI purposes
+    courseName: string;
+    courseCode: string;
+    instructor: string;
+    startDate: string;
+    endDate: string;
+    classes: ClassInfo[];
 }
 
 // Mock data for demonstration
-const mockClasses: Course[] = [
+const mockClasses = [
     {
-        id: '1',
-        name: 'Introduction to Computer Science',
-        code: 'CS101',
-        instructor: 'Dr. Smith',
-        schedule: [{
-            day: 'Monday',
-            startTime: '09:00',
-            endTime: '10:30',
-            location: 'Science Building 101'
-        }],
-        type: 'Lecture'
+        courseName: "Data Structures and Algorithms",
+        courseCode: "CS 2100",
+        instructor: "Dr. Sarah Chen",
+        startDate: "2024-01-15",
+        endDate: "2024-05-10",
+        classes: [
+            {
+                section: "A1",
+                classType: "Lecture",
+                location: "Science Hall 205",
+                day: "Monday",
+                startTime: "09:30",
+                endTime: "10:50",
+                additionalInfo: ""
+            },
+            {
+                section: "A1",
+                classType: "Lecture",
+                location: "Science Hall 205",
+                day: "Wednesday",
+                startTime: "09:30",
+                endTime: "10:50",
+                additionalInfo: ""
+            },
+            {
+                section: "L1",
+                classType: "Lab",
+                location: "Computer Lab 401",
+                day: "Friday",
+                startTime: "14:30",
+                endTime: "15:50",
+                additionalInfo: ""
+            }
+        ]
     },
     {
-        id: '2',
-        name: 'Calculus I',
-        code: 'MATH201',
-        instructor: 'Prof. Johnson',
-        schedule: [{
-            day: 'Tuesday',
-            startTime: '11:00',
-            endTime: '12:30',
-            location: 'Math Building 305'
-        }],
-        type: 'Lecture'
+        courseName: "Linear Algebra",
+        courseCode: "MATH 2410",
+        instructor: "Prof. Michael Torres",
+        startDate: "2024-01-15",
+        endDate: "2024-05-10",
+        classes: [
+            {
+                section: "B2",
+                classType: "Lecture",
+                location: "Mathematics Building 110",
+                day: "Tuesday",
+                startTime: "11:00",
+                endTime: "12:20",
+                additionalInfo: ""
+            },
+            {
+                section: "B2",
+                classType: "Lecture",
+                location: "Mathematics Building 110",
+                day: "Thursday",
+                startTime: "11:00",
+                endTime: "12:20",
+                additionalInfo: ""
+            },
+            {
+                section: "T1",
+                classType: "Tutorial",
+                location: "Study Center",
+                day: "Friday",
+                startTime: "10:00",
+                endTime: "10:50",
+                additionalInfo: ""
+            }
+        ]
+    },
+    {
+        courseName: "Introduction to Psychology",
+        courseCode: "PSYC 1101",
+        instructor: "Dr. Emily Rodriguez",
+        startDate: "2024-01-15",
+        endDate: "2024-05-10",
+        classes: [
+            {
+                section: "C3",
+                classType: "Lecture",
+                location: "Social Sciences 301",
+                day: "Monday",
+                startTime: "13:00",
+                endTime: "14:20",
+                additionalInfo: ""
+            },
+            {
+                section: "C3",
+                classType: "Lecture",
+                location: "Social Sciences 301",
+                day: "Wednesday",
+                startTime: "13:00",
+                endTime: "14:20",
+                additionalInfo: ""
+            },
+            {
+                section: "D1",
+                classType: "Discussion",
+                location: "",
+                day: "",
+                startTime: "",
+                endTime: "",
+                additionalInfo: "Asynchronous online discussion"
+            }
+        ]
+    },
+    {
+        courseName: "World History: Modern Era",
+        courseCode: "HIST 2200",
+        instructor: "Prof. James Wilson",
+        startDate: "2024-01-15",
+        endDate: "2024-05-10",
+        classes: [
+            {
+                section: "A4",
+                classType: "Seminar",
+                location: "Humanities 405",
+                day: "Tuesday",
+                startTime: "15:30",
+                endTime: "16:50",
+                additionalInfo: ""
+            },
+            {
+                section: "A4",
+                classType: "Seminar",
+                location: "Humanities 405",
+                day: "Thursday",
+                startTime: "15:30",
+                endTime: "16:50",
+                additionalInfo: ""
+            }
+        ]
+    },
+    {
+        courseName: "Environmental Science",
+        courseCode: "ENVS 1500",
+        instructor: "Dr. Lisa Park",
+        startDate: "2024-01-15",
+        endDate: "2024-05-10",
+        classes: [
+            {
+                section: "B1",
+                classType: "Hybrid",
+                location: "Online/Field Work",
+                day: "",
+                startTime: "",
+                endTime: "",
+                additionalInfo: "Flexible schedule with monthly field trips"
+            }
+        ]
     }
 ];
 
@@ -65,8 +196,6 @@ function TimetableSetup() {
         const file = event.target.files?.[0];
         if (file) {
             setSelectedFile(file);
-            // In a real implementation, we would process the file here
-            // For now, we'll just move to the next step
             setCurrentStep('review');
         }
     };
@@ -74,16 +203,22 @@ function TimetableSetup() {
     const handleAddClass = () => {
         const newClass: Course = {
             id: String(classes.length + 1),
-            name: '',
-            code: '',
+            courseName: '',
+            courseCode: '',
             instructor: '',
-            schedule: [{
-                day: 'Monday',
-                startTime: '09:00',
-                endTime: '10:30',
-                location: ''
-            }],
-            type: 'Lecture'
+            startDate: new Date().toISOString().split('T')[0],
+            endDate: new Date().toISOString().split('T')[0],
+            classes: [
+                {
+                    section: 'A',
+                    classType: 'Lecture',
+                    location: '',
+                    day: 'Monday',
+                    startTime: '09:00',
+                    endTime: '10:30',
+                    additionalInfo: ''
+                }
+            ]
         };
         setClasses([...classes, newClass]);
         setSelectedClass(newClass);
@@ -96,41 +231,44 @@ function TimetableSetup() {
     };
 
     const handleDeleteClass = (classId: string) => {
-        setClasses(classes.filter(c => c.id !== classId));
+        setClasses(classes.filter((c) => c.id !== classId));
     };
 
-    const handleSaveClass = (formData: { 
-        name: string; 
-        code: string; 
-        hasScheduledClasses: boolean; 
-        instructor?: string; 
-        type?: string; 
-        schedule?: { 
-            days?: string[]; 
-            startTime?: string; 
-            endTime?: string; 
-            location?: string; 
-        }[] 
+    const handleSaveClass = (formData: {
+        courseName: string;
+        courseCode: string;
+        hasScheduledClasses: boolean;
+        instructor?: string;
+        schedule?: {
+            days?: string[];
+            startTime?: string;
+            endTime?: string;
+            location?: string;
+            section?: string;
+            classType?: string;
+        }[];
     }) => {
         if (!selectedClass) return;
 
         const updatedClass: Course = {
             ...selectedClass,
-            name: formData.name,
-            code: formData.code,
+            courseName: formData.courseName,
+            courseCode: formData.courseCode,
             instructor: formData.instructor || '',
-            type: formData.type || 'Lecture',
-            schedule: formData.hasScheduledClasses && formData.schedule ? 
-                formData.schedule.map(s => ({
-                    day: s.days?.[0] || 'Monday',
-                    startTime: s.startTime || '09:00',
-                    endTime: s.endTime || '10:30',
-                    location: s.location || ''
-                })) : 
-                []
+            classes: formData.hasScheduledClasses && formData.schedule
+                ? formData.schedule.map(s => ({
+                    section: s.section || 'A',
+                    classType: s.classType || 'Lecture',
+                    location: s.location || '',
+                    day: s.days?.[0] || '',
+                    startTime: s.startTime || '',
+                    endTime: s.endTime || '',
+                    additionalInfo: ''
+                }))
+                : []
         };
 
-        setClasses(classes.map(c => c.id === updatedClass.id ? updatedClass : c));
+        setClasses(classes.map((c) => (c.id === updatedClass.id ? updatedClass : c)));
         setSelectedClass(null);
         setIsEditModalOpen(false);
     };
@@ -144,12 +282,8 @@ function TimetableSetup() {
                         <li className={`step ${currentStep === 'upload' || currentStep === 'review' || currentStep === 'complete' ? 'step-primary' : ''}`}>
                             Upload Schedule
                         </li>
-                        <li className={`step ${currentStep === 'review' || currentStep === 'complete' ? 'step-primary' : ''}`}>
-                            Review Classes
-                        </li>
-                        <li className={`step ${currentStep === 'complete' ? 'step-primary' : ''}`}>
-                            Complete
-                        </li>
+                        <li className={`step ${currentStep === 'review' || currentStep === 'complete' ? 'step-primary' : ''}`}>Review Classes</li>
+                        <li className={`step ${currentStep === 'complete' ? 'step-primary' : ''}`}>Complete</li>
                     </ul>
                 </div>
 
@@ -159,8 +293,7 @@ function TimetableSetup() {
                             <div className='text-center'>
                                 <h2 className='text-2xl font-bold mb-4'>Upload Your Schedule</h2>
                                 <p className='text-base-content/70 mb-8'>
-                                    Upload your class schedule or syllabus and we'll automatically extract your classes.
-                                    We support PDF, DOC, and image files.
+                                    Upload your class schedule or syllabus and we'll automatically extract your classes. We support PDF, DOC, and image files.
                                 </p>
 
                                 <div className='flex flex-col items-center gap-6'>
@@ -177,9 +310,7 @@ function TimetableSetup() {
 
                                     <div className='divider'>OR</div>
 
-                                    <button
-                                        className='btn btn-primary btn-wide'
-                                        onClick={() => setCurrentStep('review')}>
+                                    <button className='btn btn-primary btn-wide' onClick={() => setCurrentStep('review')}>
                                         Add Classes Manually
                                     </button>
                                 </div>
@@ -202,33 +333,41 @@ function TimetableSetup() {
                                             <div className='card-body'>
                                                 <div className='flex justify-between items-start'>
                                                     <div>
-                                                        <h3 className='font-bold text-lg'>{classItem.name}</h3>
-                                                        <p className='text-sm text-base-content/70'>{classItem.code} • {classItem.instructor}</p>
+                                                        <h3 className='font-bold text-lg'>{classItem.courseName}</h3>
+                                                        <p className='text-sm text-base-content/70'>
+                                                            {classItem.courseCode} • {classItem.instructor}
+                                                        </p>
                                                     </div>
                                                     <div className='flex gap-2'>
                                                         <button className='btn btn-ghost btn-sm' onClick={() => handleEditClass(classItem)}>
                                                             <Edit2 className='w-4 h-4' />
                                                         </button>
-                                                        <button className='btn btn-ghost btn-sm text-error' onClick={() => handleDeleteClass(classItem.id)}>
+                                                        <button className='btn btn-ghost btn-sm text-error' onClick={() => handleDeleteClass(classItem.id!)}>
                                                             <Trash2 className='w-4 h-4' />
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div className='divider my-2'></div>
-                                                <div className='flex flex-wrap gap-4 text-sm text-base-content/70'>
-                                                    <div className='flex items-center gap-2'>
-                                                        <Calendar className='w-4 h-4' />
-                                                        <span>{classItem.schedule[0].day}</span>
-                                                    </div>
-                                                    <div className='flex items-center gap-2'>
-                                                        <Clock className='w-4 h-4' />
-                                                        <span>{classItem.schedule[0].startTime} - {classItem.schedule[0].endTime}</span>
-                                                    </div>
-                                                    <div className='flex items-center gap-2'>
-                                                        <MapPin className='w-4 h-4' />
-                                                        <span>{classItem.schedule[0].location}</span>
-                                                    </div>
-                                                </div>
+                                                {classItem.classes[0] && (
+                                                    <>
+                                                        <div className='divider my-2'></div>
+                                                        <div className='flex flex-wrap gap-4 text-sm text-base-content/70'>
+                                                            <div className='flex items-center gap-2'>
+                                                                <Calendar className='w-4 h-4' />
+                                                                <span>{classItem.classes[0].day}</span>
+                                                            </div>
+                                                            <div className='flex items-center gap-2'>
+                                                                <Clock className='w-4 h-4' />
+                                                                <span>
+                                                                    {classItem.classes[0].startTime} - {classItem.classes[0].endTime}
+                                                                </span>
+                                                            </div>
+                                                            <div className='flex items-center gap-2'>
+                                                                <MapPin className='w-4 h-4' />
+                                                                <span>{classItem.classes[0].location}</span>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                     ))}
@@ -239,10 +378,7 @@ function TimetableSetup() {
                                         <ArrowLeft className='w-4 h-4' />
                                         Back
                                     </button>
-                                    <button 
-                                        className='btn btn-primary gap-2' 
-                                        onClick={() => setCurrentStep('complete')}
-                                        disabled={classes.length === 0}>
+                                    <button className='btn btn-primary gap-2' onClick={() => setCurrentStep('complete')} disabled={classes.length === 0}>
                                         Continue
                                         <ArrowRight className='w-4 h-4' />
                                     </button>
@@ -278,4 +414,4 @@ function TimetableSetup() {
             />
         </div>
     );
-} 
+}
