@@ -3,6 +3,7 @@
     "start": "ts-node main.ts"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "openai": "^4.82.0"
   },
   "devDependencies": {

@@ -1,27 +1,31 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as path from "path";
 
 dotenv.config();
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro", generationConfig: { temperature: 0 } });
 
 // Input file configuration
-const INPUT_IMAGE_URL = "https://bpgirvgeoazgxtpnkijw.supabase.co/storage/v1/object/public/schedules//Timetable_Ex1.jpeg";
+const INPUT_FILES = [
+  "3.png"
+];
+const INPUT_DIR = "./inputs";
 const OUTPUT_DIR = "./outputs";
-
-const fileName = "Timetable_Ex1";
 
 const timetableMessage = `
 You are an expert AI with advanced vision capabilities, specialized in reading and understanding university timetables.
 Your task is to analyze the image provided (through OCR and layout recognition) and extract precise course details,
 ignoring any headers, footers, logos, or extraneous information that is not directly related to the timetable.
 
-Use the metadata provided for context and ensure your extraction is both comprehensive and accurate, even when the
-timetable is presented in various styles or layouts used by different universities. 
+CRITICAL: Course Organization Rules
+1. Group all classes belonging to the same course together
+2. A course is identified by its course code and name
+3. Multiple class times for the same course should be listed as separate entries in the "classes" array
+4. Different sections (lecture, lab, tutorial) of the same course should be in the same course object
+5. Each course should appear only ONCE in the output, with all its classes grouped in its classes array
 
 Important Extraction Instructions:
 1. **Focus Exclusively on Timetable Data:** The image may include extraneous text, graphics, and decorative elements.
@@ -33,99 +37,91 @@ Important Extraction Instructions:
    - Convert abbreviated day names to full names (e.g., "Mon" → "Monday").
    - Convert time entries to 24-hour format (e.g., "9 AM" becomes "09:00").
    - Trim any extraneous spaces or characters from extracted text.
-4. **Multiple Occurrences:** If a course appears with multiple schedule entries (for example, different days or times), treat each occurrence as a separate entry in the output.
+4. **Multiple Occurrences:** If a course has multiple class times or types (lecture, lab, tutorial), add them as separate entries in the course's "classes" array.
 5. **Fallback Behavior:** If a specific field is not present or is ambiguous in the image, return an empty string ("") for that field rather than guessing.
 6. **Strict JSON Output:** The output must be a valid JSON object that starts with "{" and ends with "}" with no additional text, commentary, or markdown formatting.
-7. **Metadata Utilization:** Use the metadata provided to help interpret context such as the university name, academic term, or any known formatting quirks that might improve extraction accuracy.
-
-Include the metadata below in your analysis:
-{json.dumps(metadata, indent=4)}
 
 Instructions for the Output:
 Return the result strictly in the following JSON format:
 
 {{
     "courses": [
-        {{
+        {
             "courseName": "Introduction to Psychology",
             "courseCode": "PSY101",
-            "section": "11212",
-            "location": "Building A, Room 101",
-            "day": "Monday",
-            "startTime": "09:00",
-            "endTime": "10:00",
-            "additionalInfo": "Section A"
-        }},
-        {{
-            "courseName": "Advanced Calculus",
-            "courseCode": "MATH301",
-            "section": "11201",
-            "location": "Room 202",
-            "day": "Tuesday",
-            "startTime": "11:00",
-            "endTime": "12:30",
-            "additionalInfo": ""
-        }}
+            "instructor": "Dr. John Smith",
+            "startDate": "2024-01-01",
+            "endDate": "2024-05-31",
+            "classes": [
+                { 
+                    "section": "B",
+                    "classType": "Lecture",
+                    "location": "Building A, Room 101",
+                    "day": "Monday",
+                    "startTime": "09:00",
+                    "endTime": "10:00",
+                    "additionalInfo": "Section A"
+                },
+                {
+                    "section": "B2",
+                    "classType": "Lab",
+                    "location": "Building A, Room 102",
+                    "day": "Tuesday",
+                    "startTime": "10:00",
+                    "endTime": "11:00",
+                    "additionalInfo": "Section B"
+                }
+            ]
+        }
     ]
-}}
+}} 
+
+Example of Course Grouping:
+- If a course "COMP101" has both a lecture on Monday and a lab on Wednesday, they should be in the same course object:
+  * ONE course entry for "COMP101"
+  * TWO entries in its classes array (one for lecture, one for lab)
+  * Do NOT create separate course entries for different class types or times
 
 Remember:
 - Do not output any additional text or markdown formatting.
 - Your entire response should consist only of the JSON object described above.
 - Focus exclusively on extracting accurate, precise timetable data.
-
-Timetable Image:
-[IMAGE DATA IS SUPPLIED VIA OPENAI VISION API]
-
-Begin your extraction process now.`
+- Always group related classes under their parent course.`;
 
 async function main() {
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0,
-      messages: [
-        // { 
-        //   "role": "system", 
-        //   "content": "You are a timetable information extraction expert. Your task is to analyze the visual structure of timetables and extract precise schedule information." 
-        // },
-        { 
-          "role": "user", 
-          "content": timetableMessage
-        },
-        {
-          "role": "user", 
-          "content": [
-            {
-              "type": "image_url",
-              "image_url": {
-                "url": INPUT_IMAGE_URL,
-                "detail": "low"
-              }
-            }
-          ]
-        },
-      ],
-      max_tokens: 1000,
-      response_format: { type: "json_object" }
-    });
-
     // Create outputs directory if it doesn't exist
     if (!fs.existsSync(OUTPUT_DIR)) {
       fs.mkdirSync(OUTPUT_DIR);
     }
 
-    // Generate output filename based on input filename
+    // Prepare all images
+    const imageParts = await Promise.all(INPUT_FILES.map(async (file) => {
+      const inputPath = path.join(INPUT_DIR, file);
+      const imageBuffer = await fs.promises.readFile(inputPath);
+      return {
+        inlineData: {
+          mimeType: file.endsWith('.png') ? "image/png" : "image/jpeg",
+          data: imageBuffer.toString('base64'),
+        }
+      };
+    }));
+
+    // Generate content with all images
+    const result = await model.generateContent([
+      { text: timetableMessage },
+      ...imageParts
+    ]);
+
+    const response = result.response;
+    const text = response.text();
+
+    // Save output
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const outputPath = path.join(OUTPUT_DIR, `${fileName}_${timestamp}.txt`);
-
-    await fs.promises.writeFile(
-      outputPath,
-      completion.choices[0].message.content,
-      'utf-8'
-    );
-
+    const outputPath = path.join(OUTPUT_DIR, `combined_${timestamp}.txt`);
+    await fs.promises.writeFile(outputPath, text, 'utf-8');
     console.log(`Output written to: ${outputPath}`);
+
   } catch (error) {
     console.error("Error:", error);
   }
