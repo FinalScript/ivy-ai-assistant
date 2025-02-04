@@ -16,116 +16,82 @@ const OUTPUT_DIR = "./outputs";
 const fileName = "Timetable_Ex1";
 
 const timetableMessage = `
-You are a professional at extracting information from timetables, with a particular expertise in ensuring schedule accuracy.
-You will be given an image of a timetable. Your primary focus is to extract precise scheduling information by identifying distinct visual sections and groupings in the timetable.
+You are an expert AI with advanced vision capabilities, specialized in reading and understanding university timetables.
+Your task is to analyze the image provided (through OCR and layout recognition) and extract precise course details,
+ignoring any headers, footers, logos, or extraneous information that is not directly related to the timetable.
 
-INFORMATION IDENTIFICATION STRATEGY:
+Use the metadata provided for context and ensure your extraction is both comprehensive and accurate, even when the
+timetable is presented in various styles or layouts used by different universities. 
 
-1. Visual Structure Analysis:
-   - Look for clearly boxed or bordered sections
-   - Identify column headers and row labels
-   - Pay attention to grouped information within cells
-   - Notice any lines or dividers separating different types of information
+Important Extraction Instructions:
+1. **Focus Exclusively on Timetable Data:** The image may include extraneous text, graphics, and decorative elements.
+   Ignore any content not directly related to course scheduling.
+2. **Handle Diverse Formats:** The timetable image may be in a variety of formats:
+   - Tabular layouts, free-form text, multi-column arrangements, or mixed formats.
+   - Ensure that even if the timetable is presented in an unconventional layout, you extract all relevant course details.
+3. **Normalization:** 
+   - Convert abbreviated day names to full names (e.g., "Mon" → "Monday").
+   - Convert time entries to 24-hour format (e.g., "9 AM" becomes "09:00").
+   - Trim any extraneous spaces or characters from extracted text.
+4. **Multiple Occurrences:** If a course appears with multiple schedule entries (for example, different days or times), treat each occurrence as a separate entry in the output.
+5. **Fallback Behavior:** If a specific field is not present or is ambiguous in the image, return an empty string ("") for that field rather than guessing.
+6. **Strict JSON Output:** The output must be a valid JSON object that starts with "{" and ends with "}" with no additional text, commentary, or markdown formatting.
+7. **Metadata Utilization:** Use the metadata provided to help interpret context such as the university name, academic term, or any known formatting quirks that might improve extraction accuracy.
 
-2. Common Timetable Sections to Identify:
-   A. Course Information Block:
-      - Usually contains course code, name, and section together
-      - Often appears as a distinct cell or grouped information
-      - May be highlighted or bordered differently
-   
-   B. Schedule Information Block:
-      - Look for time information grouped with days
-      - Often appears in a grid or table format
-      - May include location information in the same group
-   
-   C. Time Format Identification:
-      - Look for consistent time format patterns in each column/section
-      - Times are usually grouped with specific days
-      - Check for AM/PM indicators within each time group
+Include the metadata below in your analysis:
+{json.dumps(metadata, indent=4)}
 
-3. Time Extraction Rules (IN ORDER OF PRIORITY):
-   A. FIRST: Look for times with AM/PM indicators within schedule blocks:
-      - When you find "AM" or "PM", this is your most reliable source
-      - Convert to 24-hour format using these rules:
-        * "1:05 PM" → "13:05"
-        * "9:05 AM" → "09:05"
-        * "11:35 AM" → "11:35"
-        * "2:30 PM" → "14:30"
-        * "12:00 PM" → "12:00" (noon)
-        * "12:00 AM" → "00:00" (midnight)
-   
-   B. If NO AM/PM indicators found:
-      - Look for times in 24-hour format (e.g., "13:05", "09:00")
-      - Must include leading zeros
-      - Must include minutes even if ":00"
-   
-   C. If NO valid times found:
-      - Use "00:00" for both start and end times
-      - Flag this course for review by including "TBA" in location
+Instructions for the Output:
+Return the result strictly in the following JSON format:
 
-4. Day Identification Rules:
-   - Look for day information in column headers or grouped with times
-   - Each unique day gets its own schedule entry
-   - Valid days are ONLY: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
-   - If days are abbreviated in the timetable, expand them to full names
-   - Pay attention to day groupings (e.g., "MWF" should become three separate entries)
-
-COURSE INCLUSION RULES:
-1. EXCLUDE any courses marked as "Unassigned" or "TBA" for all schedule components
-2. EXCLUDE any courses that don't have specific meeting times
-3. EXCLUDE any courses marked as "Cancelled" or "Withdrawn"
-4. INCLUDE courses marked as "Online" or "Virtual" with specific meeting times
-5. INCLUDE courses even if they have no location
-
-Important:
-Return ONLY the JSON object without any markdown formatting or additional text.
-The response should start with {{ and end with }} without any other characters.
-
-The JSON must follow this exact structure:
 {{
-  "student": {
-    "name": "Student Name",
-    "id": "Student ID"
-  },
-  "courses": [
-    {
-      "name": "Course Name",
-      "code": "Course Code",
-      "instructor": "Instructor Name",
-      "type": "Course Type",
-      "schedule": [
-        {
-          "day": "Monday",
-          "startTime": "09:00",
-          "endTime": "10:30",
-          "location": "AH 101"
-        }
-      ]
-    }
-  ]
+    "courses": [
+        {{
+            "courseName": "Introduction to Psychology",
+            "courseCode": "PSY101",
+            "section": "11212",
+            "location": "Building A, Room 101",
+            "day": "Monday",
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "additionalInfo": "Section A"
+        }},
+        {{
+            "courseName": "Advanced Calculus",
+            "courseCode": "MATH301",
+            "section": "11201",
+            "location": "Room 202",
+            "day": "Tuesday",
+            "startTime": "11:00",
+            "endTime": "12:30",
+            "additionalInfo": ""
+        }}
+    ]
 }}
 
-Remember: 
-- Look for visually grouped information first
-- Pay attention to table structure and cell groupings
-- Identify consistent patterns in how information is presented
-- ALWAYS look for AM/PM indicators first when extracting times
-- If no AM/PM indicators found, look for 24-hour format
-- If no valid times found, use "00:00" and flag with "TBA" location
-- VERIFY each day is properly separated into its own schedule entry`
+Remember:
+- Do not output any additional text or markdown formatting.
+- Your entire response should consist only of the JSON object described above.
+- Focus exclusively on extracting accurate, precise timetable data.
+
+Timetable Image:
+[IMAGE DATA IS SUPPLIED VIA OPENAI VISION API]
+
+Begin your extraction process now.`
 
 async function main() {
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
+      temperature: 0,
       messages: [
-        { 
-          "role": "system", 
-          "content": "You are a timetable information extraction expert. Your task is to analyze the visual structure of timetables and extract precise schedule information." 
-        },
+        // { 
+        //   "role": "system", 
+        //   "content": "You are a timetable information extraction expert. Your task is to analyze the visual structure of timetables and extract precise schedule information." 
+        // },
         { 
           "role": "user", 
-          "content": "Extract all course information from this timetable" 
+          "content": timetableMessage
         },
         {
           "role": "user", 
@@ -133,13 +99,15 @@ async function main() {
             {
               "type": "image_url",
               "image_url": {
-                "url": INPUT_IMAGE_URL
+                "url": INPUT_IMAGE_URL,
+                "detail": "low"
               }
             }
           ]
         },
       ],
       max_tokens: 1000,
+      response_format: { type: "json_object" }
     });
 
     // Create outputs directory if it doesn't exist
