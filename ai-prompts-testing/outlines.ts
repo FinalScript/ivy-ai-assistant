@@ -7,8 +7,8 @@ dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-pro",
-  generationConfig: { temperature: 0 },
+    model: "gemini-1.5-pro",
+    generationConfig: { temperature: 0 },
 });
 
 // Input file configuration
@@ -19,37 +19,42 @@ const OUTPUT_DIR = "./outputs";
 
 // MIME type mapping for supported file types
 const MIME_TYPES: { [key: string]: string } = {
-  ".jpeg": "image/jpeg",
-  ".jpg": "image/jpeg",
-  ".png": "image/png",
-  ".pdf": "application/pdf",
-  ".doc": "application/msword",
-  ".docx":
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ".jpeg": "image/jpeg",
+    ".jpg": "image/jpeg",
+    ".png": "image/png",
+    ".pdf": "application/pdf",
+    ".doc": "application/msword",
+    ".docx":
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 };
 
 const outlineMessage = `
 You are an expert AI with advanced vision and text processing capabilities specializing in analyzing university course outlines. 
-Your task is to extract key details from the provided course outlines and output a structured JSON object.
+Your task is to extract key details about assessments from the provided course outlines and output a structured JSON object.
 
 Key Rules:
-- Only extract and output course-related information from the outlines.
+- Anything that may alter the grade of the student must be extracted.
+- Only extract and output assessment-related information from the outlines.
 - Do not include any additional text, commentary, or markdown formatting.
 - Your output must be valid JSON with no extra content.
-- If a field is not present, output an empty string ("") or null.
+- If a field is not present, output an empty array ([]), empty string ("") or null depending on the field.
 
 Output must be a strict JSON object (starting with "{" and ending with "}") in this format:
 
-{
+{{
   "assessments": {
     "quizzes": [
       {
         "name": "Quiz 1: Introduction to Data Structures",
         "type": "Online Quiz",
-        "releaseDate": "2024-01-15",
-        "dueDate": "2024-01-15",
-        "startTime": "14:30",
-        "endTime": "15:20",
+        "available": {
+          "date": "2024-01-15",
+          "time": "14:30"
+        },
+        "due": {
+          "date": "2024-01-15",
+          "time": "15:20"
+        },
         "topicsCovered": ["Arrays", "Linked Lists", "Basic Complexity Analysis"],
         "location": "Online - Canvas",
         "gradeWeight": 5,
@@ -61,10 +66,14 @@ Output must be a strict JSON object (starting with "{" and ending with "}") in t
       {
         "name": "Assignment 1: Algorithm Implementation",
         "type": "Programming Assignment",
-        "releaseDate": "2024-01-20",
-        "dueDate": "2024-02-03",
-        "startTime": "00:00",
-        "endTime": "23:59",
+        "available": {
+          "date": "2024-01-20",
+          "time": "00:00"
+        },
+        "due": {
+          "date": "2024-02-03",
+          "time": "23:59"
+        },
         "topicsCovered": ["Sorting Algorithms", "Search Algorithms", "Time Complexity"],
         "location": "Submit via GitHub Classroom",
         "gradeWeight": 15,
@@ -76,10 +85,14 @@ Output must be a strict JSON object (starting with "{" and ending with "}") in t
       {
         "name": "Term Project: Custom Data Structure Implementation",
         "type": "Group Project",
-        "releaseDate": "2024-02-15",
-        "dueDate": "2024-04-15",
-        "startTime": "00:00",
-        "endTime": "23:59",
+        "available": {
+          "date": "2024-02-15",
+          "time": "00:00"
+        },
+        "due": {
+          "date": "2024-04-15",
+          "time": "23:59"
+        },
         "topicsCovered": [
           "Advanced Data Structures",
           "Algorithm Analysis",
@@ -96,10 +109,14 @@ Output must be a strict JSON object (starting with "{" and ending with "}") in t
       {
         "name": "Lab 1: Environment Setup and Basic Algorithms",
         "type": "Practical Lab",
-        "releaseDate": "2024-01-16",
-        "dueDate": "2024-01-16",
-        "startTime": "10:30",
-        "endTime": "12:20",
+        "available": {
+          "date": "2024-01-16",
+          "time": "10:30"
+        },
+        "due": {
+          "date": "2024-01-16",
+          "time": "12:20"
+        },
         "topicsCovered": ["Development Environment", "Version Control", "Basic Algorithms"],
         "location": "Computer Lab 204",
         "gradeWeight": 10,
@@ -111,10 +128,14 @@ Output must be a strict JSON object (starting with "{" and ending with "}") in t
       {
         "name": "Midterm Examination",
         "type": "Closed Book Exam",
-        "releaseDate": "2024-03-01",
-        "dueDate": "2024-03-01",
-        "startTime": "14:30",
-        "endTime": "16:30",
+        "available": {
+          "date": "2024-03-01",
+          "time": "14:30"
+        },
+        "due": {
+          "date": "2024-03-01",
+          "time": "16:30"
+        },
         "topicsCovered": [
           "All Topics from Weeks 1-7",
           "Data Structures",
@@ -126,91 +147,121 @@ Output must be a strict JSON object (starting with "{" and ending with "}") in t
         "lateSubmissions": "Not accepted",
         "accommodations": "Extended time and separate room available with DSS approval"
       }
+    ],
+    "other": [
+      {
+        "name": "Peer Code Reviews",
+        "type": "Collaborative Assessment",
+        "available": {
+          "date": "2024-02-01",
+          "time": "00:00"
+        },
+        "due": {
+          "date": "2024-04-01",
+          "time": "23:59"
+        },
+        "topicsCovered": ["Code Quality", "Documentation", "Best Practices"],
+        "location": "GitHub Classroom",
+        "gradeWeight": 5,
+        "lateSubmissions": "Reviews must be completed within assigned sprint periods",
+        "accommodations": "Flexible review scheduling available"
+      }
     ]
   }
-}
+}}
 `;
 
 async function processFile(file: string) {
-  const extension = path.extname(file).toLowerCase();
-  const mimeType = MIME_TYPES[extension];
+    const extension = path.extname(file).toLowerCase();
+    const mimeType = MIME_TYPES[extension];
 
-  if (!mimeType) {
-    throw new Error(`Unsupported file type: ${extension}`);
-  }
+    if (!mimeType) {
+        throw new Error(`Unsupported file type: ${extension}`);
+    }
 
-  const inputPath = path.join(INPUT_DIR, file);
-  const fileBuffer = await fs.promises.readFile(inputPath);
+    const inputPath = path.join(INPUT_DIR, file);
+    const fileBuffer = await fs.promises.readFile(inputPath);
 
-  return {
-    inlineData: {
-      mimeType,
-      data: fileBuffer.toString("base64"),
-    },
-  };
+    return {
+        inlineData: {
+            mimeType,
+            data: fileBuffer.toString("base64"),
+        },
+    };
 }
 
 async function main() {
-  try {
-    // Create outputs directory if it doesn't exist
-    if (!fs.existsSync(OUTPUT_DIR)) {
-      fs.mkdirSync(OUTPUT_DIR);
-    }
-
-    // Validate and filter supported files
-    const supportedFiles = INPUT_FILES.filter((file) => {
-      const extension = path.extname(file).toLowerCase();
-      return extension in MIME_TYPES;
-    });
-
-    if (supportedFiles.length === 0) {
-      throw new Error("No supported files found in input directory");
-    }
-
-    // Process all files
-    const fileParts = await Promise.all(supportedFiles.map(processFile));
-
-    // Generate content with all files
-    const result = await model.generateContent([
-      { text: outlineMessage },
-      ...fileParts,
-    ]);
-
-    const response = result.response;
-    let text = response.text();
-
-    // Clean the output by removing markdown formatting
-    text = text
-      .replace(/^```json\n?/, "")
-      .replace(/\n?```$/, "")
-      .trim();
-
+    const startTime = performance.now();
     try {
-      const parsedData = JSON.parse(text);
-      console.log("Extracted Outline Data:", parsedData);
+        // Create outputs directory if it doesn't exist
+        if (!fs.existsSync(OUTPUT_DIR)) {
+            fs.mkdirSync(OUTPUT_DIR);
+        }
 
-      // Save output
-      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-      const outputPath = path.join(OUTPUT_DIR, `outline_${timestamp}.json`);
-      await fs.promises.writeFile(
-        outputPath,
-        JSON.stringify(parsedData, null, 2),
-        "utf-8"
-      );
-      console.log(`Output written to: ${outputPath}`);
-    } catch (parseError) {
-      console.error("Error parsing JSON response:", parseError);
-      // Save raw output for debugging
-      const outputPath = path.join(
-        OUTPUT_DIR,
-        `raw_output_${new Date().toISOString().replace(/[:.]/g, "-")}.txt`
-      );
-      await fs.promises.writeFile(outputPath, text, "utf-8");
-      console.log(`Raw output written to: ${outputPath}`);
+        // Validate and filter supported files
+        const supportedFiles = INPUT_FILES.filter((file) => {
+            const extension = path.extname(file).toLowerCase();
+            return extension in MIME_TYPES;
+        });
+
+        if (supportedFiles.length === 0) {
+            throw new Error("No supported files found in input directory");
+        }
+
+        // Process all files
+        const fileParts = await Promise.all(supportedFiles.map(processFile));
+
+        console.log('Starting AI processing...');
+        const aiStartTime = performance.now();
+
+        // Generate content with all files
+        const result = await model.generateContent([
+            { text: outlineMessage },
+            ...fileParts,
+        ]);
+
+        const aiEndTime = performance.now();
+        console.log(`AI Processing completed in ${((aiEndTime - aiStartTime) / 1000).toFixed(2)} seconds`);
+
+        const response = result.response;
+        let text = response.text();
+
+        // Clean the output by removing markdown formatting
+        text = text
+            .replace(/^```json\n?/, "")
+            .replace(/\n?```$/, "")
+            .trim();
+
+        try {
+            const parsedData = JSON.parse(text);
+            console.log("Extracted Outline Data:", parsedData);
+
+            // Save output
+            const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+            const outputPath = path.join(OUTPUT_DIR, `outline_${timestamp}.json`);
+            await fs.promises.writeFile(
+                outputPath,
+                JSON.stringify(parsedData, null, 2),
+                "utf-8"
+            );
+            console.log(`Output written to: ${outputPath}`);
+        } catch (parseError) {
+            console.error("Error parsing JSON response:", parseError);
+            // Save raw output for debugging
+            const outputPath = path.join(
+                OUTPUT_DIR,
+                `raw_output_${new Date().toISOString().replace(/[:.]/g, "-")}.txt`
+            );
+            await fs.promises.writeFile(outputPath, text, "utf-8");
+            console.log(`Raw output written to: ${outputPath}`);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    } finally {
+        const endTime = performance.now();
+        const totalSeconds = (endTime - startTime) / 1000;
+        console.log(`\nTotal execution time: ${totalSeconds.toFixed(2)} seconds`);
     }
-  } catch (error) {
-    console.error("Error:", error);
-  }
 }
 
 main();

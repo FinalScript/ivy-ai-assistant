@@ -4,10 +4,14 @@
       {
         "name": "Quiz 1: Introduction to Data Structures",
         "type": "Online Quiz",
-        "releaseDate": "2024-01-15",
-        "dueDate": "2024-01-15",
-        "startTime": "14:30",
-        "endTime": "15:20",
+        "available": {
+          "date": "2024-01-15",
+          "time": "14:30"
+        },
+        "due": {
+          "date": "2024-01-15",
+          "time": "15:20"
+        },
         "topicsCovered": ["Arrays", "Linked Lists", "Basic Complexity Analysis"],
         "location": "Online - Canvas",
         "gradeWeight": 5,
@@ -19,10 +23,14 @@
       {
         "name": "Assignment 1: Algorithm Implementation",
         "type": "Programming Assignment",
-        "releaseDate": "2024-01-20",
-        "dueDate": "2024-02-03",
-        "startTime": "00:00",
-        "endTime": "23:59",
+        "available": {
+          "date": "2024-01-20",
+          "time": "00:00"
+        },
+        "due": {
+          "date": "2024-02-03",
+          "time": "23:59"
+        },
         "topicsCovered": ["Sorting Algorithms", "Search Algorithms", "Time Complexity"],
         "location": "Submit via GitHub Classroom",
         "gradeWeight": 15,
@@ -34,10 +42,14 @@
       {
         "name": "Term Project: Custom Data Structure Implementation",
         "type": "Group Project",
-        "releaseDate": "2024-02-15",
-        "dueDate": "2024-04-15",
-        "startTime": "00:00",
-        "endTime": "23:59",
+        "available": {
+          "date": "2024-02-15",
+          "time": "00:00"
+        },
+        "due": {
+          "date": "2024-04-15",
+          "time": "23:59"
+        },
         "topicsCovered": [
           "Advanced Data Structures",
           "Algorithm Analysis",
@@ -54,10 +66,14 @@
       {
         "name": "Lab 1: Environment Setup and Basic Algorithms",
         "type": "Practical Lab",
-        "releaseDate": "2024-01-16",
-        "dueDate": "2024-01-16",
-        "startTime": "10:30",
-        "endTime": "12:20",
+        "available": {
+          "date": "2024-01-16",
+          "time": "10:30"
+        },
+        "due": {
+          "date": "2024-01-16",
+          "time": "12:20"
+        },
         "topicsCovered": ["Development Environment", "Version Control", "Basic Algorithms"],
         "location": "Computer Lab 204",
         "gradeWeight": 10,
@@ -69,10 +85,14 @@
       {
         "name": "Midterm Examination",
         "type": "Closed Book Exam",
-        "releaseDate": "2024-03-01",
-        "dueDate": "2024-03-01",
-        "startTime": "14:30",
-        "endTime": "16:30",
+        "available": {
+          "date": "2024-03-01",
+          "time": "14:30"
+        },
+        "due": {
+          "date": "2024-03-01",
+          "time": "16:30"
+        },
         "topicsCovered": [
           "All Topics from Weeks 1-7",
           "Data Structures",
@@ -83,6 +103,25 @@
         "gradeWeight": 35,
         "lateSubmissions": "Not accepted",
         "accommodations": "Extended time and separate room available with DSS approval"
+      }
+    ],
+    "other": [
+      {
+        "name": "Peer Code Reviews",
+        "type": "Collaborative Assessment",
+        "available": {
+          "date": "2024-02-01",
+          "time": "00:00"
+        },
+        "due": {
+          "date": "2024-04-01",
+          "time": "23:59"
+        },
+        "topicsCovered": ["Code Quality", "Documentation", "Best Practices"],
+        "location": "GitHub Classroom",
+        "gradeWeight": 5,
+        "lateSubmissions": "Reviews must be completed within assigned sprint periods",
+        "accommodations": "Flexible review scheduling available"
       }
     ]
   }

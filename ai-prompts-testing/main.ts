@@ -64,8 +64,8 @@ Ensure:
 - No extra text, commentary, or markdown is included—only the valid JSON output.
 `
 
-
 async function main() {
+  const startTime = performance.now();
   try {
     // Create outputs directory if it doesn't exist
     if (!fs.existsSync(OUTPUT_DIR)) {
@@ -84,11 +84,17 @@ async function main() {
       };
     }));
 
+    console.log('Starting AI processing...');
+    const aiStartTime = performance.now();
+
     // Generate content with all images
     const result = await model.generateContent([
       { text: timetableMessage },
       ...imageParts
     ]);
+
+    const aiEndTime = performance.now();
+    console.log(`AI Processing completed in ${((aiEndTime - aiStartTime) / 1000).toFixed(2)} seconds`);
 
     const response = result.response;
     let text = response.text();
@@ -105,15 +111,19 @@ async function main() {
       const outputPath = path.join(OUTPUT_DIR, `timetable_${timestamp}.json`);
       await fs.promises.writeFile(outputPath, JSON.stringify(parsedData, null, 2), 'utf-8');
       console.log(`Output written to: ${outputPath}`);
-  } catch (parseError) {
+    } catch (parseError) {
       console.error('Error parsing JSON response:', parseError);
       // Save raw output for debugging
       const outputPath = path.join(OUTPUT_DIR, `raw_output_${new Date().toISOString().replace(/[:.]/g, '-')}.txt`);
       await fs.promises.writeFile(outputPath, text, 'utf-8');
       console.log(`Raw output written to: ${outputPath}`);
-  }
+    }
   } catch (error) {
     console.error("Error:", error);
+  } finally {
+    const endTime = performance.now();
+    const totalSeconds = (endTime - startTime) / 1000;
+    console.log(`\nTotal execution time: ${totalSeconds.toFixed(2)} seconds`);
   }
 }
 
