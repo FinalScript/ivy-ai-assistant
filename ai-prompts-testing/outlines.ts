@@ -7,12 +7,12 @@ dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
 const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-pro",
+    model: "gemini-2.0-flash-thinking-exp-01-21",
     generationConfig: { temperature: 0 },
 });
 
 // Input file configuration
-const INPUT_FILES = ["Outline_BestCase.pdf"];
+const INPUT_FILES = ["ENGL-1500.pdf"];
 
 const INPUT_DIR = "./inputs";
 const OUTPUT_DIR = "./outputs";
@@ -171,6 +171,12 @@ Output must be a strict JSON object (starting with "{" and ending with "}") in t
 }}
 `;
 
+// Function to count tokens in a string (rough estimate)
+function estimateTokens(text: string): number {
+    // Simple estimation: Split on whitespace and punctuation
+    return text.split(/[\s,.!?;:()\[\]{}'"]+/).filter(Boolean).length;
+}
+
 async function processFile(file: string) {
     const extension = path.extname(file).toLowerCase();
     const mimeType = MIME_TYPES[extension];
@@ -214,17 +220,29 @@ async function main() {
         console.log('Starting AI processing...');
         const aiStartTime = performance.now();
 
-        // Generate content with all files
-        const result = await model.generateContent([
+        // Count input tokens
+        const prompt = [
             { text: outlineMessage },
             ...fileParts,
-        ]);
+        ];
+        const inputTokenCount = await model.countTokens(prompt);
+        console.log(`Input Tokens: ${inputTokenCount.totalTokens}`);
 
-        const aiEndTime = performance.now();
-        console.log(`AI Processing completed in ${((aiEndTime - aiStartTime) / 1000).toFixed(2)} seconds`);
-
+        // Generate content with all files
+        const result = await model.generateContent(prompt);
         const response = result.response;
         let text = response.text();
+
+        // Count output tokens
+        const outputTokenCount = await model.countTokens([{ text }]);
+        
+        const aiEndTime = performance.now();
+
+        console.log('\nToken Usage Metrics:');
+        console.log(`Input Tokens: ${inputTokenCount.totalTokens}`);
+        console.log(`Output Tokens: ${outputTokenCount.totalTokens}`);
+        console.log(`Total Tokens: ${inputTokenCount.totalTokens + outputTokenCount.totalTokens}`);
+        console.log(`AI Processing completed in ${((aiEndTime - aiStartTime) / 1000).toFixed(2)} seconds`);
 
         // Clean the output by removing markdown formatting
         text = text
@@ -236,12 +254,21 @@ async function main() {
             const parsedData = JSON.parse(text);
             console.log("Extracted Outline Data:", parsedData);
 
-            // Save output
+            // Save output with metrics
             const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
             const outputPath = path.join(OUTPUT_DIR, `outline_${timestamp}.json`);
+            const outputData = {
+                data: parsedData,
+                metrics: {
+                    inputTokens: inputTokenCount.totalTokens,
+                    outputTokens: outputTokenCount.totalTokens,
+                    totalTokens: inputTokenCount.totalTokens + outputTokenCount.totalTokens,
+                    processingTimeSeconds: ((aiEndTime - aiStartTime) / 1000).toFixed(2)
+                }
+            };
             await fs.promises.writeFile(
                 outputPath,
-                JSON.stringify(parsedData, null, 2),
+                JSON.stringify(outputData, null, 2),
                 "utf-8"
             );
             console.log(`Output written to: ${outputPath}`);
