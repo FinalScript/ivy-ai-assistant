@@ -40,6 +40,7 @@ Step 1: Identify and Categorize Assessment Components
   * "projects": Larger scope work, often involving multiple components or group work
   * "labs": Hands-on practical work in controlled environments
   * "participation": Engagement-based assessments (attendance, discussions, peer reviews)
+  * "bonus": Optional extra credit opportunities, side quests, or additional work for bonus marks
   * "other": Any assessments that don't fit the above categories
 
 Step 2: Extract Temporal Information
@@ -55,12 +56,16 @@ For each assessment found:
 4. Document any late submission policies
 5. Note any accommodation information
 6. List all topics or materials covered
+7. For bonus items, include:
+   - Maximum bonus points available
+   - Whether it's repeatable
+   - Any prerequisites or conditions
 
 Step 4: Structure the Data
 Organize all information into a JSON object with the following specifications:
 
 1. Group semantically similar assessments together under the appropriate category
-2. For each assessment, include:
+2. For each regular assessment, include:
    - name (string): Full assessment name
    - type (string): Specific type of assessment
    - available: { date (YYYY-MM-DD), time (HH:mm) }
@@ -70,6 +75,12 @@ Organize all information into a JSON object with the following specifications:
    - gradeWeight (number): Percentage or points
    - lateSubmissions (string): Late submission policy
    - accommodations (string): Available accommodations
+
+3. For bonus assessments, include additional fields:
+   - maxBonusPoints (number): Maximum extra points available
+   - isRepeatable (boolean): Whether the bonus can be earned multiple times
+   - prerequisites (string): Any requirements to attempt this bonus
+   - conditions (string): Specific conditions for earning the bonus
 
 Expected Output Format:
 {
@@ -95,6 +106,26 @@ Expected Output Format:
     "projects": [...],
     "labs": [...],
     "participation": [...],
+    "bonus": [{
+      "name": string,
+      "type": string,
+      "available": {
+        "date": "YYYY-MM-DD",
+        "time": "HH:mm"
+      },
+      "due": {
+        "date": "YYYY-MM-DD",
+        "time": "HH:mm"
+      },
+      "topicsCovered": string[],
+      "location": string,
+      "maxBonusPoints": number,
+      "isRepeatable": boolean,
+      "prerequisites": string,
+      "conditions": string,
+      "lateSubmissions": string,
+      "accommodations": string
+    }],
     "other": [...]
   }
 }
@@ -102,6 +133,7 @@ Expected Output Format:
 Categorization Guidelines:
 - Group assessments based on their purpose and nature, not just their literal names
 - Consider the assessment's scope, duration, and evaluation method when categorizing
+- Place all extra credit opportunities in the "bonus" category
 - If an assessment could fit multiple categories, use its primary purpose for classification
 - Ensure consistent categorization across similar types of assessments
 
@@ -109,6 +141,7 @@ Rules for Missing Information:
 - Use empty array ([]) for missing lists
 - Use empty string ("") for missing text fields
 - Use null for missing optional fields
+- Use false for missing boolean fields
 - Always include all assessment type arrays, even if empty
 
 Output Requirements:
