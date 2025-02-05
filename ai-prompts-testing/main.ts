@@ -96,12 +96,22 @@ async function main() {
     // Clean the output by removing markdown formatting
     text = text.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
 
-    // Save output
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const outputPath = path.join(OUTPUT_DIR, `combined_${timestamp}.txt`);
-    await fs.promises.writeFile(outputPath, text, 'utf-8');
-    console.log(`Output written to: ${outputPath}`);
+    try {
+      const parsedData = JSON.parse(text);
+      console.log('Extracted Timetable Data:', parsedData);
 
+      // Save output
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const outputPath = path.join(OUTPUT_DIR, `timetable_${timestamp}.json`);
+      await fs.promises.writeFile(outputPath, JSON.stringify(parsedData, null, 2), 'utf-8');
+      console.log(`Output written to: ${outputPath}`);
+  } catch (parseError) {
+      console.error('Error parsing JSON response:', parseError);
+      // Save raw output for debugging
+      const outputPath = path.join(OUTPUT_DIR, `raw_output_${new Date().toISOString().replace(/[:.]/g, '-')}.txt`);
+      await fs.promises.writeFile(outputPath, text, 'utf-8');
+      console.log(`Raw output written to: ${outputPath}`);
+  }
   } catch (error) {
     console.error("Error:", error);
   }
