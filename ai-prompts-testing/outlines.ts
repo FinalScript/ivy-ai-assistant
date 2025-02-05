@@ -28,133 +28,36 @@ const MIME_TYPES: { [key: string]: string } = {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 };
 
-const outlineMessage = `First, describe what you see in the document, focusing on any sections related to assessments, grading, or evaluation components.
+const outlineMessage = `
+You are a helpful assistant designed to extract structured data from course outlines for a student timetable application.
 
-Then, follow these specific steps to extract and structure the assessment information:
+Your task is to process the text of a course outline provided below and output the information in JSON format.  The JSON should represent the course, its classes, and assessments.
 
-Step 1: Identify and Categorize Assessment Components
-- Look for all graded components in the document
-- Group them into these main categories based on their nature, not just their exact names:
-  * "evaluations": All formal assessments (exams, tests, quizzes, midterms, finals)
-  * "assignments": Individual written or practical work (homework, problem sets, essays)
-  * "projects": Larger scope work, often involving multiple components or group work
-  * "labs": Hands-on practical work in controlled environments
-  * "participation": Engagement-based assessments (attendance, discussions, peer reviews)
-  * "bonus": Optional extra credit opportunities, side quests, or additional work for bonus marks
-  * "other": Any assessments that don't fit the above categories
+Specifically, for each course, extract the following information and structure it in JSON format:
 
-Step 2: Extract Temporal Information
-- Find all dates in the document and convert them to YYYY-MM-DD format
-- Convert all times to 24-hour format (HH:mm)
-- Look for availability windows and due dates for each assessment
+*   **courseName:** (String) The full name of the course.
+*   **courseCode:** (String) The course code (e.g., COMP2401).
+*   **instructorName:** (String) The name of the instructor.
+*   **instructorEmail:** (String) The instructor's email address (if available).
+*   **courseDescription:** (String) A brief description of the course.
+*   **classes:** (Array of Objects) An array of class objects. Each class object should have:
+    *   **classType:** (String) Type of class (e.g., "Lecture", "Lab").
+    *   **dayOfWeek:** (String) Day of the week (e.g., "Monday").
+    *   **startTime:** (String) Start time (e.g., "10:35").
+    *   **endTime:** (String) End time (e.g., "11:55").
+    *   **location:** (String) Location of the class (e.g., "In-Person", "Online (Zoom)").
+*   **assessments:** (Array of Objects) An array of assessment objects. Each assessment object should have:
+    *   **assessmentType:** (String) Type of assessment (e.g., "Assignment", "Exam", "Project").
+    *   **assessmentName:** (String) Name of the assessment (e.g., "Assignment 1", "Midterm Exam").
+    *   **dueDate:** (String, ISO 8601 format if possible) Due date and time. If not explicitly a date, extract any date-related information.
+    *   **weight:** (Number or String) Weight of the assessment in percentage or points.
+    *   **description:** (String) A brief description of the assessment.
 
-Step 3: Collect Assessment Details
-For each assessment found:
-1. Record the full name and type
-2. Note the grade weight or points
-3. Capture the submission location/method
-4. Document any late submission policies
-5. Note any accommodation information
-6. List all topics or materials covered
-7. For bonus items, include:
-   - Maximum bonus points available
-   - Whether it's repeatable
-   - Any prerequisites or conditions
+If some information is not explicitly mentioned in the text, leave the corresponding JSON fields empty or with a value like "N/A" or null.  Prioritize accuracy and completeness based on the provided text.
 
-Step 4: Structure the Data
-Organize all information into a JSON object with the following specifications:
+Please output ONLY the JSON. Do not include any introductory or explanatory text before or after the JSON output.
+`;
 
-1. Group semantically similar assessments together under the appropriate category
-2. For each regular assessment, include:
-   - name (string): Full assessment name
-   - type (string): Specific type of assessment
-   - available: { date (YYYY-MM-DD), time (HH:mm) }
-   - due: { date (YYYY-MM-DD), time (HH:mm) }
-   - topicsCovered (array): List of topics
-   - location (string): Submission or assessment location
-   - gradeWeight (number): Percentage or points
-   - lateSubmissions (string): Late submission policy
-   - accommodations (string): Available accommodations
-
-3. For bonus assessments, include additional fields:
-   - maxBonusPoints (number): Maximum extra points available
-   - isRepeatable (boolean): Whether the bonus can be earned multiple times
-   - prerequisites (string): Any requirements to attempt this bonus
-   - conditions (string): Specific conditions for earning the bonus
-
-Expected Output Format:
-{
-  "assessments": {
-    "evaluations": [{
-      "name": string,
-      "type": string,
-      "available": {
-        "date": "YYYY-MM-DD",
-        "time": "HH:mm"
-      },
-      "due": {
-        "date": "YYYY-MM-DD",
-        "time": "HH:mm"
-      },
-      "topicsCovered": string[],
-      "location": string,
-      "gradeWeight": number,
-      "lateSubmissions": string,
-      "accommodations": string
-    }],
-    "assignments": [...],
-    "projects": [...],
-    "labs": [...],
-    "participation": [...],
-    "bonus": [{
-      "name": string,
-      "type": string,
-      "available": {
-        "date": "YYYY-MM-DD",
-        "time": "HH:mm"
-      },
-      "due": {
-        "date": "YYYY-MM-DD",
-        "time": "HH:mm"
-      },
-      "topicsCovered": string[],
-      "location": string,
-      "maxBonusPoints": number,
-      "isRepeatable": boolean,
-      "prerequisites": string,
-      "conditions": string,
-      "lateSubmissions": string,
-      "accommodations": string
-    }],
-    "other": [...]
-  }
-}
-
-Categorization Guidelines:
-- Group assessments based on their purpose and nature, not just their literal names
-- Consider the assessment's scope, duration, and evaluation method when categorizing
-- Place all extra credit opportunities in the "bonus" category
-- If an assessment could fit multiple categories, use its primary purpose for classification
-- Ensure consistent categorization across similar types of assessments
-
-Rules for Missing Information:
-- Use empty array ([]) for missing lists
-- Use empty string ("") for missing text fields
-- Use null for missing optional fields
-- Use false for missing boolean fields
-- Always include all assessment type arrays, even if empty
-
-Output Requirements:
-1. Provide only the JSON object, no additional text or markdown
-2. Ensure the JSON is valid and can be parsed
-3. Maintain consistent date/time formats throughout
-4. Include all assessment categories in the structure`;
-
-// Function to count tokens in a string (rough estimate)
-function estimateTokens(text: string): number {
-    // Simple estimation: Split on whitespace and punctuation
-    return text.split(/[\s,.!?;:()\[\]{}'"]+/).filter(Boolean).length;
-}
 
 async function processFile(file: string) {
     const extension = path.extname(file).toLowerCase();
