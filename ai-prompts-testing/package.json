@@ -1,6 +1,7 @@
 {
   "scripts": {
     "start": "ts-node main.ts",
+    "timetable": "ts-node main.ts",
     "outlines": "ts-node outlines.ts"
   },
   "dependencies": {
