@@ -6,13 +6,7 @@ import * as path from "path";
 dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro", generationConfig: { temperature: 0 } });
-
-// Function to count tokens in a string (rough estimate)
-function estimateTokens(text: string): number {
-    // Simple estimation: Split on whitespace and punctuation
-    return text.split(/[\s,.!?;:()\[\]{}'"]+/).filter(Boolean).length;
-}
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-thinking-exp-01-21", generationConfig: { temperature: 0 } });
 
 // Input file configuration
 const INPUT_FILES = [
@@ -110,7 +104,7 @@ async function main() {
 
     // Count output tokens
     const outputTokenCount = await model.countTokens([{ text }]);
-    
+
     const aiEndTime = performance.now();
 
     console.log('\nToken Usage Metrics:');
