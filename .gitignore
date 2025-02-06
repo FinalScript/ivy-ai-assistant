@@ -85,4 +85,26 @@ ai-prompts-testing/inputs/*
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-.pnp.* 
+.pnp.*
+
+# New additions from the code block
+.next
+.pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db 
