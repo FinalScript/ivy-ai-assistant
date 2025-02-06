@@ -3,6 +3,7 @@ import { createCourse, deleteCourse, getCourseById, getCoursesByTerm, getCourses
 import { Course } from '../../db/schema/course.schema'
 import { supabase } from '../../db/supabase'
 import { PROCESSING_STATUS_UPDATED, ProcessingUpdate, redisPubSub, updateProcessingStatus } from '../../services/redis.service'
+import { processTimetableFile, validateCourseData, transformToNewCourse } from '../../services/ai.service'
 import { Context } from '../context'
 
 interface CourseInput {
@@ -82,7 +83,7 @@ export const TimetableResolver = {
         await updateProcessingStatus({
           fileId,
           status: 'UPLOADING',
-          message: 'Uploading file',
+          message: 'Downloading file from storage',
           progress: 0
         })
 
@@ -105,12 +106,12 @@ export const TimetableResolver = {
         await updateProcessingStatus({
           fileId,
           status: 'PROCESSING',
-          message: 'Processing file contents',
+          message: 'Processing file with AI',
           progress: 25
         })
 
-        // TODO: Implement AI processing here
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        const extractedCourses = await processTimetableFile(fileData);
+        const validatedCourses = validateCourseData(extractedCourses);
 
         await updateProcessingStatus({
           fileId,
@@ -123,7 +124,7 @@ export const TimetableResolver = {
           success: true,
           message: 'File processed successfully',
           fileId,
-          courses: []
+          courses: validatedCourses
         }
       } catch (error) {
         console.error('Timetable processing error:', error)

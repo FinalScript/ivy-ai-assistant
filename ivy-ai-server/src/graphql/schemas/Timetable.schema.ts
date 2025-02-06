@@ -24,56 +24,56 @@ export const TimetableSchema = gql`
   }
 
   type Course {
-    id: ID!
+    id: ID
     code: String!
-    name: String!
+    name: String
     description: String
-    term: String!
-    assessments: [Assessment!]
-    sections: [Section!]
+    term: String
+    assessments: [Assessment]
+    sections: [Section]
   }
 
   type Assessment {
-    title: String!
-    type: String!
-    due_date: String!
-    description: String!
+    title: String
+    type: String
+    due_date: String
+    description: String
     weight: Float
-    status: String!
+    status: String
     location: String
   }
 
   type Section {
-    section_id: String!
-    instructor: Instructor!
-    schedule: [ScheduleItem!]!
+    section_id: String
+    instructor: Instructor
+    schedule: [ScheduleItem]
   }
 
   type Instructor {
-    name: String!
-    email: String!
-    office: Office!
+    name: String
+    email: String
+    office: Office
   }
 
   type Office {
-    location: String!
-    hours: [OfficeHour!]!
+    location: String
+    hours: [OfficeHour]
   }
 
   type OfficeHour {
-    day: String!
-    start_time: String!
-    end_time: String!
-    location: String!
+    day: String
+    start_time: String
+    end_time: String
+    location: String
   }
 
   type ScheduleItem {
-    day: String!
-    start_time: String!
-    end_time: String!
-    location: String!
-    type: String!
-    is_rescheduled: Boolean!
+    day: String
+    start_time: String
+    end_time: String
+    location: String
+    type: String
+    is_rescheduled: Boolean
   }
 
   type Query {
@@ -95,53 +95,53 @@ export const TimetableSchema = gql`
 
   input CourseInput {
     code: String!
-    name: String!
+    name: String
     description: String
-    term: String!
-    assessments: [AssessmentInput!]
-    sections: [SectionInput!]
+    term: String
+    assessments: [AssessmentInput]
+    sections: [SectionInput]
   }
 
   input AssessmentInput {
-    title: String!
-    type: String!
-    due_date: String!
-    description: String!
+    title: String
+    type: String
+    due_date: String
+    description: String
     weight: Float
-    status: String!
+    status: String
     location: String
   }
 
   input SectionInput {
-    section_id: String!
-    instructor: InstructorInput!
-    schedule: [ScheduleItemInput!]!
+    section_id: String
+    instructor: InstructorInput
+    schedule: [ScheduleItemInput]
   }
 
   input InstructorInput {
-    name: String!
-    email: String!
-    office: OfficeInput!
+    name: String
+    email: String
+    office: OfficeInput
   }
 
   input OfficeInput {
-    location: String!
-    hours: [OfficeHourInput!]!
+    location: String
+    hours: [OfficeHourInput]
   }
 
   input OfficeHourInput {
-    day: String!
-    start_time: String!
-    end_time: String!
-    location: String!
+    day: String
+    start_time: String
+    end_time: String
+    location: String
   }
 
   input ScheduleItemInput {
-    day: String!
-    start_time: String!
-    end_time: String!
-    location: String!
-    type: String!
-    is_rescheduled: Boolean!
+    day: String
+    start_time: String
+    end_time: String
+    location: String
+    type: String
+    is_rescheduled: Boolean
   }
 ` 
