@@ -31,51 +31,51 @@ const MIME_TYPES: { [key: string]: string } = {
 const outlineMessage = `You are an expert AI assistant specializing in analyzing course outlines and syllabi.
 
 TASK:
-Extract detailed course information, instructor details, and assessment information from the provided course outline, grouping different sections of the same course together.
+Extract detailed course information, instructor details, and assessment information from the provided course outline.
 
 REQUIRED OUTPUT FORMAT:
 {
-  "courses": [
+  "code": "COURSE_CODE",        // Example: "CS101"
+  "name": "COURSE_NAME",        // Example: "Introduction to Programming"
+  "description": "DESCRIPTION", // Full course description
+  "term": "TERM_INFO",         // Example: "Fall 2023"
+  "assessments": [
     {
-      "code": "COURSE_CODE",        // Example: "CS101"
-      "name": "COURSE_NAME",        // Example: "Introduction to Programming"
-      "description": "DESCRIPTION", // Full course description
-      "term": "TERM_INFO",         // Example: "Fall 2023"
-      "assessments": [              // Course-wide assessments
-        {
-          "title": "TITLE",         // Example: "Midterm Exam"
-          "type": "TYPE",           // Example: "exam", "assignment", "project"
-          "due_date": "ISO_TIME",   // Example: "2024-03-15T14:00:00-05:00"
-          "description": "DETAILS", // Detailed description of the assessment
-          "weight": NUMBER,         // Example: 30 (percentage)
-          "status": "upcoming"      // Always set as "upcoming"
-        }
-      ],
-      "sections": [
-        {
-          "section_id": "SECTION_ID", // Example: "A01"
-          "instructor": {
-            "name": "FULL_NAME",       // Example: "Dr. Jane Smith"
-            "email": "EMAIL",          // Example: "jane.smith@university.edu"
-            "office_location": "ROOM", // Example: "Building A, Room 305"
-            "office_hours": [
-              {
-                "day": "DAY_OF_WEEK",   // Example: "Tuesday"
-                "start_time": "ISO_TIME",// Example: "2024-02-15T14:00:00-05:00"
-                "end_time": "ISO_TIME",  // Example: "2024-02-15T16:00:00-05:00"
-                "location": "LOCATION"   // Office or online meeting link
-              }
-            ]
-          },
-          "schedule": [
+      "title": "TITLE",         // Example: "Midterm Exam"
+      "type": "TYPE",           // Example: "exam", "assignment", "project"
+      "due_date": "ISO_TIME",   // Example: "2024-03-15T14:00:00-05:00"
+      "description": "DETAILS", // Description or special instructions
+      "weight": NUMBER,         // Example: 30, null if not specified
+      "status": "upcoming",     // Always set as "upcoming"
+      "location": "LOCATION"    // For exams and in-person assessments, null if online/not specified
+    }
+  ],
+  "sections": [
+    {
+      "section_id": "SECTION_ID", // Example: "A01"
+      "instructor": {
+        "name": "FULL_NAME",       // Example: "Dr. Jane Smith"
+        "email": "EMAIL",          // Example: "jane.smith@university.edu"
+        "office": {
+          "location": "ROOM",      // Example: "Building A, Room 305"
+          "hours": [
             {
-              "day": "DAY_OF_WEEK",     // Example: "Monday"
-              "start_time": "ISO_TIME", // Example: "2024-02-15T09:30:00-05:00"
-              "end_time": "ISO_TIME",   // Example: "2024-02-15T10:50:00-05:00"
-              "location": "LOCATION",   // Example: "Building A, Room 101"
-              "type": "CLASS_TYPE"      // Example: "lecture", "lab", "tutorial"
+              "day": "DAY_OF_WEEK",   // Example: "Tuesday"
+              "start_time": "ISO_TIME",// Example: "2024-02-15T14:00:00-05:00"
+              "end_time": "ISO_TIME",  // Example: "2024-02-15T16:00:00-05:00"
+              "location": "LOCATION"   // Office or online meeting link
             }
           ]
+        }
+      },
+      "schedule": [
+        {
+          "day": "DAY_OF_WEEK",     // Example: "Monday"
+          "start_time": "ISO_TIME", // Example: "2024-02-15T09:30:00-05:00"
+          "end_time": "ISO_TIME",   // Example: "2024-02-15T10:50:00-05:00"
+          "location": "LOCATION",   // Example: "Building A, Room 101"
+          "type": "CLASS_TYPE",     // Example: "lecture", "lab", "tutorial"
+          "is_rescheduled": BOOLEAN // true if this is a schedule change
         }
       ]
     }
@@ -83,24 +83,26 @@ REQUIRED OUTPUT FORMAT:
 }
 
 RULES:
-1. Group all sections of the same course under one course object
-2. Keep assessments at the course level (not in sections)
-3. Extract ALL available course information
-4. Include complete assessment details with weights
-5. Convert all times to ISO 8601 format with timezone
-6. Use local timezone if none specified
-7. Set missing values to null
-8. Preserve exact course codes and section numbers
+1. Extract information for a single course
+2. Group all sections under the course object
+3. Keep assessments at the course level (not in sections)
+4. Extract ALL available course information
+5. Include complete assessment details with weights
+6. Convert all times to ISO 8601 format with timezone
+7. Use local timezone if none specified
+8. Set missing values to null
+9. Mark any rescheduled classes with is_rescheduled=true
 
 VALIDATION:
 - All dates must be in ISO 8601 format
 - Course codes must be uppercase
 - Day names must be capitalized
 - Class types must be lowercase
-- Weights must be numbers (not strings)
+- Weights must be numbers or null
 - Email addresses must be valid format
-- Each course must have at least one section
+- Course must have at least one section
 - Assessments must be at course level, not section level
+- Boolean values must be true/false
 
 OUTPUT:
 Provide ONLY the JSON output. No additional text or explanations.`;
