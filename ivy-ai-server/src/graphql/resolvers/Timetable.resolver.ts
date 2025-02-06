@@ -101,7 +101,7 @@ export const TimetableResolver = {
         // Update status to uploading
         processingStatus.set(fileId, {
           status: 'UPLOADING',
-          message: 'Grabbing file',
+          message: 'Uploading file',
           progress: 0
         });
 
@@ -113,10 +113,10 @@ export const TimetableResolver = {
         if (downloadError || !fileData) {
           processingStatus.set(fileId, {
             status: 'ERROR',
-            message: 'Failed to grab file',
+            message: 'Failed to upload file',
             progress: 0
           });
-          throw new Error('Failed to grab file')
+          throw new Error('Failed to upload file')
         }
 
         // Update status to processing
