@@ -12,8 +12,8 @@ export const TimetableSchema = gql`
   type ProcessingUpdate {
     fileId: String!
     status: ProcessingStatus!
-    message: String
-    progress: Float
+    message: String!
+    progress: Float!
   }
 
   type UploadResponse {
@@ -80,7 +80,6 @@ export const TimetableSchema = gql`
     myCourses: [Course!]!
     course(id: ID!): Course
     coursesByTerm(term: String!): [Course!]!
-    processingStatus(fileId: String!): ProcessingUpdate
   }
 
   type Mutation {
@@ -88,6 +87,10 @@ export const TimetableSchema = gql`
     addCourse(input: CourseInput!): Course!
     updateCourse(id: ID!, input: CourseInput!): Course!
     deleteCourse(id: ID!): Boolean!
+  }
+
+  type Subscription {
+    processingStatusUpdated(fileId: String!): ProcessingUpdate!
   }
 
   input CourseInput {

@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const GET_PROCESSING_STATUS = gql`
-  query GetProcessingStatus($fileId: String!) {
-    processingStatus(fileId: $fileId) {
+export const PROCESSING_STATUS_SUBSCRIPTION = gql`
+  subscription OnProcessingStatusUpdated($fileId: String!) {
+    processingStatusUpdated(fileId: $fileId) {
       fileId
       status
       message

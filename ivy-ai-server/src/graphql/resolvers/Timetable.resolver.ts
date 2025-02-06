@@ -1,17 +1,9 @@
 import { AuthenticationError, UserInputError } from 'apollo-server-express'
-import { createCourse, getCourseById, getCoursesByUserId, getCoursesByTerm, updateCourse, deleteCourse, createManyCourses } from '../../controllers/Course.controller'
+import { createCourse, deleteCourse, getCourseById, getCoursesByTerm, getCoursesByUserId, updateCourse } from '../../controllers/Course.controller'
 import { Course } from '../../db/schema/course.schema'
-import { Context } from '../context'
 import { supabase } from '../../db/supabase'
-
-// In-memory store for processing status
-const processingStatus = new Map<string,
-  {
-    status: 'UPLOADING' | 'UPLOADED' | 'PROCESSING' | 'COMPLETED' | 'ERROR',
-    message: string,
-    progress: number
-  }
->();
+import { PROCESSING_STATUS_UPDATED, ProcessingUpdate, redisPubSub, updateProcessingStatus } from '../../services/redis.service'
+import { Context } from '../context'
 
 interface CourseInput {
   code: string
@@ -72,18 +64,6 @@ export const TimetableResolver = {
     coursesByTerm: async (_: unknown, { term }: { term: string }, { user }: Context): Promise<Course[]> => {
       if (!user) throw new AuthenticationError('Not authenticated')
       return getCoursesByTerm(user.id, term)
-    },
-
-    processingStatus: async (_: unknown, { fileId }: { fileId: string }, { user }: Context) => {
-      if (!user) throw new AuthenticationError('Not authenticated')
-
-      const fileUserId = fileId.split('/')[0]
-      if (fileUserId !== user.id) {
-        throw new AuthenticationError('Not authorized to access this file')
-      }
-
-      const status = processingStatus.get(fileId)
-      return status ? { fileId, ...status } : null
     }
   },
 
@@ -99,11 +79,12 @@ export const TimetableResolver = {
         }
 
         // Update status to uploading
-        processingStatus.set(fileId, {
+        await updateProcessingStatus({
+          fileId,
           status: 'UPLOADING',
           message: 'Uploading file',
           progress: 0
-        });
+        })
 
         // Download file from Supabase storage
         const { data: fileData, error: downloadError } = await supabase.storage
@@ -111,55 +92,32 @@ export const TimetableResolver = {
           .download(fileId)
 
         if (downloadError || !fileData) {
-          processingStatus.set(fileId, {
+          await updateProcessingStatus({
+            fileId,
             status: 'ERROR',
-            message: 'Failed to upload file',
+            message: 'Failed to download file',
             progress: 0
-          });
-          throw new Error('Failed to upload file')
+          })
+          throw new Error('Failed to download file')
         }
 
-        // Update status to processing
-        processingStatus.set(fileId, {
+        // Process the file with AI
+        await updateProcessingStatus({
+          fileId,
           status: 'PROCESSING',
           message: 'Processing file contents',
           progress: 25
-        });
+        })
 
-        // TODO: Process the file and extract course information
-        // Simulate processing time for now
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // TODO: Implement AI processing here
+        await new Promise(resolve => setTimeout(resolve, 2000))
 
-        // Update status to processing
-        processingStatus.set(fileId, {
-          status: 'PROCESSING',
-          message: 'AI is doing its thing',
-          progress: 50
-        });
-
-        // TODO: Process the file and extract course information
-        // Simulate processing time for now
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Update status to processing
-        processingStatus.set(fileId, {
-          status: 'PROCESSING',
-          message: 'AI is doing its thing',
-          progress: 75
-        });
-
-        // TODO: Process the file and extract course information
-        // Simulate processing time for now
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Update status to completed
-        processingStatus.set(fileId, {
+        await updateProcessingStatus({
+          fileId,
           status: 'COMPLETED',
           message: 'File processed successfully',
           progress: 100
-        });
-
-        console.log(fileData)
+        })
 
         return {
           success: true,
@@ -170,15 +128,16 @@ export const TimetableResolver = {
       } catch (error) {
         console.error('Timetable processing error:', error)
 
-        processingStatus.set(fileId, {
+        await updateProcessingStatus({
+          fileId,
           status: 'ERROR',
           message: error instanceof Error ? error.message : 'Failed to process file',
           progress: 0
-        });
+        })
 
         return {
           success: false,
-          message: 'Failed to process file',
+          message: error instanceof Error ? error.message : 'Failed to process file',
           fileId,
           courses: []
         }
@@ -187,11 +146,7 @@ export const TimetableResolver = {
 
     addCourse: async (_: unknown, { input }: { input: CourseInput }, { user }: Context): Promise<Course> => {
       if (!user) throw new AuthenticationError('Not authenticated')
-
-      return createCourse({
-        ...input,
-        userId: user.id
-      })
+      return createCourse({ ...input, userId: user.id })
     },
 
     updateCourse: async (_: unknown, { id, input }: { id: string, input: CourseInput }, { user }: Context): Promise<Course> => {
@@ -220,5 +175,17 @@ export const TimetableResolver = {
 
       return deleteCourse(id)
     }
+  },
+
+  Subscription: {
+    processingStatusUpdated: {
+      subscribe: (_: unknown, { fileId }: { fileId: string }) => {
+        return redisPubSub.asyncIterator([PROCESSING_STATUS_UPDATED], {
+          filter: (payload: { processingStatusUpdated: ProcessingUpdate }) => {
+            return payload.processingStatusUpdated.fileId === fileId;
+          },
+        });
+      },
+    },
   }
-} 
+}

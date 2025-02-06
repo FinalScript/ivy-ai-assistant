@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
 import { Upload, FileCheck, Bot } from 'lucide-react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useSubscription } from '@apollo/client';
 import { supabase } from '../lib/supabase';
-import { GET_PROCESSING_STATUS, PROCESS_TIMETABLE } from '../graphql/timetable';
+import { PROCESS_TIMETABLE, PROCESSING_STATUS_SUBSCRIPTION } from '../graphql/timetable';
 
 export const Route = createFileRoute('/timetable-setup')({
     component: TimetableSetup,
@@ -18,14 +18,21 @@ function TimetableSetup() {
 
     const [processTimetable] = useMutation(PROCESS_TIMETABLE);
 
-    const { data: statusData } = useQuery(GET_PROCESSING_STATUS, {
-        variables: { fileId: currentFileId || '' },
-        skip: !currentFileId,
-        pollInterval: 1000, // Poll every second
-        onCompleted: (data) => {
-            if (data?.processingStatus?.status === 'COMPLETED') {
-                // Stop polling after completion
-                // You might want to navigate to a different page or show a success message
+    const { data: statusData } = useSubscription(PROCESSING_STATUS_SUBSCRIPTION, {
+        variables: {
+            fileId: currentFileId || '',
+        },
+        onData: ({ data: { data } }) => {
+            console.log('Subscription data:', data);
+            if (data?.processingStatusUpdated) {
+                const { status, message } = data.processingStatusUpdated;
+                if (status === 'COMPLETED') {
+                    // Navigate to dashboard or show success message
+                   
+                } else if (status === 'ERROR') {
+                    setUploadError(message);
+                    setCurrentFileId(null);
+                }
             }
         },
     });
@@ -40,21 +47,6 @@ function TimetableSetup() {
                 return;
             }
             setUserId(user.id);
-
-            // Check for any existing processing files
-            const { data: processingFiles, error } = await supabase
-                .from('file_processing')
-                .select('file_id, status')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false })
-                .limit(1);
-
-            if (!error && processingFiles?.length > 0) {
-                const latestFile = processingFiles[0];
-                if (latestFile.status !== 'COMPLETED' && latestFile.status !== 'ERROR') {
-                    setCurrentFileId(latestFile.file_id);
-                }
-            }
         };
 
         getCurrentUser();
@@ -65,76 +57,46 @@ function TimetableSetup() {
         if (!file || !userId) return;
 
         setSelectedFile(file);
-        try {
-            // Create file path with user ID
-            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}${file.name.substring(file.name.lastIndexOf('.'))}`;
-            const filePath = `${userId}/${fileName}`;
+        setUploadError(null);
 
-            // First create the processing record
-            const { error: dbError } = await supabase.from('file_processing').insert({
-                file_id: filePath,
-                user_id: userId,
-                status: 'UPLOADING',
-                message: 'Starting file upload',
-                progress: 0,
-            });
+        // Create file path with user ID
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}${file.name.substring(file.name.lastIndexOf('.'))}`;
+        const filePath = `${userId}/${fileName}`;
 
-            if (dbError) {
-                throw new Error('Failed to initialize file processing');
-            }
+        setCurrentFileId(filePath);
 
-            setCurrentFileId(filePath);
+        console.log('Uploading file to supabase');
 
-            const { error: uploadError, data } = await supabase.storage.from('schedules').upload(filePath, file, {
+        supabase.storage
+            .from('schedules')
+            .upload(filePath, file, {
                 cacheControl: '3600',
                 upsert: false,
-            });
-
-            if (uploadError) {
-                // Update processing status to error
-                await supabase
-                    .from('file_processing')
-                    .update({
-                        status: 'ERROR',
-                        message: uploadError.message,
-                        progress: 0,
-                    })
-                    .eq('file_id', filePath);
-
-                throw new Error(uploadError.message);
-            }
-
-            // Process with GraphQL
-            const { data: processData } = await processTimetable({
-                variables: {
-                    fileId: filePath,
-                },
-            });
-
-            if (processData.processTimetable.success) {
-                console.log(processData.processTimetable);
-                if (processData.processTimetable.courses.length > 0) {
-                    //navigate({ to: '/dashboard' });
+            })
+            .then(({ error: uploadError }) => {
+                if (uploadError) {
+                    throw uploadError;
                 }
-            } else {
-                setUploadError(processData.processTimetable.message || 'Failed to process file');
+                console.log('File uploaded to supabase');
+                console.log('Processing file with GraphQL');
+                
+                return processTimetable({
+                    variables: {
+                        fileId: filePath,
+                    },
+                });
+            })
+            .then(({ data: processData }) => {
+                if (!processData.processTimetable.success) {
+                    setUploadError(processData.processTimetable.message || 'Failed to process file');
+                    setCurrentFileId(null);
+                }
+            })
+            .catch((error) => {
+                console.error('Upload/Process error:', error);
+                setUploadError('Failed to upload and process file. Please try again.');
                 setCurrentFileId(null);
-
-                // Update processing status to error
-                await supabase
-                    .from('file_processing')
-                    .update({
-                        status: 'ERROR',
-                        message: processData.processTimetable.message || 'Failed to process file',
-                        progress: 0,
-                    })
-                    .eq('file_id', filePath);
-            }
-        } catch (error) {
-            console.error('Upload/Process error:', error);
-            setUploadError('Failed to upload and process file. Please try again.');
-            setCurrentFileId(null);
-        }
+            });
     };
 
     const renderProcessingStatus = () => {
@@ -153,11 +115,11 @@ function TimetableSetup() {
             </div>
         );
 
-        if (!statusData?.processingStatus) {
+        if (!statusData?.processingStatusUpdated) {
             return renderUploadUI();
         }
 
-        const { status, message, progress } = statusData.processingStatus;
+        const { status, message, progress } = statusData.processingStatusUpdated;
 
         switch (status) {
             case 'UPLOADING':
@@ -206,7 +168,6 @@ function TimetableSetup() {
                     </div>
                 );
             case 'ERROR':
-
             default:
                 return renderUploadUI();
         }
