@@ -97,54 +97,50 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
     if (!isOpen) return null;
 
     return (
-        <div className='fixed inset-0 z-50 overflow-y-auto'>
-            <div className='fixed inset-0 bg-black/50' onClick={onClose} />
-            
-            <div className='relative min-h-screen flex items-center justify-center p-4'>
-                <div className='relative bg-base-100 rounded-lg w-full max-w-2xl'>
-                    <div className='flex items-center justify-between p-4 border-b border-base-200'>
-                        <h3 className='text-lg font-bold'>
-                            {courseData ? 'Edit Course' : 'Add New Course'}
-                        </h3>
-                        <button className='btn btn-ghost btn-sm btn-circle' onClick={onClose}>
-                            <X className='w-4 h-4' />
-                        </button>
-                    </div>
+        <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
+            <div className='bg-base-100 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto'>
+                <div className='sticky top-0 flex justify-between items-center p-4 border-b bg-base-100'>
+                    <h2 className='text-xl font-bold'>
+                        {courseData ? 'Edit Course' : 'Add New Course'}
+                    </h2>
+                    <button className='btn btn-ghost btn-sm' onClick={onClose}>
+                        <X className='w-4 h-4' />
+                    </button>
+                </div>
 
-                    <form onSubmit={handleSubmit(onSave)} className='p-4'>
+                <div className='p-4'>
+                    <form onSubmit={handleSubmit(onSave)}>
                         <div className='space-y-4'>
-                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                                <div className='form-control'>
+                            <div className='form-control'>
+                                <label className='label'>
+                                    <span className='label-text'>Course Name</span>
+                                </label>
+                                <input
+                                    type='text'
+                                    className='input input-bordered'
+                                    {...register('courseName')}
+                                />
+                                {errors.courseName && (
                                     <label className='label'>
-                                        <span className='label-text'>Course Name*</span>
+                                        <span className='label-text-alt text-error'>{errors.courseName.message}</span>
                                     </label>
-                                    <input
-                                        type='text'
-                                        className={`input input-bordered ${errors.courseName ? 'input-error' : ''}`}
-                                        {...register('courseName')}
-                                    />
-                                    {errors.courseName && (
-                                        <label className='label'>
-                                            <span className='label-text-alt text-error'>{errors.courseName.message}</span>
-                                        </label>
-                                    )}
-                                </div>
+                                )}
+                            </div>
 
-                                <div className='form-control'>
+                            <div className='form-control'>
+                                <label className='label'>
+                                    <span className='label-text'>Course Code</span>
+                                </label>
+                                <input
+                                    type='text'
+                                    className='input input-bordered'
+                                    {...register('courseCode')}
+                                />
+                                {errors.courseCode && (
                                     <label className='label'>
-                                        <span className='label-text'>Course Code*</span>
+                                        <span className='label-text-alt text-error'>{errors.courseCode.message}</span>
                                     </label>
-                                    <input
-                                        type='text'
-                                        className={`input input-bordered ${errors.courseCode ? 'input-error' : ''}`}
-                                        {...register('courseCode')}
-                                    />
-                                    {errors.courseCode && (
-                                        <label className='label'>
-                                            <span className='label-text-alt text-error'>{errors.courseCode.message}</span>
-                                        </label>
-                                    )}
-                                </div>
+                                )}
                             </div>
 
                             <div className='form-control'>
@@ -173,17 +169,15 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
                                 <div className='space-y-4'>
                                     {schedule.map((_, index) => (
                                         <div key={index} className='card bg-base-200'>
-                                            <div className='card-body p-4'>
+                                            <div className='card-body'>
                                                 <div className='flex justify-between items-start'>
-                                                    <h4 className='font-medium'>Class Schedule {index + 1}</h4>
-                                                    {index > 0 && (
-                                                        <button
-                                                            type='button'
-                                                            className='btn btn-ghost btn-sm btn-circle'
-                                                            onClick={() => removeScheduleSlot(index)}>
-                                                            <Trash2 className='w-4 h-4' />
-                                                        </button>
-                                                    )}
+                                                    <h3 className='font-bold'>Class Schedule {index + 1}</h3>
+                                                    <button
+                                                        type='button'
+                                                        className='btn btn-ghost btn-sm text-error'
+                                                        onClick={() => removeScheduleSlot(index)}>
+                                                        <Trash2 className='w-4 h-4' />
+                                                    </button>
                                                 </div>
 
                                                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -195,7 +189,6 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
                                                             type='text'
                                                             className='input input-bordered'
                                                             {...register(`schedule.${index}.section`)}
-                                                            placeholder='e.g., A1, B2'
                                                         />
                                                     </div>
 
@@ -207,97 +200,94 @@ export function EditClassModal({ isOpen, onClose, onSave, courseData }: EditCour
                                                             className='select select-bordered'
                                                             {...register(`schedule.${index}.classType`)}>
                                                             {classTypes.map(type => (
-                                                                <option key={type} value={type}>{type}</option>
+                                                                <option key={type} value={type}>
+                                                                    {type}
+                                                                </option>
                                                             ))}
                                                         </select>
                                                     </div>
 
                                                     <div className='form-control'>
                                                         <label className='label'>
-                                                            <span className='label-text'>Days*</span>
+                                                            <span className='label-text'>Day</span>
                                                         </label>
-                                                        <div className='flex flex-wrap gap-2'>
-                                                            {days.map((day) => (
-                                                                <label key={day} className='flex items-center gap-2 cursor-pointer'>
-                                                                    <input
-                                                                        type='checkbox'
-                                                                        className='checkbox checkbox-sm'
-                                                                        value={day}
-                                                                        {...register(`schedule.${index}.days`)}
-                                                                    />
-                                                                    <span className='text-sm'>{day.slice(0, 3)}</span>
-                                                                </label>
+                                                        <select
+                                                            className='select select-bordered'
+                                                            {...register(`schedule.${index}.days.0`)}>
+                                                            <option value=''>Select a day</option>
+                                                            {days.map(day => (
+                                                                <option key={day} value={day}>
+                                                                    {day}
+                                                                </option>
                                                             ))}
-                                                        </div>
+                                                        </select>
                                                         {errors.schedule?.[index]?.days && (
                                                             <label className='label'>
-                                                                <span className='label-text-alt text-error'>Select at least one day</span>
+                                                                <span className='label-text-alt text-error'>Day is required</span>
                                                             </label>
                                                         )}
                                                     </div>
 
-                                                    <div className='space-y-4'>
-                                                        <div className='form-control'>
+                                                    <div className='form-control'>
+                                                        <label className='label'>
+                                                            <span className='label-text'>Start Time</span>
+                                                        </label>
+                                                        <select
+                                                            className='select select-bordered'
+                                                            {...register(`schedule.${index}.startTime`)}>
+                                                            <option value=''>Select time</option>
+                                                            {Array.from({ length: 24 * 2 }, (_, i) => {
+                                                                const hour = Math.floor(i / 2);
+                                                                const minute = (i % 2) * 30;
+                                                                const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                                                                const label = new Date(`1970-01-01T${time}`).toLocaleTimeString('en-US', {
+                                                                    hour: 'numeric',
+                                                                    minute: '2-digit',
+                                                                    hour12: true,
+                                                                });
+                                                                return (
+                                                                    <option key={time} value={time}>
+                                                                        {label}
+                                                                    </option>
+                                                                );
+                                                            })}
+                                                        </select>
+                                                        {errors.schedule?.[index]?.startTime && (
                                                             <label className='label'>
-                                                                <span className='label-text'>Start Time*</span>
+                                                                <span className='label-text-alt text-error'>Start time is required</span>
                                                             </label>
-                                                            <select
-                                                                className={`select select-bordered ${errors.schedule?.[index]?.startTime ? 'select-error' : ''}`}
-                                                                {...register(`schedule.${index}.startTime`)}>
-                                                                <option value=''>Select time</option>
-                                                                {Array.from({ length: 24 * 2 }, (_, i) => {
-                                                                    const hour = Math.floor(i / 2);
-                                                                    const minute = (i % 2) * 30;
-                                                                    const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-                                                                    const label = new Date(`1970-01-01T${time}`).toLocaleTimeString('en-US', {
-                                                                        hour: 'numeric',
-                                                                        minute: '2-digit',
-                                                                        hour12: true,
-                                                                    });
-                                                                    return (
-                                                                        <option key={time} value={time}>
-                                                                            {label}
-                                                                        </option>
-                                                                    );
-                                                                })}
-                                                            </select>
-                                                            {errors.schedule?.[index]?.startTime && (
-                                                                <label className='label'>
-                                                                    <span className='label-text-alt text-error'>Start time is required</span>
-                                                                </label>
-                                                            )}
-                                                        </div>
+                                                        )}
+                                                    </div>
 
-                                                        <div className='form-control'>
+                                                    <div className='form-control'>
+                                                        <label className='label'>
+                                                            <span className='label-text'>End Time</span>
+                                                        </label>
+                                                        <select
+                                                            className='select select-bordered'
+                                                            {...register(`schedule.${index}.endTime`)}>
+                                                            <option value=''>Select time</option>
+                                                            {Array.from({ length: 24 * 2 }, (_, i) => {
+                                                                const hour = Math.floor(i / 2);
+                                                                const minute = (i % 2) * 30;
+                                                                const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                                                                const label = new Date(`1970-01-01T${time}`).toLocaleTimeString('en-US', {
+                                                                    hour: 'numeric',
+                                                                    minute: '2-digit',
+                                                                    hour12: true,
+                                                                });
+                                                                return (
+                                                                    <option key={time} value={time}>
+                                                                        {label}
+                                                                    </option>
+                                                                );
+                                                            })}
+                                                        </select>
+                                                        {errors.schedule?.[index]?.endTime && (
                                                             <label className='label'>
-                                                                <span className='label-text'>End Time*</span>
+                                                                <span className='label-text-alt text-error'>End time is required</span>
                                                             </label>
-                                                            <select
-                                                                className={`select select-bordered ${errors.schedule?.[index]?.endTime ? 'select-error' : ''}`}
-                                                                {...register(`schedule.${index}.endTime`)}>
-                                                                <option value=''>Select time</option>
-                                                                {Array.from({ length: 24 * 2 }, (_, i) => {
-                                                                    const hour = Math.floor(i / 2);
-                                                                    const minute = (i % 2) * 30;
-                                                                    const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-                                                                    const label = new Date(`1970-01-01T${time}`).toLocaleTimeString('en-US', {
-                                                                        hour: 'numeric',
-                                                                        minute: '2-digit',
-                                                                        hour12: true,
-                                                                    });
-                                                                    return (
-                                                                        <option key={time} value={time}>
-                                                                            {label}
-                                                                        </option>
-                                                                    );
-                                                                })}
-                                                            </select>
-                                                            {errors.schedule?.[index]?.endTime && (
-                                                                <label className='label'>
-                                                                    <span className='label-text-alt text-error'>End time is required</span>
-                                                                </label>
-                                                            )}
-                                                        </div>
+                                                        )}
                                                     </div>
 
                                                     <div className='form-control'>

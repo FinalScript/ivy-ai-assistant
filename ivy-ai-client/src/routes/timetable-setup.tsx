@@ -1,417 +1,247 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Upload, FileText, Plus, Edit2, Trash2, Calendar, Clock, MapPin } from 'lucide-react';
-import { EditClassModal } from '../components/EditClassModal';
-
-interface ClassInfo {
-    section: string;
-    classType: string;
-    location: string;
-    day: string;
-    startTime: string;
-    endTime: string;
-    additionalInfo: string;
-}
-
-interface Course {
-    id?: string; // For UI purposes
-    courseName: string;
-    courseCode: string;
-    instructor: string;
-    startDate: string;
-    endDate: string;
-    classes: ClassInfo[];
-}
-
-// Mock data for demonstration
-const mockClasses = [
-    {
-        courseName: "Data Structures and Algorithms",
-        courseCode: "CS 2100",
-        instructor: "Dr. Sarah Chen",
-        startDate: "2024-01-15",
-        endDate: "2024-05-10",
-        classes: [
-            {
-                section: "A1",
-                classType: "Lecture",
-                location: "Science Hall 205",
-                day: "Monday",
-                startTime: "09:30",
-                endTime: "10:50",
-                additionalInfo: ""
-            },
-            {
-                section: "A1",
-                classType: "Lecture",
-                location: "Science Hall 205",
-                day: "Wednesday",
-                startTime: "09:30",
-                endTime: "10:50",
-                additionalInfo: ""
-            },
-            {
-                section: "L1",
-                classType: "Lab",
-                location: "Computer Lab 401",
-                day: "Friday",
-                startTime: "14:30",
-                endTime: "15:50",
-                additionalInfo: ""
-            }
-        ]
-    },
-    {
-        courseName: "Linear Algebra",
-        courseCode: "MATH 2410",
-        instructor: "Prof. Michael Torres",
-        startDate: "2024-01-15",
-        endDate: "2024-05-10",
-        classes: [
-            {
-                section: "B2",
-                classType: "Lecture",
-                location: "Mathematics Building 110",
-                day: "Tuesday",
-                startTime: "11:00",
-                endTime: "12:20",
-                additionalInfo: ""
-            },
-            {
-                section: "B2",
-                classType: "Lecture",
-                location: "Mathematics Building 110",
-                day: "Thursday",
-                startTime: "11:00",
-                endTime: "12:20",
-                additionalInfo: ""
-            },
-            {
-                section: "T1",
-                classType: "Tutorial",
-                location: "Study Center",
-                day: "Friday",
-                startTime: "10:00",
-                endTime: "10:50",
-                additionalInfo: ""
-            }
-        ]
-    },
-    {
-        courseName: "Introduction to Psychology",
-        courseCode: "PSYC 1101",
-        instructor: "Dr. Emily Rodriguez",
-        startDate: "2024-01-15",
-        endDate: "2024-05-10",
-        classes: [
-            {
-                section: "C3",
-                classType: "Lecture",
-                location: "Social Sciences 301",
-                day: "Monday",
-                startTime: "13:00",
-                endTime: "14:20",
-                additionalInfo: ""
-            },
-            {
-                section: "C3",
-                classType: "Lecture",
-                location: "Social Sciences 301",
-                day: "Wednesday",
-                startTime: "13:00",
-                endTime: "14:20",
-                additionalInfo: ""
-            },
-            {
-                section: "D1",
-                classType: "Discussion",
-                location: "",
-                day: "",
-                startTime: "",
-                endTime: "",
-                additionalInfo: "Asynchronous online discussion"
-            }
-        ]
-    },
-    {
-        courseName: "World History: Modern Era",
-        courseCode: "HIST 2200",
-        instructor: "Prof. James Wilson",
-        startDate: "2024-01-15",
-        endDate: "2024-05-10",
-        classes: [
-            {
-                section: "A4",
-                classType: "Seminar",
-                location: "Humanities 405",
-                day: "Tuesday",
-                startTime: "15:30",
-                endTime: "16:50",
-                additionalInfo: ""
-            },
-            {
-                section: "A4",
-                classType: "Seminar",
-                location: "Humanities 405",
-                day: "Thursday",
-                startTime: "15:30",
-                endTime: "16:50",
-                additionalInfo: ""
-            }
-        ]
-    },
-    {
-        courseName: "Environmental Science",
-        courseCode: "ENVS 1500",
-        instructor: "Dr. Lisa Park",
-        startDate: "2024-01-15",
-        endDate: "2024-05-10",
-        classes: [
-            {
-                section: "B1",
-                classType: "Hybrid",
-                location: "Online/Field Work",
-                day: "",
-                startTime: "",
-                endTime: "",
-                additionalInfo: "Flexible schedule with monthly field trips"
-            }
-        ]
-    }
-];
+import { useState, useEffect } from 'react';
+import { Upload, FileCheck, Bot } from 'lucide-react';
+import { useMutation, useQuery } from '@apollo/client';
+import { supabase } from '../lib/supabase';
+import { GET_PROCESSING_STATUS, PROCESS_TIMETABLE } from '../graphql/timetable';
 
 export const Route = createFileRoute('/timetable-setup')({
     component: TimetableSetup,
 });
 
 function TimetableSetup() {
-    const [currentStep, setCurrentStep] = useState<'upload' | 'review' | 'complete'>('upload');
-    const [classes, setClasses] = useState<Course[]>(mockClasses);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [selectedClass, setSelectedClass] = useState<Course | null>(null);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+    const [currentFileId, setCurrentFileId] = useState<string | null>(null);
+    const [userId, setUserId] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const [processTimetable] = useMutation(PROCESS_TIMETABLE);
+
+    const { data: statusData } = useQuery(GET_PROCESSING_STATUS, {
+        variables: { fileId: currentFileId || '' },
+        skip: !currentFileId,
+        pollInterval: 1000, // Poll every second
+        onCompleted: (data) => {
+            if (data?.processingStatus?.status === 'COMPLETED') {
+                // Stop polling after completion
+                // You might want to navigate to a different page or show a success message
+            }
+        },
+    });
+
+    useEffect(() => {
+        const getCurrentUser = async () => {
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
+            if (!user) {
+                // navigate({ to: '/auth' });
+                return;
+            }
+            setUserId(user.id);
+
+            // Check for any existing processing files
+            const { data: processingFiles, error } = await supabase
+                .from('file_processing')
+                .select('file_id, status')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (!error && processingFiles?.length > 0) {
+                const latestFile = processingFiles[0];
+                if (latestFile.status !== 'COMPLETED' && latestFile.status !== 'ERROR') {
+                    setCurrentFileId(latestFile.file_id);
+                }
+            }
+        };
+
+        getCurrentUser();
+    }, [navigate]);
+
+    const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (file) {
-            setSelectedFile(file);
-            setCurrentStep('review');
+        if (!file || !userId) return;
+
+        setSelectedFile(file);
+        try {
+            // Create file path with user ID
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}${file.name.substring(file.name.lastIndexOf('.'))}`;
+            const filePath = `${userId}/${fileName}`;
+
+            // First create the processing record
+            const { error: dbError } = await supabase.from('file_processing').insert({
+                file_id: filePath,
+                user_id: userId,
+                status: 'UPLOADING',
+                message: 'Starting file upload',
+                progress: 0,
+            });
+
+            if (dbError) {
+                throw new Error('Failed to initialize file processing');
+            }
+
+            setCurrentFileId(filePath);
+
+            const { error: uploadError, data } = await supabase.storage.from('schedules').upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false,
+            });
+
+            if (uploadError) {
+                // Update processing status to error
+                await supabase
+                    .from('file_processing')
+                    .update({
+                        status: 'ERROR',
+                        message: uploadError.message,
+                        progress: 0,
+                    })
+                    .eq('file_id', filePath);
+
+                throw new Error(uploadError.message);
+            }
+
+            // Process with GraphQL
+            const { data: processData } = await processTimetable({
+                variables: {
+                    fileId: filePath,
+                },
+            });
+
+            if (processData.processTimetable.success) {
+                console.log(processData.processTimetable);
+                if (processData.processTimetable.courses.length > 0) {
+                    //navigate({ to: '/dashboard' });
+                }
+            } else {
+                setUploadError(processData.processTimetable.message || 'Failed to process file');
+                setCurrentFileId(null);
+
+                // Update processing status to error
+                await supabase
+                    .from('file_processing')
+                    .update({
+                        status: 'ERROR',
+                        message: processData.processTimetable.message || 'Failed to process file',
+                        progress: 0,
+                    })
+                    .eq('file_id', filePath);
+            }
+        } catch (error) {
+            console.error('Upload/Process error:', error);
+            setUploadError('Failed to upload and process file. Please try again.');
+            setCurrentFileId(null);
         }
     };
 
-    const handleAddClass = () => {
-        const newClass: Course = {
-            id: String(classes.length + 1),
-            courseName: '',
-            courseCode: '',
-            instructor: '',
-            startDate: new Date().toISOString().split('T')[0],
-            endDate: new Date().toISOString().split('T')[0],
-            classes: [
-                {
-                    section: 'A',
-                    classType: 'Lecture',
-                    location: '',
-                    day: 'Monday',
-                    startTime: '09:00',
-                    endTime: '10:30',
-                    additionalInfo: ''
-                }
-            ]
-        };
-        setClasses([...classes, newClass]);
-        setSelectedClass(newClass);
-        setIsEditModalOpen(true);
+    const renderProcessingStatus = () => {
+        const renderUploadUI = () => (
+            <div className='flex flex-col items-center gap-6'>
+                <label className='flex flex-col items-center justify-center w-full h-64 border-2 border-base-content/20 border-dashed rounded-lg cursor-pointer hover:bg-base-200 transition-colors'>
+                    <div className='flex flex-col items-center justify-center pt-5 pb-6'>
+                        <Upload className='w-12 h-12 text-base-content/50 mb-4' />
+                        <p className='mb-2 text-sm text-base-content/70'>
+                            <span className='font-semibold'>Click to upload</span> or drag and drop
+                        </p>
+                        <p className='text-xs text-base-content/50'>PDF, DOC, PNG, JPG (MAX. 10MB)</p>
+                    </div>
+                    <input type='file' className='hidden' onChange={handleFileSelect} accept='.pdf,.doc,.docx,.png,.jpg,.jpeg' />
+                </label>
+            </div>
+        );
+
+        if (!statusData?.processingStatus) {
+            return renderUploadUI();
+        }
+
+        const { status, message, progress } = statusData.processingStatus;
+
+        switch (status) {
+            case 'UPLOADING':
+                return (
+                    <div className='flex flex-col items-center justify-center gap-4'>
+                        <div className='loading loading-spinner loading-lg'></div>
+                        <p className='text-base-content/70'>{message}</p>
+                        <div className='w-full max-w-xs'>
+                            <progress className='progress progress-primary w-full' value={progress} max='100'></progress>
+                        </div>
+                    </div>
+                );
+            case 'PROCESSING':
+                return (
+                    <div className='flex flex-col items-center justify-center gap-6 animate-fade-in'>
+                        <div className='relative'>
+                            <div className='w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center'>
+                                <Bot className='w-10 h-10 text-primary animate-bounce' />
+                            </div>
+                            <div className='absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary/20 animate-pulse delay-75'></div>
+                            <div className='absolute -bottom-1 -left-1 w-4 h-4 rounded-full bg-primary/20 animate-pulse delay-150'></div>
+                            <div className='absolute top-1/2 -right-3 w-3 h-3 rounded-full bg-primary/20 animate-pulse delay-300'></div>
+                        </div>
+                        <div className='text-center'>
+                            <p className='text-lg font-semibold text-primary mb-2'>{message}</p>
+                            <p className='text-base-content/70'>This might take a few moments...</p>
+                        </div>
+                        <div className='w-full max-w-xs'>
+                            <progress className='progress progress-primary w-full' value={progress} max='100'></progress>
+                        </div>
+                    </div>
+                );
+            case 'COMPLETED':
+                return (
+                    <div className='flex flex-col gap-y-10'>
+                        <div className='flex flex-col items-center justify-center gap-4 animate-fade-in'>
+                            <div className='w-16 h-16 bg-success/20 rounded-full flex items-center justify-center'>
+                                <FileCheck className='w-8 h-8 text-success' />
+                            </div>
+                            <p className='text-success'>{message}</p>
+                            <div className='w-full max-w-xs'>
+                                <progress className='progress progress-success w-full' value={progress} max='100'></progress>
+                            </div>
+                        </div>
+                        {renderUploadUI()}
+                    </div>
+                );
+            case 'ERROR':
+
+            default:
+                return renderUploadUI();
+        }
     };
 
-    const handleEditClass = (classItem: Course) => {
-        setSelectedClass(classItem);
-        setIsEditModalOpen(true);
-    };
-
-    const handleDeleteClass = (classId: string) => {
-        setClasses(classes.filter((c) => c.id !== classId));
-    };
-
-    const handleSaveClass = (formData: {
-        courseName: string;
-        courseCode: string;
-        hasScheduledClasses: boolean;
-        instructor?: string;
-        schedule?: {
-            days?: string[];
-            startTime?: string;
-            endTime?: string;
-            location?: string;
-            section?: string;
-            classType?: string;
-        }[];
-    }) => {
-        if (!selectedClass) return;
-
-        const updatedClass: Course = {
-            ...selectedClass,
-            courseName: formData.courseName,
-            courseCode: formData.courseCode,
-            instructor: formData.instructor || '',
-            classes: formData.hasScheduledClasses && formData.schedule
-                ? formData.schedule.map(s => ({
-                    section: s.section || 'A',
-                    classType: s.classType || 'Lecture',
-                    location: s.location || '',
-                    day: s.days?.[0] || '',
-                    startTime: s.startTime || '',
-                    endTime: s.endTime || '',
-                    additionalInfo: ''
-                }))
-                : []
-        };
-
-        setClasses(classes.map((c) => (c.id === updatedClass.id ? updatedClass : c)));
-        setSelectedClass(null);
-        setIsEditModalOpen(false);
-    };
+    if (!userId) {
+        return (
+            <div className='min-h-screen bg-base-200 pt-20 pb-8 px-4 flex justify-center items-center'>
+                <span className='loading loading-spinner loading-lg'></span>
+            </div>
+        );
+    }
 
     return (
         <div className='min-h-screen bg-base-200 pt-20 pb-8 px-4'>
             <div className='max-w-4xl mx-auto'>
-                {/* Progress Steps */}
-                <div className='w-full mb-8'>
-                    <ul className='steps steps-horizontal w-full'>
-                        <li className={`step ${currentStep === 'upload' || currentStep === 'review' || currentStep === 'complete' ? 'step-primary' : ''}`}>
-                            Upload Schedule
-                        </li>
-                        <li className={`step ${currentStep === 'review' || currentStep === 'complete' ? 'step-primary' : ''}`}>Review Classes</li>
-                        <li className={`step ${currentStep === 'complete' ? 'step-primary' : ''}`}>Complete</li>
-                    </ul>
-                </div>
-
                 <div className='card bg-base-100 shadow-xl'>
                     <div className='card-body'>
-                        {currentStep === 'upload' && (
-                            <div className='text-center'>
-                                <h2 className='text-2xl font-bold mb-4'>Upload Your Schedule</h2>
-                                <p className='text-base-content/70 mb-8'>
-                                    Upload your class schedule or syllabus and we'll automatically extract your classes. We support PDF, DOC, and image files.
-                                </p>
+                        <div className='text-center'>
+                            <h2 className='text-2xl font-bold mb-4'>Upload Your Schedule</h2>
+                            <p className='text-base-content/70 mb-8'>
+                                Upload your class schedule or syllabus and we'll automatically extract your classes. We support PDF, DOC, and image files.
+                            </p>
 
-                                <div className='flex flex-col items-center gap-6'>
-                                    <label className='flex flex-col items-center justify-center w-full h-64 border-2 border-base-content/20 border-dashed rounded-lg cursor-pointer hover:bg-base-200 transition-colors'>
-                                        <div className='flex flex-col items-center justify-center pt-5 pb-6'>
-                                            <Upload className='w-12 h-12 text-base-content/50 mb-4' />
-                                            <p className='mb-2 text-sm text-base-content/70'>
-                                                <span className='font-semibold'>Click to upload</span> or drag and drop
-                                            </p>
-                                            <p className='text-xs text-base-content/50'>PDF, DOC, PNG, JPG (MAX. 10MB)</p>
-                                        </div>
-                                        <input type='file' className='hidden' onChange={handleFileSelect} accept='.pdf,.doc,.docx,.png,.jpg,.jpeg' />
-                                    </label>
-
-                                    <div className='divider'>OR</div>
-
-                                    <button className='btn btn-primary btn-wide' onClick={() => setCurrentStep('review')}>
-                                        Add Classes Manually
-                                    </button>
+                            {uploadError && (
+                                <div className='alert alert-error mb-4'>
+                                    <span>{uploadError}</span>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {currentStep === 'review' && (
-                            <div>
-                                <div className='flex justify-between items-center mb-6'>
-                                    <h2 className='text-2xl font-bold'>Your Classes</h2>
-                                    <button className='btn btn-primary gap-2' onClick={handleAddClass}>
-                                        <Plus className='w-4 h-4' />
-                                        Add Class
-                                    </button>
-                                </div>
-
-                                <div className='space-y-4'>
-                                    {classes.map((classItem) => (
-                                        <div key={classItem.id} className='card bg-base-200'>
-                                            <div className='card-body'>
-                                                <div className='flex justify-between items-start'>
-                                                    <div>
-                                                        <h3 className='font-bold text-lg'>{classItem.courseName}</h3>
-                                                        <p className='text-sm text-base-content/70'>
-                                                            {classItem.courseCode} • {classItem.instructor}
-                                                        </p>
-                                                    </div>
-                                                    <div className='flex gap-2'>
-                                                        <button className='btn btn-ghost btn-sm' onClick={() => handleEditClass(classItem)}>
-                                                            <Edit2 className='w-4 h-4' />
-                                                        </button>
-                                                        <button className='btn btn-ghost btn-sm text-error' onClick={() => handleDeleteClass(classItem.id!)}>
-                                                            <Trash2 className='w-4 h-4' />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                {classItem.classes[0] && (
-                                                    <>
-                                                        <div className='divider my-2'></div>
-                                                        <div className='flex flex-wrap gap-4 text-sm text-base-content/70'>
-                                                            <div className='flex items-center gap-2'>
-                                                                <Calendar className='w-4 h-4' />
-                                                                <span>{classItem.classes[0].day}</span>
-                                                            </div>
-                                                            <div className='flex items-center gap-2'>
-                                                                <Clock className='w-4 h-4' />
-                                                                <span>
-                                                                    {classItem.classes[0].startTime} - {classItem.classes[0].endTime}
-                                                                </span>
-                                                            </div>
-                                                            <div className='flex items-center gap-2'>
-                                                                <MapPin className='w-4 h-4' />
-                                                                <span>{classItem.classes[0].location}</span>
-                                                            </div>
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className='flex justify-between mt-8'>
-                                    <button className='btn btn-outline gap-2' onClick={() => setCurrentStep('upload')}>
-                                        <ArrowLeft className='w-4 h-4' />
-                                        Back
-                                    </button>
-                                    <button className='btn btn-primary gap-2' onClick={() => setCurrentStep('complete')} disabled={classes.length === 0}>
-                                        Continue
-                                        <ArrowRight className='w-4 h-4' />
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {currentStep === 'complete' && (
-                            <div className='text-center'>
-                                <div className='flex justify-center mb-6'>
-                                    <div className='w-16 h-16 bg-success/20 rounded-full flex items-center justify-center'>
-                                        <FileText className='w-8 h-8 text-success' />
-                                    </div>
-                                </div>
-                                <h2 className='text-2xl font-bold mb-4'>Schedule Setup Complete!</h2>
-                                <p className='mb-8 text-base-content/70'>
-                                    Your class schedule has been successfully set up. You can now view and manage your classes in the calendar.
-                                </p>
-                                <button onClick={() => navigate({ to: '/dashboard' })} className='btn btn-primary btn-lg'>
-                                    Go to Dashboard
-                                </button>
-                            </div>
-                        )}
+                            {renderProcessingStatus()}
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <EditClassModal
-                isOpen={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
-                onSave={handleSaveClass}
-                courseData={selectedClass || undefined}
-            />
         </div>
     );
 }

@@ -5,7 +5,7 @@ import './global.css';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { AuthProvider } from './providers/AuthProvider';
 import { ApolloProvider } from '@apollo/client';
-import { apolloClient } from './lib/apollo';
+import { client } from './graphql/client';
 import LoadingScreen from './components/LoadingScreen';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
@@ -26,7 +26,7 @@ if (!rootElement.innerHTML) {
     const root = ReactDOM.createRoot(rootElement);
     root.render(
         <StrictMode>
-            <ApolloProvider client={apolloClient}>
+            <ApolloProvider client={client}>
                 <AuthProvider>
                     <ThemeProvider>
                         <Suspense fallback={<LoadingScreen />}>
