@@ -2,7 +2,8 @@
   "scripts": {
     "start": "ts-node main.ts",
     "timetable": "ts-node main.ts",
-    "outlines": "ts-node outlines.ts"
+    "outlines": "ts-node outlines.ts",
+    "calendars": "ts-node calendars.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

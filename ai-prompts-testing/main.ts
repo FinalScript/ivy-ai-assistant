@@ -10,61 +10,60 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-thinking-exp-0
 
 // Input file configuration
 const INPUT_FILES = [
-  "Timetable_Ex1.jpeg"
+  "timetable.jpeg"
 ];
 
 const INPUT_DIR = "./inputs";
 const OUTPUT_DIR = "./outputs";
 
-const timetableMessage = `
-You are an expert AI with advanced vision capabilities specializing in reading university timetables from images. Your task is to extract course details (via OCR and layout recognition) while ignoring any extraneous elements (headers, footers, logos, etc.).
+const timetableMessage = `You are an expert AI assistant specializing in parsing academic timetables.
 
-Key Rules:
-1. Group courses by identifying their base course code or name prefix (ignoring section identifiers).
-2. Create a single unique object for courses that share the same base code/name prefix.
-3. All variations, sections, or class types of the same base course should be added as separate entries in that course's classes array.
-4. Normalize day names (e.g., "Mon" → "Monday") and time entries (e.g., "9 AM" → "09:00"). Trim any extra spaces or characters.
-5. If a field is missing or ambiguous, output an empty string ("").
+TASK:
+Extract course information and schedules from the provided timetable image, grouping different sections of the same course together.
 
-Output must be a strict JSON object (starting with "{" and ending with "}") in this format:
-
+REQUIRED OUTPUT FORMAT:
 {
-    "courses": [
+  "courses": [
+    {
+      "code": "COURSE_CODE",        // Example: "CS101"
+      "name": "COURSE_NAME",        // Example: "Introduction to Programming"
+      "term": "TERM_INFO",         // Example: "Fall 2023"
+      "sections": [
         {
-            "courseName": "Introduction to Psychology",
-            "courseCode": "PSY101",
-            "instructor": "Dr. John Smith",
-            "startDate": "2024-01-01",
-            "endDate": "2024-05-31",
-            "classes": [
-                { 
-                    "section": "B",
-                    "classType": "Lecture",
-                    "location": "Building A, Room 101",
-                    "day": "Monday",
-                    "startTime": "09:00",
-                    "endTime": "10:00",
-                    "additionalInfo": "Section A"
-                },
-                {
-                    "section": "B2",
-                    "classType": "Lab",
-                    "location": "Building A, Room 102",
-                    "day": "Tuesday",
-                    "startTime": "10:00",
-                    "endTime": "11:00",
-                    "additionalInfo": "Section B"
-                }
-            ]
+          "section_id": "SECTION_ID", // Example: "A01"
+          "schedule": [
+            {
+              "day": "DAY_OF_WEEK",     // Example: "Monday"
+              "start_time": "ISO_TIME", // Example: "2024-02-15T09:30:00-05:00"
+              "end_time": "ISO_TIME",   // Example: "2024-02-15T10:50:00-05:00"
+              "location": "LOCATION",   // Example: "Building A, Room 101"
+              "type": "CLASS_TYPE"      // Example: "lecture", "lab", "tutorial"
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }
 
-Ensure:
-- Only timetable-related data is extracted, regardless of format (table, free-form text, multi-column, etc.).
-- All related classes are grouped under their parent course.
-- No extra text, commentary, or markdown is included—only the valid JSON output.
-`
+RULES:
+1. Group all sections of the same course under one course object
+2. Extract ONLY course information and schedules
+3. Use full day names (Monday, Tuesday, etc.)
+4. Convert all times to ISO 8601 format with timezone
+5. Use local timezone if none specified
+6. Set missing values to null
+7. Do not include assessment information
+
+VALIDATION:
+- All dates must be in ISO 8601 format
+- Course codes must be uppercase
+- Day names must be capitalized
+- Class types must be lowercase
+- Each course must have at least one section
+
+OUTPUT:
+Provide ONLY the JSON output. No additional text or explanations.`;
 
 async function main() {
   const startTime = performance.now();

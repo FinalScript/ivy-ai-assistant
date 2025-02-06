@@ -12,7 +12,7 @@ const model = genAI.getGenerativeModel({
 });
 
 // Input file configuration
-const INPUT_FILES = ["Outline_BestCase.pdf"];
+const INPUT_FILES = ["calendar.pdf"];
 
 const INPUT_DIR = "./inputs";
 const OUTPUT_DIR = "./outputs";
@@ -23,15 +23,14 @@ const MIME_TYPES: { [key: string]: string } = {
     ".jpg": "image/jpeg",
     ".png": "image/png",
     ".pdf": "application/pdf",
-    ".doc": "application/msword",
-    ".docx":
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ".ics": "text/calendar",
+    ".csv": "text/csv",
 };
 
-const outlineMessage = `You are an expert AI assistant specializing in analyzing course outlines and syllabi.
+const calendarMessage = `You are an expert AI assistant specializing in extracting academic calendar information.
 
 TASK:
-Extract detailed course information, instructor details, and assessment information from the provided course outline, grouping different sections of the same course together.
+Extract assessment dates, deadlines, and schedule changes from the provided academic calendar, grouping different sections of the same course together.
 
 REQUIRED OUTPUT FORMAT:
 {
@@ -39,41 +38,29 @@ REQUIRED OUTPUT FORMAT:
     {
       "code": "COURSE_CODE",        // Example: "CS101"
       "name": "COURSE_NAME",        // Example: "Introduction to Programming"
-      "description": "DESCRIPTION", // Full course description
       "term": "TERM_INFO",         // Example: "Fall 2023"
       "assessments": [              // Course-wide assessments
         {
           "title": "TITLE",         // Example: "Midterm Exam"
           "type": "TYPE",           // Example: "exam", "assignment", "project"
           "due_date": "ISO_TIME",   // Example: "2024-03-15T14:00:00-05:00"
-          "description": "DETAILS", // Detailed description of the assessment
-          "weight": NUMBER,         // Example: 30 (percentage)
-          "status": "upcoming"      // Always set as "upcoming"
+          "description": "DETAILS", // Description or special instructions
+          "weight": NUMBER,         // Example: 30, null if not specified
+          "status": "upcoming",     // Always set as "upcoming"
+          "location": "LOCATION"    // For exams and in-person assessments
         }
       ],
       "sections": [
         {
-          "section_id": "SECTION_ID", // Example: "A01"
-          "instructor": {
-            "name": "FULL_NAME",       // Example: "Dr. Jane Smith"
-            "email": "EMAIL",          // Example: "jane.smith@university.edu"
-            "office_location": "ROOM", // Example: "Building A, Room 305"
-            "office_hours": [
-              {
-                "day": "DAY_OF_WEEK",   // Example: "Tuesday"
-                "start_time": "ISO_TIME",// Example: "2024-02-15T14:00:00-05:00"
-                "end_time": "ISO_TIME",  // Example: "2024-02-15T16:00:00-05:00"
-                "location": "LOCATION"   // Office or online meeting link
-              }
-            ]
-          },
+          "section_id": "SECTION_ID", // Example: "A01", null if not specified
           "schedule": [
             {
               "day": "DAY_OF_WEEK",     // Example: "Monday"
               "start_time": "ISO_TIME", // Example: "2024-02-15T09:30:00-05:00"
               "end_time": "ISO_TIME",   // Example: "2024-02-15T10:50:00-05:00"
               "location": "LOCATION",   // Example: "Building A, Room 101"
-              "type": "CLASS_TYPE"      // Example: "lecture", "lab", "tutorial"
+              "type": "CLASS_TYPE",     // Example: "lecture", "lab", "tutorial"
+              "is_rescheduled": BOOLEAN // true if this is a schedule change
             }
           ]
         }
@@ -85,26 +72,25 @@ REQUIRED OUTPUT FORMAT:
 RULES:
 1. Group all sections of the same course under one course object
 2. Keep assessments at the course level (not in sections)
-3. Extract ALL available course information
-4. Include complete assessment details with weights
-5. Convert all times to ISO 8601 format with timezone
-6. Use local timezone if none specified
-7. Set missing values to null
-8. Preserve exact course codes and section numbers
+3. Focus on dates, deadlines, and schedule changes
+4. Convert all times to ISO 8601 format with timezone
+5. Use local timezone if none specified
+6. Set missing values to null
+7. Mark rescheduled classes with is_rescheduled=true
+8. Include locations for exams and in-person assessments
 
 VALIDATION:
 - All dates must be in ISO 8601 format
 - Course codes must be uppercase
 - Day names must be capitalized
 - Class types must be lowercase
-- Weights must be numbers (not strings)
-- Email addresses must be valid format
+- Weights must be numbers or null
+- Boolean values must be true/false
 - Each course must have at least one section
 - Assessments must be at course level, not section level
 
 OUTPUT:
 Provide ONLY the JSON output. No additional text or explanations.`;
-
 
 async function processFile(file: string) {
     const extension = path.extname(file).toLowerCase();
@@ -151,7 +137,7 @@ async function main() {
 
         // Count input tokens
         const prompt = [
-            { text: outlineMessage },
+            { text: calendarMessage },
             ...fileParts,
         ];
         const inputTokenCount = await model.countTokens(prompt);
@@ -181,11 +167,11 @@ async function main() {
 
         try {
             const parsedData = JSON.parse(text);
-            console.log("Extracted Outline Data:", parsedData);
+            console.log("Extracted Calendar Data:", parsedData);
 
             // Save output with metrics
             const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-            const outputPath = path.join(OUTPUT_DIR, `outline_${timestamp}.json`);
+            const outputPath = path.join(OUTPUT_DIR, `calendar_${timestamp}.json`);
             const outputData = {
                 data: parsedData,
                 metrics: {
@@ -220,4 +206,4 @@ async function main() {
     }
 }
 
-main();
+main(); 
