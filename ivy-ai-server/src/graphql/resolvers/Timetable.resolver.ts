@@ -75,42 +75,25 @@ export const TimetableResolver = {
       const mainFileId = fileIds[0];
 
       try {
-        // Immediately show processing status before any operations
         await updateProcessingStatus({
           fileId: mainFileId,
-          status: 'PROCESSING',
-          message: `Processing ${fileIds.length} ${fileIds.length === 1 ? 'file' : 'files'}`,
+          status: 'UPLOADING',
+          message: `Uploading ${fileIds.length} ${fileIds.length === 1 ? 'file' : 'files'}`,
           progress: 0
         });
 
-        let allCourses: any[] = [];
-        const uniqueCourses = new Map();
-
-        // Quick verification of file ownership
-        if (fileIds.some(fileId => fileId.split('/')[0] !== user.id)) {
-          throw new AuthenticationError('Not authorized to access one or more files')
-        }
-
         // Start downloads immediately
-        const downloadPromises = fileIds.map(fileId => 
+        const downloadPromises = fileIds.map(fileId =>
           supabase.storage
             .from('schedules')
             .download(fileId)
         );
 
-        // Update progress while downloads are happening
-        await updateProcessingStatus({
-          fileId: mainFileId,
-          status: 'PROCESSING',
-          message: `Downloading files...`,
-          progress: 10
-        });
-
         // Wait for all downloads to complete
         const downloadResults = await Promise.all(downloadPromises);
 
         // Check for download errors
-        const failedDownloads = downloadResults.map((result, index) => 
+        const failedDownloads = downloadResults.map((result, index) =>
           result.error ? fileIds[index] : null
         ).filter(Boolean);
 
@@ -121,49 +104,29 @@ export const TimetableResolver = {
         // Extract file data
         const filesData = downloadResults.map(result => result.data!);
 
-        // Process all files at once
         await updateProcessingStatus({
           fileId: mainFileId,
           status: 'PROCESSING',
-          message: `Analyzing ${filesData.length} files...`,
+          message: `Extracting courses...`,
           progress: 25
         });
+
+        setTimeout(async () => {
+          await updateProcessingStatus({
+            fileId: mainFileId,
+            status: 'PROCESSING',
+            message: `Processing courses...`,
+            progress: 50
+          });
+        }, 3000);
 
         const extractedCourses = await processTimetableFile(filesData);
         const validatedCourses = validateCourseData(extractedCourses);
 
-        // Merge courses with the same code and term
-        validatedCourses.forEach(course => {
-          const key = `${course.code}-${course.term}`;
-          if (!uniqueCourses.has(key)) {
-            uniqueCourses.set(key, course);
-          } else {
-            // Merge sections if they don't already exist
-            const existingCourse = uniqueCourses.get(key);
-            const existingSectionIds = new Set(existingCourse.sections.map((s: any) => s.section_id));
-            
-            course.sections.forEach((section: any) => {
-              if (!existingSectionIds.has(section.section_id)) {
-                existingCourse.sections.push(section);
-              }
-            });
-          }
-        });
-
-        await updateProcessingStatus({
-          fileId: mainFileId,
-          status: 'PROCESSING',
-          message: `Organizing extracted courses...`,
-          progress: 75
-        });
-
-        // Convert the Map values back to an array
-        allCourses = Array.from(uniqueCourses.values());
-
         await updateProcessingStatus({
           fileId: mainFileId,
           status: 'COMPLETED',
-          message: 'All files processed successfully',
+          message: `Completed`,
           progress: 100
         });
 
@@ -171,17 +134,10 @@ export const TimetableResolver = {
           success: true,
           message: 'All files processed successfully',
           fileId: mainFileId,
-          courses: allCourses
+          courses: validatedCourses
         }
       } catch (error) {
         console.error('Timetable processing error:', error)
-
-        await updateProcessingStatus({
-          fileId: mainFileId,
-          status: 'ERROR',
-          message: error instanceof Error ? error.message : 'Failed to process files',
-          progress: 0
-        });
 
         return {
           success: false,
