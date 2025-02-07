@@ -83,11 +83,12 @@ export const TimetableSchema = gql`
   }
 
   type Mutation {
-    processTimetable(fileId: String!): UploadResponse!
+    processTimetable(fileIds: [String!]!): UploadResponse!
     addCourse(input: CourseInput!): Course!
     updateCourse(id: ID!, input: CourseInput!): Course!
     deleteCourse(id: ID!): Boolean!
   }
+
 
   type Subscription {
     processingStatusUpdated(fileId: String!): ProcessingUpdate!

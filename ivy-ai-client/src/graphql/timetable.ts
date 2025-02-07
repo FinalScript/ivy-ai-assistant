@@ -12,8 +12,8 @@ export const PROCESSING_STATUS_SUBSCRIPTION = gql`
 `;
 
 export const PROCESS_TIMETABLE = gql`
-  mutation ProcessTimetable($fileId: String!) {
-    processTimetable(fileId: $fileId) {
+  mutation ProcessTimetable($fileIds: [String!]!) {
+    processTimetable(fileIds: $fileIds) {
       success
       message
       fileId

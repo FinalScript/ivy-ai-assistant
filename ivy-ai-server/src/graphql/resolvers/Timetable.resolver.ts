@@ -69,77 +69,128 @@ export const TimetableResolver = {
   },
 
   Mutation: {
-    processTimetable: async (_: unknown, { fileId }: { fileId: string }, { user }: Context) => {
+    processTimetable: async (_: unknown, { fileIds }: { fileIds: string[] }, { user }: Context) => {
       if (!user) throw new AuthenticationError('Not authenticated')
 
+      const mainFileId = fileIds[0];
+
       try {
-        // Verify the file belongs to the user
-        const fileUserId = fileId.split('/')[0]
-        if (fileUserId !== user.id) {
-          throw new AuthenticationError('Not authorized to access this file')
-        }
-
-        // Update status to uploading
+        // Immediately show processing status before any operations
         await updateProcessingStatus({
-          fileId,
-          status: 'UPLOADING',
-          message: 'Downloading file from storage',
-          progress: 0
-        })
-
-        // Download file from Supabase storage
-        const { data: fileData, error: downloadError } = await supabase.storage
-          .from('schedules')
-          .download(fileId)
-
-        if (downloadError || !fileData) {
-          await updateProcessingStatus({
-            fileId,
-            status: 'ERROR',
-            message: 'Failed to download file',
-            progress: 0
-          })
-          throw new Error('Failed to download file')
-        }
-
-        // Process the file with AI
-        await updateProcessingStatus({
-          fileId,
+          fileId: mainFileId,
           status: 'PROCESSING',
-          message: 'Processing file with AI',
-          progress: 25
-        })
+          message: `Processing ${fileIds.length} ${fileIds.length === 1 ? 'file' : 'files'}`,
+          progress: 0
+        });
 
-        const extractedCourses = await processTimetableFile(fileData);
-        const validatedCourses = validateCourseData(extractedCourses);
+        let allCourses: any[] = [];
+        const uniqueCourses = new Map();
+
+        // Quick verification of file ownership
+        if (fileIds.some(fileId => fileId.split('/')[0] !== user.id)) {
+          throw new AuthenticationError('Not authorized to access one or more files')
+        }
+
+        // Start downloads immediately
+        const downloadPromises = fileIds.map(fileId => 
+          supabase.storage
+            .from('schedules')
+            .download(fileId)
+        );
+
+        // Update progress while downloads are happening
+        await updateProcessingStatus({
+          fileId: mainFileId,
+          status: 'PROCESSING',
+          message: `Downloading files...`,
+          progress: 10
+        });
+
+        // Wait for all downloads to complete
+        const downloadResults = await Promise.all(downloadPromises);
+
+        // Check for download errors
+        const failedDownloads = downloadResults.map((result, index) => 
+          result.error ? fileIds[index] : null
+        ).filter(Boolean);
+
+        if (failedDownloads.length > 0) {
+          throw new Error(`Failed to download files: ${failedDownloads.join(', ')}`)
+        }
+
+        // Extract file data
+        const filesData = downloadResults.map(result => result.data!);
+
+        // Process all files
+        for (let i = 0; i < filesData.length; i++) {
+          const fileData = filesData[i];
+          
+          await updateProcessingStatus({
+            fileId: mainFileId,
+            status: 'PROCESSING',
+            message: `Analyzing file ${i + 1} of ${filesData.length}...`,
+            progress: 25 + ((i) / filesData.length) * 50
+          });
+
+          const extractedCourses = await processTimetableFile(fileData);
+          const validatedCourses = validateCourseData(extractedCourses);
+
+          // Merge courses with the same code and term
+          validatedCourses.forEach(course => {
+            const key = `${course.code}-${course.term}`;
+            if (!uniqueCourses.has(key)) {
+              uniqueCourses.set(key, course);
+            } else {
+              // Merge sections if they don't already exist
+              const existingCourse = uniqueCourses.get(key);
+              const existingSectionIds = new Set(existingCourse.sections.map((s: any) => s.section_id));
+              
+              course.sections.forEach((section: any) => {
+                if (!existingSectionIds.has(section.section_id)) {
+                  existingCourse.sections.push(section);
+                }
+              });
+            }
+          });
+
+          await updateProcessingStatus({
+            fileId: mainFileId,
+            status: 'PROCESSING',
+            message: `Organizing extracted courses...`,
+            progress: 75 + ((i + 1) / filesData.length) * 25
+          });
+        }
+
+        // Convert the Map values back to an array
+        allCourses = Array.from(uniqueCourses.values());
 
         await updateProcessingStatus({
-          fileId,
+          fileId: mainFileId,
           status: 'COMPLETED',
-          message: 'File processed successfully',
+          message: 'All files processed successfully',
           progress: 100
-        })
+        });
 
         return {
           success: true,
-          message: 'File processed successfully',
-          fileId,
-          courses: validatedCourses
+          message: 'All files processed successfully',
+          fileId: mainFileId,
+          courses: allCourses
         }
       } catch (error) {
         console.error('Timetable processing error:', error)
 
         await updateProcessingStatus({
-          fileId,
+          fileId: mainFileId,
           status: 'ERROR',
-          message: error instanceof Error ? error.message : 'Failed to process file',
+          message: error instanceof Error ? error.message : 'Failed to process files',
           progress: 0
-        })
+        });
 
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Failed to process file',
-          fileId,
+          message: error instanceof Error ? error.message : 'Failed to process files',
+          fileId: mainFileId,
           courses: []
         }
       }
