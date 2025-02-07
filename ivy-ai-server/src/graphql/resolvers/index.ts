@@ -1,5 +1,6 @@
 import { merge } from 'lodash';
 import { UserResolver } from './User.resolver';
+import { TimetableResolver } from './Timetable.resolver';
 import { GraphQLScalarType, Kind } from 'graphql';
 
 const dateScalar = new GraphQLScalarType({
@@ -19,4 +20,4 @@ const dateScalar = new GraphQLScalarType({
   },
 });
 
-export const resolvers = merge(UserResolver, { Date: dateScalar });
+export const resolvers = merge(UserResolver, TimetableResolver, { Date: dateScalar });

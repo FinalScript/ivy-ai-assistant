@@ -65,7 +65,7 @@ export const UserResolver = {
      * @param id - The user's UUID
      */
     user: async (_: unknown, { id }: UserArgs): Promise<User | null> => {
-      return findUserById(id)
+      return await findUserById(id)
     },
   },
 
@@ -95,9 +95,9 @@ export const UserResolver = {
      */
     completeOnboarding: async (_: unknown, { input }: OnboardingArgs, context: Context): Promise<User> => {
       if (!context.user) throw new AuthenticationError('Not authenticated')
-      
+
       const fullName = `${input.firstName} ${input.lastName}`.trim()
-      
+
       return updateUser(context.user.id, {
         firstName: input.firstName,
         lastName: input.lastName,

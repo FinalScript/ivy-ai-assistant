@@ -2,7 +2,7 @@ import { AuthService } from '../services/auth.service'
 import { User } from '../db/schema/user.schema'
 import { Request } from 'express'
 
-interface Context {
+export interface Context {
   user: User | null
 }
 
