@@ -16,6 +16,7 @@ export const PROCESSING_STATUS_UPDATED = 'PROCESSING_STATUS_UPDATED';
 const options = {
   host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT || '6379'),
+  password: process.env.REDIS_PASSWORD || '',
   retryStrategy: (times: number) => {
     // reconnect after
     return Math.min(times * 50, 2000);

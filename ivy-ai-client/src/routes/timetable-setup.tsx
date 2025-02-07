@@ -98,33 +98,35 @@ function TimetableSetup() {
     useEffect(() => {
         const fetchRecentUploads = async () => {
             if (!userId) return;
-            
+
             setLoadingUploads(true);
             try {
-                const { data: files, error } = await supabase.storage
-                    .from('schedules')
-                    .list(userId, {
-                        limit: 5,
-                        sortBy: { column: 'created_at', order: 'desc' }
-                    });
+                const { data: files, error } = await supabase.storage.from('schedules').list(userId, {
+                    limit: 5,
+                    sortBy: { column: 'created_at', order: 'desc' },
+                });
 
                 if (error) throw error;
 
                 if (files) {
-                    const uploadsWithUrls = await Promise.all(files.map(async file => {
-                        const { data: { publicUrl } } = supabase.storage
-                            .from('schedules')
-                            .getPublicUrl(`${userId}/${file.name}`);
+                    const uploadsWithUrls = await Promise.all(
+                        files.map(async (file) => {
+                            const {
+                                data: { publicUrl },
+                            } = supabase.storage.from('schedules').getPublicUrl(`${userId}/${file.name}`);
 
-                        return {
-                            fileId: `${userId}/${file.name}`,
-                            fileName: file.name.split('-')[0],
-                            uploadedAt: file.created_at || new Date().toISOString(),
-                            size: file.metadata?.size || 0,
-                            url: publicUrl,
-                            type: file.metadata?.mimetype || 'application/octet-stream'
-                        };
-                    }));
+                            console.log(`${userId}/${file.name}`);
+
+                            return {
+                                fileId: `${userId}/${file.name}`,
+                                fileName: file.name.split('-')[0],
+                                uploadedAt: file.created_at || new Date().toISOString(),
+                                size: file.metadata?.size || 0,
+                                url: publicUrl,
+                                type: file.metadata?.mimetype || 'application/octet-stream',
+                            };
+                        })
+                    );
                     setRecentUploads(uploadsWithUrls);
                 }
             } catch (error) {
@@ -154,16 +156,18 @@ function TimetableSetup() {
                 cacheControl: '3600',
                 upsert: false,
             })
-            .then(() => processTimetable({
-                variables: { fileId: filePath }
-            }))
+            .then(() =>
+                processTimetable({
+                    variables: { fileId: filePath },
+                })
+            )
             .then(({ data }) => {
                 if (!data?.processTimetable.success) {
                     throw new Error(data?.processTimetable.message || 'Failed to process file');
                 }
                 setParsedCourses(data.processTimetable.courses);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Upload/Process error:', error);
                 setUploadError(error instanceof Error ? error.message : 'Failed to upload and process file. Please try again.');
                 setCurrentFileId(null);
@@ -171,9 +175,9 @@ function TimetableSetup() {
     };
 
     const toggleCourseExpanded = (courseCode: string) => {
-        setExpandedCourses(prev => ({
+        setExpandedCourses((prev) => ({
             ...prev,
-            [courseCode]: !prev[courseCode]
+            [courseCode]: !prev[courseCode],
         }));
     };
 
@@ -181,7 +185,7 @@ function TimetableSetup() {
         return new Date(isoTime).toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',
-            hour12: true
+            hour12: true,
         });
     };
 
@@ -189,73 +193,64 @@ function TimetableSetup() {
         if (!parsedCourses.length) return null;
 
         return (
-            <div className="space-y-4 mt-8">
-                <h3 className="text-xl font-semibold mb-4">Review Extracted Courses</h3>
+            <div className='space-y-4 mt-8'>
+                <h3 className='text-xl font-semibold mb-4'>Review Extracted Courses</h3>
                 {parsedCourses.map((course) => (
-                    <div key={course.code} className="card bg-base-200 shadow-sm">
-                        <div className="card-body p-4">
-                            <div 
-                                className="flex items-center justify-between cursor-pointer"
-                                onClick={() => toggleCourseExpanded(course.code)}
-                            >
+                    <div key={course.code} className='card bg-base-200 shadow-sm'>
+                        <div className='card-body p-4'>
+                            <div className='flex items-center justify-between cursor-pointer' onClick={() => toggleCourseExpanded(course.code)}>
                                 <div>
-                                    <h4 className="text-lg font-medium">{course.code} - {course.name}</h4>
-                                    <p className="text-sm text-base-content/70">{course.term}</p>
+                                    <h4 className='text-lg font-medium'>
+                                        {course.code} - {course.name}
+                                    </h4>
+                                    <p className='text-sm text-base-content/70'>{course.term}</p>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <button 
-                                        className="btn btn-ghost btn-sm"
+                                <div className='flex items-center gap-2'>
+                                    <button
+                                        className='btn btn-ghost btn-sm'
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setEditingCourse(course.code);
-                                        }}
-                                    >
-                                        <Edit2 className="w-4 h-4" />
+                                        }}>
+                                        <Edit2 className='w-4 h-4' />
                                     </button>
-                                    {expandedCourses[course.code] ? 
-                                        <ChevronUp className="w-5 h-5" /> : 
-                                        <ChevronDown className="w-5 h-5" />
-                                    }
+                                    {expandedCourses[course.code] ? <ChevronUp className='w-5 h-5' /> : <ChevronDown className='w-5 h-5' />}
                                 </div>
                             </div>
 
                             {expandedCourses[course.code] && (
-                                <div className="mt-4 space-y-4">
-                                    {course.description && (
-                                        <p className="text-sm text-base-content/80">{course.description}</p>
-                                    )}
-                                    
+                                <div className='mt-4 space-y-4'>
+                                    {course.description && <p className='text-sm text-base-content/80'>{course.description}</p>}
+
                                     {course.sections.map((section) => (
-                                        <div key={section.section_id} className="bg-base-100 rounded-lg p-4">
-                                            <h5 className="font-medium mb-2">Section {section.section_id}</h5>
-                                            
+                                        <div key={section.section_id} className='bg-base-100 rounded-lg p-4'>
+                                            <h5 className='font-medium mb-2'>Section {section.section_id}</h5>
+
                                             {section.instructor.name && (
-                                                <div className="mb-3">
-                                                    <p className="text-sm font-medium">Instructor</p>
-                                                    <p className="text-sm">{section.instructor.name}</p>
-                                                    {section.instructor.email && (
-                                                        <p className="text-sm text-base-content/70">{section.instructor.email}</p>
-                                                    )}
+                                                <div className='mb-3'>
+                                                    <p className='text-sm font-medium'>Instructor</p>
+                                                    <p className='text-sm'>{section.instructor.name}</p>
+                                                    {section.instructor.email && <p className='text-sm text-base-content/70'>{section.instructor.email}</p>}
                                                 </div>
                                             )}
 
-                                            <div className="space-y-2">
+                                            <div className='space-y-2'>
                                                 {section.schedule.map((scheduleItem, idx) => (
-                                                    <div key={idx} className="flex items-start gap-3 text-sm">
-                                                        <div className="flex items-center gap-1 min-w-[120px]">
-                                                            <Clock className="w-4 h-4" />
+                                                    <div key={idx} className='flex items-start gap-3 text-sm'>
+                                                        <div className='flex items-center gap-1 min-w-[120px]'>
+                                                            <Clock className='w-4 h-4' />
                                                             <span>{scheduleItem.day}</span>
                                                         </div>
-                                                        <div className="flex items-center gap-1">
+                                                        <div className='flex items-center gap-1'>
                                                             <span>
                                                                 {formatTime(scheduleItem.start_time)} - {formatTime(scheduleItem.end_time)}
                                                             </span>
                                                         </div>
-                                                        <div className="flex items-center gap-1 ml-4">
-                                                            <MapPin className="w-4 h-4" />
+                                                        <div className='flex items-center gap-1 ml-4'>
+                                                            <MapPin className='w-4 h-4' />
                                                             <span>{scheduleItem.location}</span>
                                                         </div>
-                                                        <span className="badge badge-sm">{scheduleItem.type}</span>
+                                                        <span className='badge badge-sm'>{scheduleItem.type}</span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -267,23 +262,21 @@ function TimetableSetup() {
                     </div>
                 ))}
 
-                <div className="flex justify-end gap-4 mt-6">
-                    <button 
-                        className="btn btn-ghost"
+                <div className='flex justify-end gap-4 mt-6'>
+                    <button
+                        className='btn btn-ghost'
                         onClick={() => {
                             setParsedCourses([]);
                             setCurrentFileId(null);
-                        }}
-                    >
+                        }}>
                         Cancel
                     </button>
-                    <button 
-                        className="btn btn-primary"
+                    <button
+                        className='btn btn-primary'
                         onClick={() => {
                             // TODO: Save courses to database
                             navigate({ to: '/dashboard' });
-                        }}
-                    >
+                        }}>
                         Save Courses
                     </button>
                 </div>
@@ -293,9 +286,9 @@ function TimetableSetup() {
 
     const handleRetryProcessing = (fileId: string) => {
         setCurrentFileId(fileId);
-        
+
         processTimetable({
-            variables: { fileId }
+            variables: { fileId },
         })
             .then(({ data }) => {
                 if (!data?.processTimetable.success) {
@@ -303,7 +296,7 @@ function TimetableSetup() {
                 }
                 setParsedCourses(data.processTimetable.courses);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Process error:', error);
                 setUploadError(error instanceof Error ? error.message : 'Failed to process file. Please try again.');
                 setCurrentFileId(null);
@@ -325,35 +318,31 @@ function TimetableSetup() {
 
         if (isImage) {
             return (
-                <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-base-300">
-                    <img 
-                        src={upload.url} 
-                        alt={upload.fileName}
-                        className="w-full h-full object-cover"
-                    />
+                <div className='relative w-20 h-20 rounded-lg overflow-hidden bg-base-300'>
+                    <img src={upload.url} alt={upload.fileName} className='w-full h-full object-cover' />
                 </div>
             );
         }
 
         if (isPDF) {
             return (
-                <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-base-300 flex items-center justify-center">
-                    <div className="text-error text-2xl font-bold">PDF</div>
+                <div className='relative w-20 h-20 rounded-lg overflow-hidden bg-base-300 flex items-center justify-center'>
+                    <div className='text-error text-2xl font-bold'>PDF</div>
                 </div>
             );
         }
 
         if (isDoc) {
             return (
-                <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-base-300 flex items-center justify-center">
-                    <div className="text-primary text-2xl font-bold">DOC</div>
+                <div className='relative w-20 h-20 rounded-lg overflow-hidden bg-base-300 flex items-center justify-center'>
+                    <div className='text-primary text-2xl font-bold'>DOC</div>
                 </div>
             );
         }
 
         return (
-            <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-base-300 flex items-center justify-center">
-                <div className="text-base-content/50 text-2xl font-bold">?</div>
+            <div className='relative w-20 h-20 rounded-lg overflow-hidden bg-base-300 flex items-center justify-center'>
+                <div className='text-base-content/50 text-2xl font-bold'>?</div>
             </div>
         );
     };
@@ -361,10 +350,10 @@ function TimetableSetup() {
     const renderRecentUploads = () => {
         if (loadingUploads) {
             return (
-                <div className="mt-8 border-t pt-8">
-                    <h3 className="text-lg font-semibold mb-4">Recent Uploads</h3>
-                    <div className="flex justify-center">
-                        <span className="loading loading-spinner loading-md"></span>
+                <div className='mt-8 border-t pt-8'>
+                    <h3 className='text-lg font-semibold mb-4'>Recent Uploads</h3>
+                    <div className='flex justify-center'>
+                        <span className='loading loading-spinner loading-md'></span>
                     </div>
                 </div>
             );
@@ -373,28 +362,21 @@ function TimetableSetup() {
         if (!recentUploads.length) return null;
 
         return (
-            <div className="mt-8 border-t pt-8">
-                <h3 className="text-lg font-semibold mb-4">Recent Uploads</h3>
-                <div className="grid gap-4">
+            <div className='mt-8 border-t pt-8'>
+                <h3 className='text-lg font-semibold mb-4'>Recent Uploads</h3>
+                <div className='grid gap-4'>
                     {recentUploads.map((upload) => (
-                        <div 
-                            key={upload.fileId} 
-                            className="flex items-center gap-4 p-4 bg-base-200 rounded-lg"
-                        >
+                        <div key={upload.fileId} className='flex items-center gap-4 p-4 bg-base-200 rounded-lg'>
                             {renderFilePreview(upload)}
-                            <div className="flex-1">
-                                <p className="font-medium">{upload.fileName}</p>
-                                <p className="text-sm text-base-content/70">
+                            <div className='flex-1'>
+                                <p className='font-medium'>{upload.fileName}</p>
+                                <p className='text-sm text-base-content/70'>
                                     {new Date(upload.uploadedAt).toLocaleDateString()} - {formatFileSize(upload.size)}
                                 </p>
                             </div>
-                            <button
-                                className="btn btn-ghost btn-sm"
-                                onClick={() => handleRetryProcessing(upload.fileId)}
-                                disabled={currentFileId !== null}
-                            >
-                                <RefreshCw className="w-4 h-4" />
-                                <span className="ml-2">Retry Processing</span>
+                            <button className='btn btn-ghost btn-sm' onClick={() => handleRetryProcessing(upload.fileId)} disabled={currentFileId !== null}>
+                                <RefreshCw className='w-4 h-4' />
+                                <span className='ml-2'>Retry Processing</span>
                             </button>
                         </div>
                     ))}

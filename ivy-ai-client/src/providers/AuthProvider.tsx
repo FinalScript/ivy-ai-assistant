@@ -85,6 +85,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
         initAuth();
     }, []);
 
+    useEffect(() => {
+        const getSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            console.log(session?.access_token)
+        };
+
+        getSession();
+    }, [user]);
+
     const signOut = async () => {
         setIsLoading(true);
         await supabase.auth.signOut();
