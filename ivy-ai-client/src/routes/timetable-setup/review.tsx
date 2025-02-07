@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, useRouterState } from '@tanstack/react-router';
-import { FileText, Upload, Check, AlertCircle, ChevronDown, ChevronRight, Edit3, Clock, MapPin } from 'lucide-react';
+import { AlertCircle, Check, Clock, Edit3, MapPin, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Course } from '../../__generated__/graphql';
 

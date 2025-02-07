@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client';
-import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router';
-import { Calendar, Sparkles, AlertCircle, Upload, Check, X, Loader2, Clock } from 'lucide-react';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { AlertCircle, Calendar, Check, Clock, Loader2, Sparkles, Upload, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Course } from '../../__generated__/graphql';
@@ -8,7 +8,7 @@ import { PROCESS_TIMETABLE } from '../../graphql/timetable';
 import { useRecentUploads } from '../../hooks/useRecentUploads';
 import { supabase } from '../../lib/supabase';
 import { RecentUpload } from '../../types/timetable';
-import { validateFile, getMimeType, isImageFile } from '../../utils/fileUtils';
+import { getMimeType, isImageFile, validateFile } from '../../utils/fileUtils';
 import { getFileIcon, getRecentFileIcon } from '../../utils/iconUtils';
 
 const MAX_FILES = 3;
@@ -30,7 +30,6 @@ export const Route = createFileRoute('/timetable-setup/')({
 export function TimetableSetup() {
     const router = useRouter();
     const [userId, setUserId] = useState<string | null>(null);
-    const [parsedCourses, setParsedCourses] = useState<Course[]>([]);
     const { recentUploads, loadingUploads } = useRecentUploads(userId);
     const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -198,10 +197,9 @@ export function TimetableSetup() {
     );
 
     const uploadToSupabase = async (file: File): Promise<string> => {
-        const fileExt = file.name.split('.').pop();
         const filePath = `${userId}/${file.name}`;
 
-        const { error: uploadError, data } = await supabase.storage.from('schedules').upload(filePath, file);
+        const { error: uploadError } = await supabase.storage.from('schedules').upload(filePath, file);
 
         if (uploadError) {
             throw new Error('Failed to upload file to storage');
