@@ -121,45 +121,41 @@ export const TimetableResolver = {
         // Extract file data
         const filesData = downloadResults.map(result => result.data!);
 
-        // Process all files
-        for (let i = 0; i < filesData.length; i++) {
-          const fileData = filesData[i];
-          
-          await updateProcessingStatus({
-            fileId: mainFileId,
-            status: 'PROCESSING',
-            message: `Analyzing file ${i + 1} of ${filesData.length}...`,
-            progress: 25 + ((i) / filesData.length) * 50
-          });
+        // Process all files at once
+        await updateProcessingStatus({
+          fileId: mainFileId,
+          status: 'PROCESSING',
+          message: `Analyzing ${filesData.length} files...`,
+          progress: 25
+        });
 
-          const extractedCourses = await processTimetableFile(fileData);
-          const validatedCourses = validateCourseData(extractedCourses);
+        const extractedCourses = await processTimetableFile(filesData);
+        const validatedCourses = validateCourseData(extractedCourses);
 
-          // Merge courses with the same code and term
-          validatedCourses.forEach(course => {
-            const key = `${course.code}-${course.term}`;
-            if (!uniqueCourses.has(key)) {
-              uniqueCourses.set(key, course);
-            } else {
-              // Merge sections if they don't already exist
-              const existingCourse = uniqueCourses.get(key);
-              const existingSectionIds = new Set(existingCourse.sections.map((s: any) => s.section_id));
-              
-              course.sections.forEach((section: any) => {
-                if (!existingSectionIds.has(section.section_id)) {
-                  existingCourse.sections.push(section);
-                }
-              });
-            }
-          });
+        // Merge courses with the same code and term
+        validatedCourses.forEach(course => {
+          const key = `${course.code}-${course.term}`;
+          if (!uniqueCourses.has(key)) {
+            uniqueCourses.set(key, course);
+          } else {
+            // Merge sections if they don't already exist
+            const existingCourse = uniqueCourses.get(key);
+            const existingSectionIds = new Set(existingCourse.sections.map((s: any) => s.section_id));
+            
+            course.sections.forEach((section: any) => {
+              if (!existingSectionIds.has(section.section_id)) {
+                existingCourse.sections.push(section);
+              }
+            });
+          }
+        });
 
-          await updateProcessingStatus({
-            fileId: mainFileId,
-            status: 'PROCESSING',
-            message: `Organizing extracted courses...`,
-            progress: 75 + ((i + 1) / filesData.length) * 25
-          });
-        }
+        await updateProcessingStatus({
+          fileId: mainFileId,
+          status: 'PROCESSING',
+          message: `Organizing extracted courses...`,
+          progress: 75
+        });
 
         // Convert the Map values back to an array
         allCourses = Array.from(uniqueCourses.values());

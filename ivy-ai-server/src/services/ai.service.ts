@@ -46,13 +46,13 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-thinking-exp-0
 
 
 /**
- * Process a file and extract course information using AI
+ * Process multiple files and extract course information using AI
  */
-export const processTimetableFile = async (fileData: Blob): Promise<ExtractedCourseData[]> => {
+export const processTimetableFile = async (filesData: Blob[]): Promise<ExtractedCourseData[]> => {
   const prompt = `You are an expert AI assistant specializing in parsing academic timetables.
 
     TASK:
-    Extract course information and schedules from the provided timetable image, grouping different sections of the same course together.
+    Extract and merge course information and schedules from the provided timetable image(s). When multiple files are provided, combine information for the same courses (identified by matching course code or course name) into a single course entry.
 
     REQUIRED OUTPUT FORMAT:
     {
@@ -80,15 +80,17 @@ export const processTimetableFile = async (fileData: Blob): Promise<ExtractedCou
     }
 
     RULES:
-    1. Group all sections of the same course under one course object
+    1. When processing multiple files, merge courses with matching course codes or names
     2. Extract ONLY course information and schedules
     3. Use full day names (Monday, Tuesday, etc.)
     4. Convert all times to ISO 8601 format with timezone
     5. Use local timezone if none specified
     6. Set missing values to null
     7. Do not include assessment information
+    8. If conflicting information exists for the same course across files, preserve all unique portions
 
     VALIDATION:
+    - There must not be any duplicate course codes or names
     - All dates must be in ISO 8601 format
     - Course codes must be uppercase
     - Day names must be capitalized
@@ -99,25 +101,25 @@ export const processTimetableFile = async (fileData: Blob): Promise<ExtractedCou
     Provide ONLY the JSON output. No additional text or explanations.`;
 
   try {
-    // Convert Blob to base64
-    const buffer = await fileData.arrayBuffer();
-    const base64Data = Buffer.from(buffer).toString('base64');
-    
-    // Prepare image part for the model
-    const imagePart = {
-      inlineData: {
-        mimeType: fileData.type,
-        data: base64Data,
-      }
-    };
+    // Convert all Blobs to base64 and prepare image parts
+    const imageParts = await Promise.all(filesData.map(async (fileData) => {
+      const buffer = await fileData.arrayBuffer();
+      const base64Data = Buffer.from(buffer).toString('base64');
+      return {
+        inlineData: {
+          mimeType: fileData.type,
+          data: base64Data,
+        }
+      };
+    }));
 
-    // Prepare complete prompt with text and image
+    // Prepare complete prompt with text and all images
     const promptParts = [
       { text: prompt },
-      imagePart
+      ...imageParts
     ];
 
-    // Generate content with image
+    // Generate content with all images
     const result = await model.generateContent(promptParts);
     const response = result.response;
     let text = response.text();
@@ -159,7 +161,7 @@ export const processTimetableFile = async (fileData: Blob): Promise<ExtractedCou
     return extractedData;
   } catch (error) {
     console.error('AI Processing Error:', error);
-    throw new Error('Failed to process file with AI');
+    throw new Error('Failed to process files with AI');
   }
 }
 
@@ -167,12 +169,41 @@ export const processTimetableFile = async (fileData: Blob): Promise<ExtractedCou
  * Validate and clean the extracted course data
  */
 export const validateCourseData = (courses: ExtractedCourseData[]): ExtractedCourseData[] => {
-  return courses.map(course => ({
-    ...course,
-    // Add any necessary data cleaning or validation here
-    // For example, ensuring all required fields are present
-    // and formatting dates correctly
-  }))
+  // Create a map to store unique courses by code
+  const uniqueCourses = new Map<string, ExtractedCourseData>();
+
+  // Process each course
+  courses.forEach(course => {
+    const existingCourse = uniqueCourses.get(course.code);
+    
+    if (!existingCourse) {
+      // If course doesn't exist yet, add it
+      uniqueCourses.set(course.code, course);
+    } else {
+      // Merge sections from duplicate course
+      existingCourse.sections = [
+        ...existingCourse.sections,
+        ...course.sections
+      ];
+
+      // Keep the most complete course info
+      if (course.name && !existingCourse.name) {
+        existingCourse.name = course.name;
+      }
+      if (course.term && !existingCourse.term) {
+        existingCourse.term = course.term;
+      }
+      if (course.description && !existingCourse.description) {
+        existingCourse.description = course.description;
+      }
+
+      // Update the map with merged course
+      uniqueCourses.set(course.code, existingCourse);
+    }
+  });
+
+  // Convert map values back to array
+  return Array.from(uniqueCourses.values());
 }
 
 /**
