@@ -1,92 +1,158 @@
-import { createFileRoute, useNavigate, useRouterState } from '@tanstack/react-router';
-import { AlertCircle, Check, Clock, Edit3, MapPin, Upload } from 'lucide-react';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { AlertCircle, Check, Clock, Edit3, MapPin, Upload, Globe } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Course } from '../../__generated__/graphql';
+import { CourseEditModal } from '../../components/CourseEditModal';
 
 interface CourseCardProps {
     course: Course;
     onEdit: (courseId: string) => void;
     onUploadOutline: (courseId: string) => void;
+    hasOutline?: boolean;
 }
 
-const CourseCard = ({ course, onEdit, onUploadOutline }: CourseCardProps) => {
+const CourseCard = ({ course, onEdit, onUploadOutline, hasOutline = false }: CourseCardProps) => {
     return (
-        <div className='card bg-base-100 shadow-lg'>
+        <div
+            className='card bg-base-100 shadow-lg transition-all duration-500 border border-base-300/50 relative group overflow-hidden
+            hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.3)] hover:border-primary/30
+            animate-background-shine bg-[length:400%_100%]
+            bg-[linear-gradient(110deg,transparent,45%,var(--base-content-rgb)/2%,55%,transparent)]'>
+            {/* Ambient Corner Glow */}
+            <div className='absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent opacity-40 blur-2xl' />
+            <div className='absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-secondary/10 to-transparent opacity-40 blur-2xl' />
+
+            {/* Animated Background Pattern */}
+            <div
+                className='absolute inset-0 opacity-[0.02] pointer-events-none 
+                bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:16px_16px] 
+                animate-subtle-bounce
+                group-hover:scale-[1.02] group-hover:rotate-[0.5deg] transition-transform duration-700 -z-[1]'
+            />
+
+            {/* Ambient Gradient Animation */}
+            <div
+                className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-30
+                animate-gradient-shift [animation-duration:8s]'
+            />
+
+            {/* Multi-layered Gradient Glow Effects */}
+            <div className='absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none'>
+                {/* Primary glow layer */}
+                <div className='absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20 blur-xl' />
+                {/* Secondary animated glow */}
+                <div
+                    className='absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-secondary/10 
+                    animate-pulse [animation-duration:3s]'
+                />
+                {/* Shimmer effect */}
+                <div
+                    className='absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent 
+                    translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out'
+                />
+            </div>
+
+            {/* Edit Button with enhanced glow */}
+            <button
+                className='absolute top-3 right-3 btn btn-sm normal-case gap-2 
+                    bg-base-200/80 hover:bg-primary/20 border-none
+                    shadow-[0_0_10px_-3px_rgba(var(--base-content-rgb),0.1)]
+                    backdrop-blur-sm transition-all duration-300
+                    hover:shadow-[0_0_15px_-3px_rgba(var(--primary-rgb),0.5)]
+                    hover:scale-105 group/edit z-10'
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(course.code);
+                }}>
+                <Edit3 className='w-4 h-4 group-hover/edit:text-primary transition-colors animate-pulse [animation-duration:4s]' />
+                <span className='text-xs group-hover/edit:text-primary transition-colors'>Edit Course</span>
+            </button>
+
             <div className='card-body p-4'>
-                <div className='flex items-start justify-between'>
-                    <div>
-                        <h3 className='text-lg font-semibold flex items-center gap-2'>
-                            <span className='px-2 py-0.5 rounded bg-primary/10 text-primary text-sm font-mono'>{course.code}</span>
-                            <span>{course.name}</span>
-                        </h3>
-                        <p className='text-sm text-base-content/70 mt-1'>{course.description || 'No description available'}</p>
-                        <div className='flex items-center gap-3 mt-2 text-sm text-base-content/70'>
-                            <span className='flex items-center gap-1'>
-                                <Clock className='w-4 h-4' />
-                                {course.term}
-                            </span>
-                            {course?.sections?.[0]?.schedule?.[0] && (
-                                <span className='flex items-center gap-1'>
-                                    <MapPin className='w-4 h-4' />
-                                    {course.sections[0].schedule[0].location}
-                                </span>
-                            )}
-                        </div>
+                {/* Course Header with gradient text */}
+                <div className='mb-1 relative'>
+                    <div
+                        className='font-mono text-sm bg-gradient-to-r from-primary/90 to-secondary/90 bg-clip-text text-transparent
+                        animate-gradient-shift [animation-duration:6s]'>
+                        {course.code}
                     </div>
-                    <div className='flex gap-2'>
-                        <button className='btn btn-ghost btn-sm' onClick={() => onEdit(course.code)}>
-                            <Edit3 className='w-4 h-4' />
-                            Edit
-                        </button>
-                        <button className='btn btn-primary btn-sm' onClick={() => onUploadOutline(course.code)}>
-                            <Upload className='w-4 h-4' />
-                            Upload Outline
-                        </button>
-                    </div>
+                    <h3 className='font-semibold text-base line-clamp-1 group-hover:text-primary transition-colors'>{course.name}</h3>
                 </div>
 
-                {/* Course Details Accordion */}
-                <div className='collapse collapse-arrow mt-4 bg-base-200/50'>
-                    <input type='checkbox' />
-                    <div className='collapse-title text-sm font-medium py-2'>View Details</div>
-                    <div className='collapse-content'>
-                        <div className='space-y-4 pt-2'>
-                            {course?.sections?.map((section, index) => (
-                                <div key={index} className='space-y-2'>
-                                    <h4 className='font-medium'>Section {section?.section_id}</h4>
+                {/* Course Details with glowing badges */}
+                <div className='flex items-center gap-2 text-xs my-3'>
+                    <span
+                        className='flex items-center gap-1.5 px-2 py-1 rounded-lg 
+                        bg-gradient-to-r from-base-200/50 to-base-300/50 backdrop-blur-sm
+                        shadow-[0_0_10px_-5px_rgba(var(--base-content-rgb),0.1)]
+                        hover:shadow-[0_0_10px_-2px_rgba(var(--primary-rgb),0.3)] 
+                        hover:bg-primary/10 transition-all duration-300
+                        animate-subtle-bounce [animation-delay:100ms]'>
+                        <Clock className='w-3 h-3 animate-pulse [animation-duration:4s]' />
+                        {course.term}
+                    </span>
+                    <span
+                        className='flex items-center gap-1.5 px-2 py-1 rounded-lg 
+                        bg-gradient-to-r from-base-200/50 to-base-300/50 backdrop-blur-sm
+                        shadow-[0_0_10px_-5px_rgba(var(--base-content-rgb),0.1)]
+                        hover:shadow-[0_0_10px_-2px_rgba(var(--secondary-rgb),0.3)]
+                        hover:bg-secondary/10 transition-all duration-300
+                        animate-subtle-bounce [animation-delay:200ms]'>
+                        <Globe className='w-3 h-3 animate-pulse [animation-duration:4s] [animation-delay:1s]' />
+                        {course.sections?.length || 0} section{(course.sections?.length || 0) !== 1 ? 's' : ''}
+                    </span>
+                </div>
 
-                                    {/* Instructor Info */}
-                                    <div className='bg-base-100 rounded-lg p-3'>
-                                        <p className='font-medium'>{section?.instructor?.name}</p>
-                                        <p className='text-sm text-base-content/70'>{section?.instructor?.email}</p>
-                                        {section?.instructor?.office && (
-                                            <div className='mt-2 text-sm'>
-                                                <p className='text-base-content/70'>Office: {section?.instructor?.office?.location}</p>
-                                                {section?.instructor?.office?.hours?.map((hour, idx) => (
-                                                    <p key={idx} className='text-base-content/70'>
-                                                        {hour?.day}: {hour?.start_time} - {hour?.end_time}
-                                                    </p>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
+                {/* Outline Section with enhanced effects */}
+                <div className='rounded-xl p-3 relative group/outline overflow-hidden'>
+                    {/* Ambient glow */}
+                    <div className='absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-secondary/3 animate-gradient-shift [animation-duration:10s]' />
 
-                                    {/* Schedule */}
-                                    <div className='space-y-1'>
-                                        {section?.schedule?.map((item, idx) => (
-                                            <div key={idx} className='flex items-center gap-2 text-sm'>
-                                                <span className='w-20 font-medium'>{item?.day}</span>
-                                                <span>
-                                                    {item?.start_time} - {item?.end_time}
-                                                </span>
-                                                <span className='text-base-content/70'>• {item?.location}</span>
-                                                <span className='badge badge-sm'>{item?.type}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
+                    {/* Animated gradient background */}
+                    <div className='absolute inset-0 bg-gradient-to-br from-base-200/90 via-base-200/80 to-base-300/70 backdrop-blur-sm' />
+                    <div
+                        className='absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5 opacity-0 
+                        group-hover/outline:opacity-100 transition-opacity duration-500'
+                    />
+                    {/* Animated border glow */}
+                    <div
+                        className='absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 opacity-0 
+                        group-hover/outline:opacity-100 transition-opacity duration-500 blur-xl'
+                    />
+
+                    <div className='relative flex items-center justify-between'>
+                        <div className='flex items-center gap-3'>
+                            <div
+                                className='w-8 h-8 rounded-lg flex items-center justify-center 
+                                bg-gradient-to-br from-base-300/90 to-base-300/70 backdrop-blur-sm
+                                shadow-[0_0_15px_-5px_rgba(var(--base-content-rgb),0.15)]
+                                group-hover/outline:shadow-[0_0_15px_-3px_rgba(var(--primary-rgb),0.5)]
+                                group-hover/outline:bg-primary/10 transition-all duration-500
+                                animate-subtle-bounce'>
+                                <Upload
+                                    className='w-4 h-4 group-hover/outline:text-primary transition-colors
+                                    animate-pulse [animation-duration:4s] [animation-delay:500ms]
+                                    group-hover/outline:animate-bounce [animation-duration:2s]'
+                                />
+                            </div>
+                            <div>
+                                <div className='font-medium text-sm group-hover/outline:text-primary transition-colors'>Course Outline</div>
+                                <div className='text-xs text-base-content/60 animate-fade-in'>Enables AI schedule optimization</div>
+                            </div>
                         </div>
+                        <button
+                            className='btn btn-sm bg-accent/90 hover:bg-accent-focus text-accent-content border-none
+                                shadow-[0_0_15px_-5px_rgba(var(--accent-rgb),0.2)]
+                                transition-all duration-300 hover:scale-105
+                                hover:shadow-[0_0_15px_-3px_rgba(var(--accent-rgb),0.5)]
+                                hover:animate-pulse [animation-duration:2s]
+                                animate-subtle-bounce [animation-delay:300ms]'
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onUploadOutline(course.code);
+                            }}>
+                            Upload
+                        </button>
                     </div>
                 </div>
             </div>
@@ -100,17 +166,20 @@ export const Route = createFileRoute('/timetable-setup/review')({
 
 function ReviewCourses() {
     const navigate = useNavigate();
-    const routerState: any = useRouterState();
-    const courses = (routerState.location.state?.courses as Course[]) || [];
+    const [courses, setCourses] = useState<Course[]>([]);
     const [hasErrors, setHasErrors] = useState(false);
+    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+    const [editModalOpen, setEditModalOpen] = useState(false);
+
+    // Get initial courses data from URL state
+    useEffect(() => {
+        const state = window.history.state;
+        if (state?.courses) {
+            setCourses(state.courses);
+        }
+    }, []);
 
     useEffect(() => {
-        // If no courses data, redirect back to upload page
-        // if (!courses || courses.length === 0) {
-        //     navigate({ to: '/timetable-setup' });
-        //     return;
-        // }
-
         // Check for any potential issues in the parsed data
         const errors = courses.some(
             (course) =>
@@ -121,11 +190,20 @@ function ReviewCourses() {
                 course.sections.some((section) => !section?.instructor || !section?.schedule || section?.schedule?.length === 0)
         );
         setHasErrors(errors);
-    }, [courses, navigate]);
+    }, [courses]);
 
     const handleEditCourse = (courseId: string) => {
-        // Handle editing course
-        console.log('Edit course:', courseId);
+        const course = courses.find((c) => c.code === courseId);
+        if (course) {
+            setSelectedCourse(course);
+            setEditModalOpen(true);
+        }
+    };
+
+    const handleSaveCourse = (updatedCourse: Course) => {
+        setCourses((prevCourses) => prevCourses.map((course) => (course.code === updatedCourse.code ? updatedCourse : course)));
+        setEditModalOpen(false);
+        setSelectedCourse(null);
     };
 
     const handleUploadOutline = (courseId: string) => {
@@ -148,37 +226,39 @@ function ReviewCourses() {
 
     return (
         <div className='min-h-screen bg-gradient-to-b from-base-200 to-base-300 py-8 px-4 mt-14'>
-            <div className='max-w-4xl mx-auto'>
-                <div className='text-center mb-8'>
-                    <h1 className='text-3xl font-bold mb-2'>Review Your Courses</h1>
-                    <p className='text-base-content/70'>
-                        We've parsed {courses.length} course
-                        {courses.length !== 1 ? 's' : ''} from your schedule. Please review the information and upload course outlines.
-                    </p>
+            <div className='max-w-7xl mx-auto'>
+                <div className='flex justify-between items-center mb-8'>
+                    <h2 className='text-2xl font-bold'>Review Your Courses</h2>
+                    <button className='btn btn-primary' onClick={handleConfirm} disabled={courses.length === 0 || hasErrors}>
+                        <Check className='w-5 h-5 mr-2' />
+                        Confirm and Continue
+                    </button>
                 </div>
 
                 {hasErrors && (
                     <div className='alert alert-warning mb-6'>
                         <AlertCircle className='w-5 h-5' />
-                        <span>Some courses may have missing or incomplete information. Please review carefully.</span>
+                        <span>Some courses have missing or incomplete information. Please review and edit as needed.</span>
                     </div>
                 )}
 
-                <div className='space-y-4'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {courses.map((course) => (
                         <CourseCard key={course.code} course={course} onEdit={handleEditCourse} onUploadOutline={handleUploadOutline} />
                     ))}
                 </div>
 
-                <div className='mt-8 flex justify-end gap-3'>
-                    <button className='btn btn-ghost' onClick={() => navigate({ to: '/timetable-setup' })}>
-                        Back to Upload
-                    </button>
-                    <button className='btn btn-primary' onClick={handleConfirm}>
-                        <Check className='w-5 h-5 mr-2' />
-                        Confirm and Continue
-                    </button>
-                </div>
+                {selectedCourse && (
+                    <CourseEditModal
+                        course={selectedCourse}
+                        isOpen={editModalOpen}
+                        onClose={() => {
+                            setEditModalOpen(false);
+                            setSelectedCourse(null);
+                        }}
+                        onSave={handleSaveCourse}
+                    />
+                )}
             </div>
         </div>
     );
