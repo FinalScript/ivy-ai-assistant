@@ -23,4 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+# Generated files
+src/__generated__
+
 .env

@@ -1,7 +1,7 @@
-import { gql } from '@apollo/client'
+import { gql } from "../__generated__";
 import { User } from './auth'
 
-export const COMPLETE_ONBOARDING_MUTATION = gql`
+export const COMPLETE_ONBOARDING_MUTATION = gql(`
     mutation CompleteOnboarding($input: OnboardingInput!) {
         completeOnboarding(input: $input) {
             id
@@ -14,7 +14,7 @@ export const COMPLETE_ONBOARDING_MUTATION = gql`
             onboardingCompleted
         }
     }
-`
+`);
 
 export interface OnboardingInput {
     firstName: string
@@ -31,4 +31,4 @@ export interface OnboardingUser extends User {
     major: string | null
     graduationYear: string | null
     onboardingCompleted: boolean
-} 
+}

@@ -12,15 +12,24 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as OnboardingImport } from './routes/onboarding'
+import { Route as DashboardImport } from './routes/dashboard'
 import { Route as AuthImport } from './routes/auth'
 import { Route as R404Import } from './routes/404'
 import { Route as IndexImport } from './routes/index'
+import { Route as TimetableSetupIndexImport } from './routes/timetable-setup/index'
+import { Route as TimetableSetupReviewImport } from './routes/timetable-setup/review'
 
 // Create/Update Routes
 
 const OnboardingRoute = OnboardingImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardRoute = DashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,6 +48,18 @@ const R404Route = R404Import.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TimetableSetupIndexRoute = TimetableSetupIndexImport.update({
+  id: '/timetable-setup/',
+  path: '/timetable-setup/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TimetableSetupReviewRoute = TimetableSetupReviewImport.update({
+  id: '/timetable-setup/review',
+  path: '/timetable-setup/review',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,11 +88,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardImport
+      parentRoute: typeof rootRoute
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingImport
+      parentRoute: typeof rootRoute
+    }
+    '/timetable-setup/review': {
+      id: '/timetable-setup/review'
+      path: '/timetable-setup/review'
+      fullPath: '/timetable-setup/review'
+      preLoaderRoute: typeof TimetableSetupReviewImport
+      parentRoute: typeof rootRoute
+    }
+    '/timetable-setup/': {
+      id: '/timetable-setup/'
+      path: '/timetable-setup'
+      fullPath: '/timetable-setup'
+      preLoaderRoute: typeof TimetableSetupIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -83,14 +125,20 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/timetable-setup/review': typeof TimetableSetupReviewRoute
+  '/timetable-setup': typeof TimetableSetupIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/timetable-setup/review': typeof TimetableSetupReviewRoute
+  '/timetable-setup': typeof TimetableSetupIndexRoute
 }
 
 export interface FileRoutesById {
@@ -98,15 +146,40 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/timetable-setup/review': typeof TimetableSetupReviewRoute
+  '/timetable-setup/': typeof TimetableSetupIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/404' | '/auth' | '/onboarding'
+  fullPaths:
+    | '/'
+    | '/404'
+    | '/auth'
+    | '/dashboard'
+    | '/onboarding'
+    | '/timetable-setup/review'
+    | '/timetable-setup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/404' | '/auth' | '/onboarding'
-  id: '__root__' | '/' | '/404' | '/auth' | '/onboarding'
+  to:
+    | '/'
+    | '/404'
+    | '/auth'
+    | '/dashboard'
+    | '/onboarding'
+    | '/timetable-setup/review'
+    | '/timetable-setup'
+  id:
+    | '__root__'
+    | '/'
+    | '/404'
+    | '/auth'
+    | '/dashboard'
+    | '/onboarding'
+    | '/timetable-setup/review'
+    | '/timetable-setup/'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,14 +187,20 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
   AuthRoute: typeof AuthRoute
+  DashboardRoute: typeof DashboardRoute
   OnboardingRoute: typeof OnboardingRoute
+  TimetableSetupReviewRoute: typeof TimetableSetupReviewRoute
+  TimetableSetupIndexRoute: typeof TimetableSetupIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
   AuthRoute: AuthRoute,
+  DashboardRoute: DashboardRoute,
   OnboardingRoute: OnboardingRoute,
+  TimetableSetupReviewRoute: TimetableSetupReviewRoute,
+  TimetableSetupIndexRoute: TimetableSetupIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -137,7 +216,10 @@ export const routeTree = rootRoute
         "/",
         "/404",
         "/auth",
-        "/onboarding"
+        "/dashboard",
+        "/onboarding",
+        "/timetable-setup/review",
+        "/timetable-setup/"
       ]
     },
     "/": {
@@ -149,8 +231,17 @@ export const routeTree = rootRoute
     "/auth": {
       "filePath": "auth.tsx"
     },
+    "/dashboard": {
+      "filePath": "dashboard.tsx"
+    },
     "/onboarding": {
       "filePath": "onboarding.tsx"
+    },
+    "/timetable-setup/review": {
+      "filePath": "timetable-setup/review.tsx"
+    },
+    "/timetable-setup/": {
+      "filePath": "timetable-setup/index.tsx"
     }
   }
 }

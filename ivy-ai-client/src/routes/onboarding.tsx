@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { COMPLETE_ONBOARDING_MUTATION } from '../graphql/onboarding';
 import { useDebounce } from '../hooks/useDebounce';
 import { useAuth } from '../providers/AuthProvider';
+import { User } from '../__generated__/graphql';
 
 interface School {
     id: string;
@@ -43,7 +44,7 @@ export const Route = createFileRoute('/onboarding')({
 
 function Onboarding() {
     const [currentStep, setCurrentStep] = useState<(typeof steps)[number]['id']>('welcome');
-    const [userData, setUserData] = useState<NameData & PersonalInfoData | null>(null);
+    const [userData, setUserData] = useState<(NameData & PersonalInfoData) | null>(null);
     const [schoolQuery, setSchoolQuery] = useState('');
     const [schools, setSchools] = useState<School[]>([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -56,7 +57,7 @@ function Onboarding() {
 
     const [completeOnboardingMutation] = useMutation(COMPLETE_ONBOARDING_MUTATION, {
         onCompleted: (data) => {
-            setUser(data.completeOnboarding);
+            setUser(data.completeOnboarding as User);
         },
     });
 
@@ -114,7 +115,7 @@ function Onboarding() {
                 setUserData((prev) => ({
                     firstName: prev?.firstName || '',
                     lastName: prev?.lastName || '',
-                    ...data
+                    ...data,
                 }));
                 nextStep();
             }
@@ -133,10 +134,8 @@ function Onboarding() {
 
             setIsSearching(true);
             try {
-                const response = await fetch(
-                    `http://universities.hipolabs.com/search?name=${encodeURIComponent(debouncedQuery)}&limit=10`
-                );
-                
+                const response = await fetch(`http://universities.hipolabs.com/search?name=${encodeURIComponent(debouncedQuery)}&limit=10`);
+
                 const data = await response.json();
 
                 const formattedSchools: School[] = data.map((result: any) => {
@@ -144,9 +143,9 @@ function Onboarding() {
                         id: result.id,
                         name: result.name,
                         country: result.country,
-                    }
+                    };
                 });
-                
+
                 setSchools(formattedSchools);
             } catch (error) {
                 console.error('Failed to fetch schools:', error);
@@ -200,7 +199,9 @@ function Onboarding() {
                                 <Bot className='w-16 h-16 text-primary animate-bounce-slow' />
                             </div>
                             <h2 className='text-2xl font-bold mb-4'>Welcome to Ivy AI!</h2>
-                            <p className='mb-8 text-base-content/70'>Let's get your account set up so we can help you stay organized and excel in your studies.</p>
+                            <p className='mb-8 text-base-content/70'>
+                                Let's get your account set up so we can help you stay organized and excel in your studies.
+                            </p>
                             <button onClick={nextStep} className='btn btn-primary btn-lg gap-2'>
                                 Get Started
                                 <ArrowRight className='w-4 h-4' />
@@ -211,7 +212,7 @@ function Onboarding() {
                     {currentStep === 'name' && (
                         <form onSubmit={nameForm.handleSubmit(onNameSubmit)} className='space-y-4'>
                             <h2 className='text-2xl font-bold mb-4'>What's your name?</h2>
-                            
+
                             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                                 <div className='form-control'>
                                     <label className='label pt-0'>
@@ -262,7 +263,7 @@ function Onboarding() {
                     {currentStep === 'personal' && (
                         <form onSubmit={personalInfoForm.handleSubmit(onPersonalInfoSubmit)} className='space-y-4'>
                             <h2 className='text-2xl font-bold mb-4'>Hello, {userData?.firstName}! Tell us more about your studies</h2>
-                            
+
                             {error && (
                                 <div className='alert alert-error'>
                                     <span>{error}</span>
@@ -324,9 +325,7 @@ function Onboarding() {
                                                                     ${index === 0 ? 'rounded-t-lg' : ''}
                                                                     ${index === schools.length - 1 ? 'rounded-b-lg' : ''}`}>
                                                                 <div className='font-medium'>{school.name}</div>
-                                                                <div className='text-sm text-base-content/70'>
-                                                                    {school.country}
-                                                                </div>
+                                                                <div className='text-sm text-base-content/70'>{school.country}</div>
                                                             </button>
                                                         ))}
                                                     </div>
@@ -415,4 +414,4 @@ function Onboarding() {
             </div>
         </div>
     );
-} 
+}
