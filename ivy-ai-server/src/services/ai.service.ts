@@ -63,13 +63,13 @@ export const processTimetableFile = async (filesData: Blob[]): Promise<Extracted
           "term": "TERM_INFO",         // Example: "Fall 2023"
           "sections": [
             {
-              "section_id": "SECTION_ID", // Example: "A01"
+              "section_id": "SECTION_ID", // Example: "A01" "LEC0101 F" "TUT0101" "01023"
               "schedule": [
                 {
                   "day": "DAY_OF_WEEK",     // Example: "Monday"
                   "start_time": "ISO_TIME", // Example: "2024-02-15T09:30:00-05:00"
                   "end_time": "ISO_TIME",   // Example: "2024-02-15T10:50:00-05:00"
-                  "location": "LOCATION",   // Example: "Building A, Room 101"
+                  "location": "LOCATION",   // Example: "Building A, Room 101" "Online"
                   "type": "CLASS_TYPE"      // Example: "lecture", "lab", "tutorial"
                 }
               ]
