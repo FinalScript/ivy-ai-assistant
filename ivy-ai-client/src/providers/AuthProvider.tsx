@@ -1,19 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { supabase } from '../lib/supabase';
-
-interface User {
-    id: string;
-    email: string;
-    firstName: string | null;
-    lastName: string | null;
-    school: string | null;
-    major: string | null;
-    graduationYear: string | null;
-    onboardingCompleted: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { User } from '../__generated__/graphql';
 
 interface AuthContextType {
     user: User | null;
@@ -44,11 +32,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const apolloClient = useApolloClient();
 
     const fetchUserData = async (userId: string) => {
-        const { data: dbUser, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', userId)
-            .single();
+        const { data: dbUser, error } = await supabase.from('users').select('*').eq('id', userId).single();
 
         if (error || !dbUser) return null;
 
@@ -68,8 +52,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     useEffect(() => {
         const initAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            
+            const {
+                data: { session },
+            } = await supabase.auth.getSession();
+
             if (session?.user) {
                 const userData = await fetchUserData(session.user.id);
                 if (userData) {
@@ -78,12 +64,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
             } else {
                 setUser(null);
             }
-            
+
             setIsLoading(false);
         };
 
         initAuth();
     }, []);
+
+    useEffect(() => {
+        const getSession = async () => {
+            const {
+                data: { session },
+            } = await supabase.auth.getSession();
+
+            console.log(session?.access_token);
+        };
+
+        getSession();
+    }, [user]);
 
     const signOut = async () => {
         setIsLoading(true);

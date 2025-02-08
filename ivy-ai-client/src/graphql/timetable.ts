@@ -1,6 +1,7 @@
-import { gql } from '@apollo/client';
+import { gql } from "../__generated__";
 
-export const PROCESSING_STATUS_SUBSCRIPTION = gql`
+
+export const PROCESSING_STATUS_SUBSCRIPTION = gql(`
   subscription OnProcessingStatusUpdated($fileId: String!) {
     processingStatusUpdated(fileId: $fileId) {
       fileId
@@ -9,11 +10,11 @@ export const PROCESSING_STATUS_SUBSCRIPTION = gql`
       progress
     }
   }
-`;
+`);
 
-export const PROCESS_TIMETABLE = gql`
-  mutation ProcessTimetable($fileId: String!) {
-    processTimetable(fileId: $fileId) {
+export const PROCESS_TIMETABLE = gql(`
+  mutation ProcessTimetable($fileIds: [String!]!) {
+    processTimetable(fileIds: $fileIds) {
       success
       message
       fileId
@@ -59,4 +60,4 @@ export const PROCESS_TIMETABLE = gql`
       }
     }
   }
-`; 
+`); 

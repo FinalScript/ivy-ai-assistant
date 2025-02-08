@@ -1,12 +1,12 @@
+import { ApolloProvider } from '@apollo/client';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { StrictMode, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-import './global.css';
-import { ThemeProvider } from './providers/ThemeProvider';
-import { AuthProvider } from './providers/AuthProvider';
-import { ApolloProvider } from '@apollo/client';
-import { client } from './graphql/client';
 import LoadingScreen from './components/LoadingScreen';
+import './global.css';
+import { client } from './graphql/client';
+import { AuthProvider } from './providers/AuthProvider';
+import { ThemeProvider } from './providers/ThemeProvider';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
 

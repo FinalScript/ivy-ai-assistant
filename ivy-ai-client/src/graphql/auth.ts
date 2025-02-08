@@ -1,32 +1,6 @@
-import { gql } from '@apollo/client'
+import { gql } from '../__generated__';
 
-export const SIGN_UP_MUTATION = gql`
-  mutation SignUp($input: SignUpInput!) {
-    signUp(input: $input) {
-      token
-      user {
-        id
-        email
-        onboardingCompleted
-      }
-    }
-  }
-`
-
-export const SIGN_IN_MUTATION = gql`
-  mutation SignIn($input: SignInInput!) {
-    signIn(input: $input) {
-      token
-      user {
-        id
-        email
-        onboardingCompleted
-      }
-    }
-  }
-`
-
-export const ME_QUERY = gql`
+export const ME_QUERY = gql(`
   query Me {
     me {
       id
@@ -34,7 +8,7 @@ export const ME_QUERY = gql`
       onboardingCompleted
     }
   }
-`
+`);
 
 export interface User {
   id: string

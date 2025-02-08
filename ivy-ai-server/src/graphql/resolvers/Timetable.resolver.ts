@@ -69,77 +69,80 @@ export const TimetableResolver = {
   },
 
   Mutation: {
-    processTimetable: async (_: unknown, { fileId }: { fileId: string }, { user }: Context) => {
+    processTimetable: async (_: unknown, { fileIds }: { fileIds: string[] }, { user }: Context) => {
       if (!user) throw new AuthenticationError('Not authenticated')
 
+      const mainFileId = fileIds[0];
+
       try {
-        // Verify the file belongs to the user
-        const fileUserId = fileId.split('/')[0]
-        if (fileUserId !== user.id) {
-          throw new AuthenticationError('Not authorized to access this file')
-        }
-
-        // Update status to uploading
         await updateProcessingStatus({
-          fileId,
+          fileId: mainFileId,
           status: 'UPLOADING',
-          message: 'Downloading file from storage',
+          message: `Uploading ${fileIds.length} ${fileIds.length === 1 ? 'file' : 'files'}`,
           progress: 0
-        })
+        });
 
-        // Download file from Supabase storage
-        const { data: fileData, error: downloadError } = await supabase.storage
-          .from('schedules')
-          .download(fileId)
+        // Start downloads immediately
+        const downloadPromises = fileIds.map(fileId =>
+          supabase.storage
+            .from('schedules')
+            .download(fileId)
+        );
 
-        if (downloadError || !fileData) {
-          await updateProcessingStatus({
-            fileId,
-            status: 'ERROR',
-            message: 'Failed to download file',
-            progress: 0
-          })
-          throw new Error('Failed to download file')
+        // Wait for all downloads to complete
+        const downloadResults = await Promise.all(downloadPromises);
+
+        // Check for download errors
+        const failedDownloads = downloadResults.map((result, index) =>
+          result.error ? fileIds[index] : null
+        ).filter(Boolean);
+
+        if (failedDownloads.length > 0) {
+          throw new Error(`Failed to download files: ${failedDownloads.join(', ')}`)
         }
 
-        // Process the file with AI
-        await updateProcessingStatus({
-          fileId,
-          status: 'PROCESSING',
-          message: 'Processing file with AI',
-          progress: 25
-        })
+        // Extract file data
+        const filesData = downloadResults.map(result => result.data!);
 
-        const extractedCourses = await processTimetableFile(fileData);
+        await updateProcessingStatus({
+          fileId: mainFileId,
+          status: 'PROCESSING',
+          message: `Extracting courses...`,
+          progress: 25
+        });
+
+        setTimeout(async () => {
+          await updateProcessingStatus({
+            fileId: mainFileId,
+            status: 'PROCESSING',
+            message: `Processing courses...`,
+            progress: 50
+          });
+        }, 3000);
+
+        const extractedCourses = await processTimetableFile(filesData);
         const validatedCourses = validateCourseData(extractedCourses);
 
         await updateProcessingStatus({
-          fileId,
+          fileId: mainFileId,
           status: 'COMPLETED',
-          message: 'File processed successfully',
+          message: `Completed`,
           progress: 100
-        })
+        });
 
         return {
           success: true,
-          message: 'File processed successfully',
-          fileId,
+          message: 'All files processed successfully',
+          fileId: mainFileId,
           courses: validatedCourses
         }
       } catch (error) {
         console.error('Timetable processing error:', error)
 
-        await updateProcessingStatus({
-          fileId,
-          status: 'ERROR',
-          message: error instanceof Error ? error.message : 'Failed to process file',
-          progress: 0
-        })
-
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Failed to process file',
-          fileId,
+          message: error instanceof Error ? error.message : 'Failed to process files',
+          fileId: mainFileId,
           courses: []
         }
       }
