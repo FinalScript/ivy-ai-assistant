@@ -25,9 +25,9 @@ export default function Navbar() {
                             <Calendar className='w-4 h-4' />
                             <span>Dashboard</span>
                         </Link>
-                        <Link to='/timetable-setup' className='flex items-center gap-2 link link-hover'>
+                        <Link to='/courses' className='flex items-center gap-2 link link-hover'>
                             <BookOpen className='w-4 h-4' />
-                            <span>Classes</span>
+                            <span>Courses</span>
                         </Link>
                     </div>
                 )}
@@ -72,9 +72,9 @@ export default function Navbar() {
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to='/timetable-setup' className='flex items-center gap-2'>
+                                        <Link to='/courses' className='flex items-center gap-2'>
                                             <BookOpen className='w-4 h-4' />
-                                            Manage Classes
+                                            Courses
                                         </Link>
                                     </li>
                                     <li>
@@ -146,12 +146,12 @@ export default function Navbar() {
                                         <span>Dashboard</span>
                                     </Link>
                                     <Link
-                                        to='/timetable-setup'
+                                        to='/courses'
                                         className='flex items-center gap-2 p-2 hover:bg-base-200 rounded-lg'
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         <BookOpen className='w-4 h-4' />
-                                        <span>Classes</span>
+                                        <span>Courses</span>
                                     </Link>
                                     <div className='divider my-2'></div>
                                     <button

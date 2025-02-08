@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as OnboardingImport } from './routes/onboarding'
 import { Route as DashboardImport } from './routes/dashboard'
+import { Route as CoursesImport } from './routes/courses'
 import { Route as AuthImport } from './routes/auth'
 import { Route as R404Import } from './routes/404'
 import { Route as IndexImport } from './routes/index'
@@ -30,6 +31,12 @@ const OnboardingRoute = OnboardingImport.update({
 const DashboardRoute = DashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CoursesRoute = CoursesImport.update({
+  id: '/courses',
+  path: '/courses',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -88,6 +95,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
+    '/courses': {
+      id: '/courses'
+      path: '/courses'
+      fullPath: '/courses'
+      preLoaderRoute: typeof CoursesImport
+      parentRoute: typeof rootRoute
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -125,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
   '/timetable-setup/review': typeof TimetableSetupReviewRoute
@@ -135,6 +150,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
   '/timetable-setup/review': typeof TimetableSetupReviewRoute
@@ -146,6 +162,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
   '/timetable-setup/review': typeof TimetableSetupReviewRoute
@@ -158,6 +175,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/auth'
+    | '/courses'
     | '/dashboard'
     | '/onboarding'
     | '/timetable-setup/review'
@@ -167,6 +185,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/auth'
+    | '/courses'
     | '/dashboard'
     | '/onboarding'
     | '/timetable-setup/review'
@@ -176,6 +195,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/auth'
+    | '/courses'
     | '/dashboard'
     | '/onboarding'
     | '/timetable-setup/review'
@@ -187,6 +207,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
   AuthRoute: typeof AuthRoute
+  CoursesRoute: typeof CoursesRoute
   DashboardRoute: typeof DashboardRoute
   OnboardingRoute: typeof OnboardingRoute
   TimetableSetupReviewRoute: typeof TimetableSetupReviewRoute
@@ -197,6 +218,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
   AuthRoute: AuthRoute,
+  CoursesRoute: CoursesRoute,
   DashboardRoute: DashboardRoute,
   OnboardingRoute: OnboardingRoute,
   TimetableSetupReviewRoute: TimetableSetupReviewRoute,
@@ -216,6 +238,7 @@ export const routeTree = rootRoute
         "/",
         "/404",
         "/auth",
+        "/courses",
         "/dashboard",
         "/onboarding",
         "/timetable-setup/review",
@@ -230,6 +253,9 @@ export const routeTree = rootRoute
     },
     "/auth": {
       "filePath": "auth.tsx"
+    },
+    "/courses": {
+      "filePath": "courses.tsx"
     },
     "/dashboard": {
       "filePath": "dashboard.tsx"
