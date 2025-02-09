@@ -284,15 +284,18 @@ const CourseCard = ({ course }: CourseCardProps) => {
                     </span>
                     {!course.hasOutline && (
                         <div
-                            className='tooltip tooltip-bottom tooltip-warning'
+                            className='tooltip tooltip-bottom before:!bg-[rgb(255,0,0)]/90 before:text-white'
                             data-tip='Course outline not uploaded'>
                             <span
                                 className='flex items-center gap-1.5 px-2 py-1 rounded-lg 
-                                bg-warning/10 hover:bg-warning/20
+                                bg-[rgb(255,0,0)]/20 hover:bg-[rgb(255,0,0)]/30
+                                shadow-[0_0_10px_-3px_rgba(255,0,0,0.3)]
+                                hover:shadow-[0_0_15px_-3px_rgba(255,0,0,0.5)]
                                 backdrop-blur-sm transition-all duration-300
-                                animate-subtle-bounce [animation-delay:300ms]'>
-                                <div className='w-1.5 h-1.5 rounded-full bg-warning animate-pulse' />
-                                Outline Missing
+                                animate-subtle-bounce [animation-delay:300ms]
+                                border border-[rgb(255,0,0)]/20'>
+                                <div className='w-1.5 h-1.5 rounded-full bg-[rgb(255,0,0)] shadow-[0_0_8px_0px_rgba(255,0,0,0.5)] animate-pulse' />
+                                <span className='text-[rgb(255,0,0)]/90'>Outline Missing</span>
                             </span>
                         </div>
                     )}
