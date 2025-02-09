@@ -1,5 +1,5 @@
+import { Candy, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Sun, Moon, Sparkles, Candy, Box, Skull, Snowflake, Leaf } from 'lucide-react';
 
 const THEMES = [
     {
@@ -9,36 +9,23 @@ const THEMES = [
         color: '#65c3c8', // primary color for cupcake theme
     },
     {
-        name: 'night',
-        label: 'Night',
-        icon: Moon,
-        color: '#38bdf8', // primary color for night theme
-    },
-
-    {
-        name: 'winter',
-        label: 'Winter',
-        icon: Snowflake,
-        color: '#5bc0de', // primary color for winter theme
-    },
-    {
-        name: 'forest',
-        label: 'Forest',
-        icon: Leaf,
-        color: '#1eb854', // primary color for forest theme
-    },
-    {
-        name: 'wireframe',
-        label: 'Wireframe',
-        icon: Box,
-        color: '#b8b8b8', // primary color for wireframe theme
-    },
-    {
         name: 'sunset',
         label: 'Sunset',
         icon: Sun,
         color: '#FF865B', // primary color for sunset theme
     },
+    // {
+    //     name: 'winter',
+    //     label: 'Winter',
+    //     icon: Snowflake,
+    //     color: '#5bc0de', // primary color for winter theme
+    // },
+    // {
+    //     name: 'forest',
+    //     label: 'Forest',
+    //     icon: Leaf,
+    //     color: '#1eb854', // primary color for forest theme
+    // },
 ] as const;
 
 type Theme = (typeof THEMES)[number]['name'];

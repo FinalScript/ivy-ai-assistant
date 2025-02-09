@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { AlertCircle, Clock, Globe, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { Course as BaseCoursetype } from '../__generated__/graphql';
+import { twMerge } from '../utils/tw-merge';
 
 // Extend the base Course type to include hasOutline
 interface Course extends BaseCoursetype {
@@ -29,18 +30,18 @@ const mockCourses: Course[] = [
                         start_time: '09:00',
                         end_time: '10:20',
                         location: 'Room 101',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Wednesday',
                         start_time: '09:00',
                         end_time: '10:20',
                         location: 'Room 101',
-                        type: 'Lecture'
-                    }
-                ]
-            }
-        ]
+                        type: 'Lecture',
+                    },
+                ],
+            },
+        ],
     },
     {
         code: 'MATH201',
@@ -61,18 +62,18 @@ const mockCourses: Course[] = [
                         start_time: '13:00',
                         end_time: '14:20',
                         location: 'Room 205',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Thursday',
                         start_time: '13:00',
                         end_time: '14:20',
                         location: 'Room 205',
-                        type: 'Lecture'
-                    }
-                ]
-            }
-        ]
+                        type: 'Lecture',
+                    },
+                ],
+            },
+        ],
     },
     {
         code: 'PHYS202',
@@ -93,18 +94,18 @@ const mockCourses: Course[] = [
                         start_time: '14:30',
                         end_time: '15:50',
                         location: 'Physics Lab 1',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Wednesday',
                         start_time: '14:30',
                         end_time: '15:50',
                         location: 'Physics Lab 1',
-                        type: 'Lab'
-                    }
-                ]
-            }
-        ]
+                        type: 'Lab',
+                    },
+                ],
+            },
+        ],
     },
     {
         code: 'CHEM301',
@@ -125,18 +126,18 @@ const mockCourses: Course[] = [
                         start_time: '10:30',
                         end_time: '11:50',
                         location: 'Chemistry Lab A',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Friday',
                         start_time: '13:30',
                         end_time: '16:20',
                         location: 'Chemistry Lab A',
-                        type: 'Lab'
-                    }
-                ]
-            }
-        ]
+                        type: 'Lab',
+                    },
+                ],
+            },
+        ],
     },
     {
         code: 'PSYC101',
@@ -157,18 +158,18 @@ const mockCourses: Course[] = [
                         start_time: '11:00',
                         end_time: '12:20',
                         location: 'Room 302',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Wednesday',
                         start_time: '11:00',
                         end_time: '12:20',
                         location: 'Room 302',
-                        type: 'Lecture'
-                    }
-                ]
-            }
-        ]
+                        type: 'Lecture',
+                    },
+                ],
+            },
+        ],
     },
     {
         code: 'HIST205',
@@ -189,19 +190,19 @@ const mockCourses: Course[] = [
                         start_time: '15:30',
                         end_time: '16:50',
                         location: 'Room 405',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Thursday',
                         start_time: '15:30',
                         end_time: '16:50',
                         location: 'Room 405',
-                        type: 'Lecture'
-                    }
-                ]
-            }
-        ]
-    }
+                        type: 'Lecture',
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
 interface CourseCardProps {
@@ -283,19 +284,18 @@ const CourseCard = ({ course }: CourseCardProps) => {
                         {course.sections?.length || 0} section{(course.sections?.length || 0) !== 1 ? 's' : ''}
                     </span>
                     {!course.hasOutline && (
-                        <div
-                            className='tooltip tooltip-bottom before:!bg-[rgb(255,0,0)]/90 before:text-white'
-                            data-tip='Course outline not uploaded'>
+                        <div>
                             <span
-                                className='flex items-center gap-1.5 px-2 py-1 rounded-lg 
-                                bg-[rgb(255,0,0)]/20 hover:bg-[rgb(255,0,0)]/30
-                                shadow-[0_0_10px_-3px_rgba(255,0,0,0.3)]
-                                hover:shadow-[0_0_15px_-3px_rgba(255,0,0,0.5)]
-                                backdrop-blur-sm transition-all duration-300
-                                animate-subtle-bounce [animation-delay:300ms]
-                                border border-[rgb(255,0,0)]/20'>
-                                <div className='w-1.5 h-1.5 rounded-full bg-[rgb(255,0,0)] shadow-[0_0_8px_0px_rgba(255,0,0,0.5)] animate-pulse' />
-                                <span className='text-[rgb(255,0,0)]/90'>Outline Missing</span>
+                                className={twMerge(
+                                    'flex items-center gap-1.5 px-2 py-1 rounded-lg',
+                                    'dark:bg-warning/20 hover:dark:bg-warning/30',
+                                    'bg-warning/20 hover:bg-warning/30',
+                                    'shadow-warning/20 hover:shadow-warning/30',
+                                    'backdrop-blur-sm transition-all duration-300',
+                                    'animate-subtle-bounce'
+                                )}>
+                                <div className='w-1.5 h-1.5 rounded-full bg-warning animate-pulse' />
+                                <span className='dark:text-warning text-warning-content/80'>Outline Missing</span>
                             </span>
                         </div>
                     )}
@@ -336,14 +336,13 @@ const CourseCard = ({ course }: CourseCardProps) => {
                                 <div className='font-medium text-sm group-hover/outline:text-primary transition-colors'>Schedule</div>
                                 {course.sections?.[0]?.schedule?.[0] && (
                                     <div className='text-xs text-base-content/60 animate-fade-in'>
-                                        {course.sections[0].schedule[0].day} {course.sections[0].schedule[0].start_time} - {course.sections[0].schedule[0].end_time}
+                                        {course.sections[0].schedule[0].day} {course.sections[0].schedule[0].start_time} -{' '}
+                                        {course.sections[0].schedule[0].end_time}
                                     </div>
                                 )}
                             </div>
                         </div>
-                        <div className='text-xs text-base-content/60'>
-                            {course.sections?.[0]?.schedule?.[0]?.location}
-                        </div>
+                        <div className='text-xs text-base-content/60'>{course.sections?.[0]?.schedule?.[0]?.location}</div>
                     </div>
                 </div>
             </div>
@@ -394,4 +393,4 @@ function CoursesPage() {
             </div>
         </div>
     );
-} 
+}
