@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { AlertCircle, Clock, Edit3, Globe, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { Course as BaseCoursetype } from '../__generated__/graphql';
@@ -211,11 +211,25 @@ interface CourseCardProps {
 }
 
 const CourseCard = ({ course, onEdit }: CourseCardProps) => {
+    const navigate = useNavigate();
+
+    const handleCardClick = (e: React.MouseEvent) => {
+        // Prevent navigation when clicking the edit button
+        if ((e.target as HTMLElement).closest('button')) {
+            return;
+        }
+        navigate({ 
+            to: '/course',
+            search: { courseId: course.code }
+        });
+    };
+
     return (
         <div
+            onClick={handleCardClick}
             className='card bg-base-100 shadow-lg transition-all duration-500 border border-base-300/50 relative group overflow-hidden
             hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.3)] hover:border-primary/30
-            animate-background-shine bg-[length:400%_100%]
+            animate-background-shine bg-[length:400%_100%] cursor-pointer
             bg-[linear-gradient(110deg,transparent,45%,var(--base-content-rgb)/2%,55%,transparent)]'>
             {/* Ambient Corner Glow */}
             <div className='absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent opacity-40 blur-2xl' />
@@ -371,8 +385,8 @@ export const Route = createFileRoute('/courses')({
 });
 
 function CoursesPage() {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [loading] = useState(false);
+    const [error] = useState<string | null>(null);
     const [courses, setCourses] = useState<Course[]>(mockCourses);
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
     const [editModalOpen, setEditModalOpen] = useState(false);
