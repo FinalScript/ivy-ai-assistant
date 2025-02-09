@@ -1,8 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { AlertCircle, Clock, Edit3, Globe, MapPin } from 'lucide-react';
+import { AlertCircle, Clock, Globe, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { Course as BaseCoursetype } from '../__generated__/graphql';
-import { CourseEditModal } from '../components/CourseEditModal';
 
 // Extend the base Course type to include hasOutline
 interface Course extends BaseCoursetype {
@@ -207,10 +206,9 @@ const mockCourses: Course[] = [
 
 interface CourseCardProps {
     course: Course;
-    onEdit: (courseId: string) => void;
 }
 
-const CourseCard = ({ course, onEdit }: CourseCardProps) => {
+const CourseCard = ({ course }: CourseCardProps) => {
     return (
         <div
             className='card bg-base-100 shadow-lg transition-all duration-500 border border-base-300/50 relative group overflow-hidden
@@ -251,22 +249,6 @@ const CourseCard = ({ course, onEdit }: CourseCardProps) => {
                 />
             </div>
 
-            {/* Edit Button with enhanced glow */}
-            <button
-                className='absolute top-3 right-3 btn btn-sm normal-case gap-2 
-                    bg-base-200/80 hover:bg-primary/20 border-none
-                    shadow-[0_0_10px_-3px_rgba(var(--base-content-rgb),0.1)]
-                    backdrop-blur-sm transition-all duration-300
-                    hover:shadow-[0_0_15px_-3px_rgba(var(--primary-rgb),0.5)]
-                    hover:scale-105 group/edit z-10'
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(course.code);
-                }}>
-                <Edit3 className='w-4 h-4 group-hover/edit:text-primary transition-colors animate-pulse [animation-duration:4s]' />
-                <span className='text-xs group-hover/edit:text-primary transition-colors'>Edit Course</span>
-            </button>
-
             <div className='card-body p-4'>
                 {/* Course Header with gradient text */}
                 <div className='mb-1 relative'>
@@ -300,20 +282,20 @@ const CourseCard = ({ course, onEdit }: CourseCardProps) => {
                         <Globe className='w-3 h-3 animate-pulse [animation-duration:4s] [animation-delay:1s]' />
                         {course.sections?.length || 0} section{(course.sections?.length || 0) !== 1 ? 's' : ''}
                     </span>
-                    <div
-                        className={`tooltip tooltip-bottom ${course.hasOutline ? 'tooltip-success' : 'tooltip-warning'}`}
-                        data-tip={course.hasOutline ? 'Course outline uploaded' : 'Course outline not uploaded'}>
-                        <span
-                            className={`flex items-center gap-1.5 px-2 py-1 rounded-lg 
-                            ${course.hasOutline 
-                                ? 'bg-success/10 hover:bg-success/20' 
-                                : 'bg-warning/10 hover:bg-warning/20'} 
-                            backdrop-blur-sm transition-all duration-300
-                            animate-subtle-bounce [animation-delay:300ms]`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${course.hasOutline ? 'bg-success' : 'bg-warning'} animate-pulse`} />
-                            Outline
-                        </span>
-                    </div>
+                    {!course.hasOutline && (
+                        <div
+                            className='tooltip tooltip-bottom tooltip-warning'
+                            data-tip='Course outline not uploaded'>
+                            <span
+                                className='flex items-center gap-1.5 px-2 py-1 rounded-lg 
+                                bg-warning/10 hover:bg-warning/20
+                                backdrop-blur-sm transition-all duration-300
+                                animate-subtle-bounce [animation-delay:300ms]'>
+                                <div className='w-1.5 h-1.5 rounded-full bg-warning animate-pulse' />
+                                Outline Missing
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Outline Section with enhanced effects */}
@@ -371,25 +353,9 @@ export const Route = createFileRoute('/courses')({
 });
 
 function CoursesPage() {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [courses, setCourses] = useState<Course[]>(mockCourses);
-    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-    const [editModalOpen, setEditModalOpen] = useState(false);
-
-    const handleEditCourse = (courseId: string) => {
-        const course = courses.find((c) => c.code === courseId);
-        if (course) {
-            setSelectedCourse(course);
-            setEditModalOpen(true);
-        }
-    };
-
-    const handleSaveCourse = (updatedCourse: Course) => {
-        setCourses((prevCourses) => prevCourses.map((course) => (course.code === updatedCourse.code ? updatedCourse : course)));
-        setEditModalOpen(false);
-        setSelectedCourse(null);
-    };
+    const [loading] = useState(false);
+    const [error] = useState<string | null>(null);
+    const [courses] = useState<Course[]>(mockCourses);
 
     if (loading) {
         return (
@@ -419,21 +385,9 @@ function CoursesPage() {
 
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {courses.map((course) => (
-                        <CourseCard key={course.code} course={course} onEdit={handleEditCourse} />
+                        <CourseCard key={course.code} course={course} />
                     ))}
                 </div>
-
-                {selectedCourse && (
-                    <CourseEditModal
-                        isOpen={editModalOpen}
-                        onClose={() => {
-                            setEditModalOpen(false);
-                            setSelectedCourse(null);
-                        }}
-                        course={selectedCourse}
-                        onSave={handleSaveCourse}
-                    />
-                )}
             </div>
         </div>
     );
