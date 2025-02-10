@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { AlertCircle, Check, Clock, Edit3, MapPin, Upload, Globe, Trash2, Plus } from 'lucide-react';
+import { AlertCircle, Check, Clock, Edit3, Globe, MapPin, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Course } from '../../__generated__/graphql';
 import { CourseEditModal } from '../../components/CourseEditModal';
@@ -17,10 +17,10 @@ const formatTimeForDisplay = (isoTime: string): string => {
     if (!isoTime) return '';
     try {
         const date = new Date(isoTime);
-        return date.toLocaleTimeString('en-US', { 
-            hour: 'numeric', 
+        return date.toLocaleTimeString('en-US', {
+            hour: 'numeric',
             minute: '2-digit',
-            hour12: true 
+            hour12: true,
         });
     } catch {
         return '';
@@ -80,45 +80,49 @@ const CourseCard = ({ course, onEdit, onUploadOutline, onDelete, hasOutline = fa
                 />
             </div>
 
-            {/* Edit and Delete Buttons Container */}
-            <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
-                {needsEdits && (
-                    <div className="text-accent animate-pulse [animation-duration:3s]" data-tip={`Missing: ${missingFields.join(', ')}`}>
-                        <AlertCircle className="w-5 h-5" />
+            {/* Warning Indicator */}
+            {needsEdits && (
+                <div className='absolute top-0 left-1/2 -translate-x-1/2 z-20'>
+                    <div className='tooltip tooltip-bottom' data-tip={`Missing: ${missingFields.join(', ')}`}>
+                        <div className='flex items-center gap-2 px-2.5 py-1.5 rounded-b-lg bg-warning/10 backdrop-blur-sm border-x border-b border-warning/20'>
+                            <AlertCircle className='w-4 h-4 text-warning' />
+                            <span className='text-xs font-medium text-warning'>Needs Info</span>
+                        </div>
                     </div>
-                )}
+                </div>
+            )}
 
-                <div className="flex items-center gap-2">
+            {/* Card Controls */}
+            <div className='absolute top-3 right-3 flex items-start gap-2 z-20'>
+                <div className='flex items-center gap-1.5'>
                     <button
-                        className={`btn btn-sm normal-case gap-2 
-                            bg-base-200/80 hover:bg-primary/20 border-none
-                            shadow-[0_0_10px_-3px_rgba(var(--base-content-rgb),0.1)]
-                            backdrop-blur-sm transition-all duration-300
-                            hover:shadow-[0_0_15px_-3px_rgba(var(--primary-rgb),0.5)]
-                            hover:scale-105 group/edit`}
+                        className='btn btn-sm px-3 normal-case
+                            bg-base-200/80 hover:bg-primary/10 border-none
+                            shadow-sm hover:shadow-lg backdrop-blur-sm
+                            transition-all duration-300 group/edit'
                         onClick={(e) => {
                             e.stopPropagation();
                             onEdit(course.code);
-                        }}
-                    >
-                        <Edit3 className={`w-4 h-4 group-hover/edit:text-primary transition-colors`} />
-                        <span className='text-xs group-hover/edit:text-primary transition-colors'>Edit Course</span>
+                        }}>
+                        <Edit3 className='w-4 h-4 group-hover/edit:text-primary transition-colors' />
                     </button>
 
                     <button
-                        className="btn btn-sm btn-ghost text-error px-3 min-h-8 h-8"
+                        className='btn btn-sm px-3 bg-base-200/80 hover:bg-error/10 border-none 
+                            shadow-sm hover:shadow-lg backdrop-blur-sm
+                            transition-all duration-300 group/delete
+                            disabled:opacity-50 disabled:cursor-not-allowed'
                         onClick={(e) => {
                             e.stopPropagation();
                             onDelete();
                         }}
-                        data-tip={isDeleteDisabled ? "At least one course is required" : "Delete Course"}
-                        disabled={isDeleteDisabled}
-                    >
-                        <Trash2 className="w-4 h-4" />
+                        disabled={isDeleteDisabled}>
+                        <Trash2 className='w-4 h-4 text-error group-hover/delete:text-error' />
                     </button>
                 </div>
             </div>
 
+            {/* Course Content */}
             <div className='card-body p-4'>
                 {/* Course Header */}
                 <div className='mb-1 relative flex flex-col'>
@@ -157,7 +161,9 @@ const CourseCard = ({ course, onEdit, onUploadOutline, onDelete, hasOutline = fa
                                                     <span>{time.day}</span>
                                                 </div>
                                                 <div className='flex items-center'>
-                                                    <span>{formatTimeForDisplay(time.start_time || '')} - {formatTimeForDisplay(time.end_time || '')}</span>
+                                                    <span>
+                                                        {formatTimeForDisplay(time.start_time || '')} - {formatTimeForDisplay(time.end_time || '')}
+                                                    </span>
                                                 </div>
                                                 <div className='flex items-center gap-1.5'>
                                                     <MapPin className='w-3 h-3 shrink-0' />
@@ -189,10 +195,48 @@ const AddCourseCard = ({ onClick }: { onClick: () => void }) => {
             className={`card bg-base-100 shadow-lg transition-all duration-500 border border-base-300/50 
                 relative group overflow-hidden cursor-pointer min-h-[200px]
                 hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.3)] hover:border-primary/30
-                flex items-center justify-center`}>
-            <div className="flex flex-col items-center gap-3 text-base-content/50 group-hover:text-primary transition-colors">
-                <Plus className="w-12 h-12" />
-                <span className="text-sm font-medium">Add New Course</span>
+                animate-background-shine bg-[length:400%_100%]
+                bg-[linear-gradient(110deg,transparent,45%,var(--base-content-rgb)/2%,55%,transparent)]`}>
+            {/* Ambient Corner Glow */}
+            <div className='absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent opacity-40 blur-2xl' />
+            <div className='absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-secondary/10 to-transparent opacity-40 blur-2xl' />
+
+            {/* Animated Background Pattern */}
+            <div
+                className='absolute inset-0 opacity-[0.02] pointer-events-none 
+                bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:16px_16px] 
+                animate-subtle-bounce
+                group-hover:scale-[1.02] group-hover:rotate-[0.5deg] transition-transform duration-700 -z-[1]'
+            />
+
+            {/* Ambient Gradient Animation */}
+            <div
+                className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-30
+                animate-gradient-shift [animation-duration:8s]'
+            />
+
+            {/* Multi-layered Gradient Glow Effects */}
+            <div className='absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none'>
+                {/* Primary glow layer */}
+                <div className='absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20 blur-xl' />
+                {/* Secondary animated glow */}
+                <div
+                    className='absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-secondary/10 
+                    animate-pulse [animation-duration:3s]'
+                />
+                {/* Shimmer effect */}
+                <div
+                    className='absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent 
+                    translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out'
+                />
+            </div>
+
+            {/* Content */}
+            <div className='relative flex flex-col items-center justify-center gap-3 h-full'>
+                <div className='w-12 h-12 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500'>
+                    <Plus className='w-8 h-8 text-primary transition-colors duration-500' />
+                </div>
+                <span className='text-sm font-medium text-primary'>Add New Course</span>
             </div>
         </div>
     );
@@ -218,7 +262,7 @@ function ReviewCourses() {
     // Generate a unique temporary ID for new courses
     const generateTempId = () => {
         const tempId = `NEW_COURSE_${tempIdCounter}`;
-        setTempIdCounter(prev => prev + 1);
+        setTempIdCounter((prev) => prev + 1);
         return tempId;
     };
 
@@ -232,13 +276,7 @@ function ReviewCourses() {
 
     useEffect(() => {
         // Check for any potential issues in the parsed data
-        const errors = courses.some(
-            (course) =>
-                !course.code ||
-                !course.name ||
-                !course.sections ||
-                course.sections.length === 0
-        );
+        const errors = courses.some((course) => !course.code || !course.name || !course.sections || course.sections.length === 0);
         setHasErrors(errors);
     }, [courses]);
 
@@ -264,9 +302,7 @@ function ReviewCourses() {
         }
 
         // Check for duplicate course code (using trimmed codes for comparison)
-        const isDuplicate = courses.some(course => 
-            course.code?.trim() === trimmedCode && trimmedCode !== originalCourseCode?.trim()
-        );
+        const isDuplicate = courses.some((course) => course.code?.trim() === trimmedCode && trimmedCode !== originalCourseCode?.trim());
 
         if (isDuplicate) {
             setModalError('This course code already exists. Please use a unique code.');
@@ -277,15 +313,13 @@ function ReviewCourses() {
         // Ensure we save the course with trimmed code
         const sanitizedCourse = {
             ...updatedCourse,
-            code: trimmedCode
+            code: trimmedCode,
         };
 
         if (isNewCourse) {
             setCourses((prevCourses) => [...prevCourses, sanitizedCourse]);
         } else {
-            setCourses((prevCourses) => prevCourses.map((course) => 
-                course.code === originalCourseCode ? sanitizedCourse : course
-            ));
+            setCourses((prevCourses) => prevCourses.map((course) => (course.code === originalCourseCode ? sanitizedCourse : course)));
         }
 
         // Clear all states and close modal only after successful save
@@ -316,7 +350,7 @@ function ReviewCourses() {
 
     const confirmDelete = () => {
         if (courseToDelete) {
-            setCourses(prevCourses => prevCourses.filter(c => c.code !== courseToDelete.code));
+            setCourses((prevCourses) => prevCourses.filter((c) => c.code !== courseToDelete.code));
             setCourseToDelete(null);
         }
     };
@@ -332,30 +366,35 @@ function ReviewCourses() {
     return (
         <div className='min-h-screen bg-base-200 py-8 px-4 mt-14 relative overflow-hidden'>
             {/* Animated Background Elements */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+            <div className='fixed inset-0 pointer-events-none overflow-hidden'>
                 {/* Base gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-base-100 via-base-200 to-base-300" />
-                
+                <div className='absolute inset-0 bg-gradient-to-br from-base-100 via-base-200 to-base-300' />
+
                 {/* Animated background pattern */}
                 <div className='absolute inset-0 opacity-10'>
                     {/* Huge top left orb */}
-                    <div className='absolute w-96 sm:w-[32rem] h-96 sm:h-[32rem] -top-48 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl 
+                    <div
+                        className='absolute w-96 sm:w-[32rem] h-96 sm:h-[32rem] -top-48 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl 
                         animate-[blob_15s_infinite]'></div>
-                    
+
                     {/* Small top right orb */}
-                    <div className='absolute w-32 sm:w-48 h-32 sm:h-48 top-20 -right-12 bg-secondary rounded-full mix-blend-multiply filter blur-xl 
+                    <div
+                        className='absolute w-32 sm:w-48 h-32 sm:h-48 top-20 -right-12 bg-secondary rounded-full mix-blend-multiply filter blur-xl 
                         animate-[blob_12s_infinite] [animation-delay:1s]'></div>
-                    
+
                     {/* Tiny center-left orb */}
-                    <div className='absolute w-24 sm:w-32 h-24 sm:h-32 top-1/2 -left-16 bg-accent rounded-full mix-blend-multiply filter blur-xl 
+                    <div
+                        className='absolute w-24 sm:w-32 h-24 sm:h-32 top-1/2 -left-16 bg-accent rounded-full mix-blend-multiply filter blur-xl 
                         animate-[blob_10s_infinite] [animation-delay:2s]'></div>
-                    
+
                     {/* Medium bottom-center orb */}
-                    <div className='absolute w-64 sm:w-80 h-64 sm:h-80 -bottom-20 left-1/3 bg-primary rounded-full mix-blend-multiply filter blur-xl 
+                    <div
+                        className='absolute w-64 sm:w-80 h-64 sm:h-80 -bottom-20 left-1/3 bg-primary rounded-full mix-blend-multiply filter blur-xl 
                         animate-[blob_18s_infinite] [animation-delay:3s]'></div>
-                    
+
                     {/* Large bottom right orb */}
-                    <div className='absolute w-80 sm:w-[28rem] h-80 sm:h-[28rem] -bottom-40 -right-32 bg-secondary rounded-full mix-blend-multiply filter blur-xl 
+                    <div
+                        className='absolute w-80 sm:w-[28rem] h-80 sm:h-[28rem] -bottom-40 -right-32 bg-secondary rounded-full mix-blend-multiply filter blur-xl 
                         animate-[blob_14s_infinite] [animation-delay:4s]'></div>
                 </div>
             </div>
@@ -370,24 +409,30 @@ function ReviewCourses() {
                 </div>
 
                 {hasErrors && (
-                    <div className='alert alert-warning mb-6'>
-                        <AlertCircle className='w-5 h-5' />
-                        <span>Some courses have missing or incomplete information. Please review and edit as needed.</span>
+                    <div className='flex justify-center mb-6'>
+                        <div className='tooltip tooltip-bottom' data-tip="Look for cards with 'Needs Info' and click their edit button to complete required information">
+                            <div className='flex items-center gap-3 px-4 py-2 rounded-lg bg-warning/10 backdrop-blur-sm border border-warning/20'>
+                                <AlertCircle className='w-5 h-5 text-warning' />
+                                <span className='text-sm font-medium text-warning'>
+                                    We noticed some missing information - please complete to continue
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 )}
 
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {courses.map((course) => (
-                        <CourseCard 
-                            key={course.code} 
-                            course={course} 
-                            onEdit={handleEditCourse} 
+                        <CourseCard
+                            key={course.code}
+                            course={course}
+                            onEdit={handleEditCourse}
                             onUploadOutline={handleUploadOutline}
                             onDelete={() => handleDeleteCourse(course)}
                             isDeleteDisabled={courses.length <= 1}
                         />
                     ))}
-                    <AddCourseCard 
+                    <AddCourseCard
                         onClick={() => {
                             setSelectedCourse({
                                 code: '', // Start with empty code
@@ -398,7 +443,7 @@ function ReviewCourses() {
                             setOriginalCourseCode(''); // No original code for new courses
                             setIsNewCourse(true);
                             setEditModalOpen(true);
-                        }} 
+                        }}
                     />
                 </div>
 
@@ -418,17 +463,20 @@ function ReviewCourses() {
 
                 {/* Delete Confirmation Modal */}
                 {courseToDelete && (
-                    <div className="modal modal-open">
-                        <div className="modal-box">
-                            <h3 className="font-bold text-lg">Delete Course</h3>
-                            <p className="py-4">
+                    <div className='modal modal-open'>
+                        <div className='modal-box'>
+                            <h3 className='font-bold text-lg'>Delete Course</h3>
+                            <p className='py-4'>
                                 Are you sure you want to delete {courseToDelete.code}
-                                {courseToDelete.name ? ` - ${courseToDelete.name}` : ''}?
-                                This action cannot be undone.
+                                {courseToDelete.name ? ` - ${courseToDelete.name}` : ''}? This action cannot be undone.
                             </p>
-                            <div className="modal-action">
-                                <button className="btn" onClick={() => setCourseToDelete(null)}>Cancel</button>
-                                <button className="btn btn-error" onClick={confirmDelete}>Delete</button>
+                            <div className='modal-action'>
+                                <button className='btn' onClick={() => setCourseToDelete(null)}>
+                                    Cancel
+                                </button>
+                                <button className='btn btn-error' onClick={confirmDelete}>
+                                    Delete
+                                </button>
                             </div>
                         </div>
                     </div>
