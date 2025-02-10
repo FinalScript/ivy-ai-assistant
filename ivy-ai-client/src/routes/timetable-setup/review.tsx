@@ -401,7 +401,7 @@ function ReviewCourses() {
 
             <div className='max-w-7xl mx-auto relative'>
                 <div className='flex justify-between items-center mb-8'>
-                    <h2 className='text-2xl font-bold'>Review Your Courses</h2>
+                    <h2 className='text-3xl font-bold'>Review Your Courses</h2>
                     <button className='btn btn-primary' onClick={handleConfirm} disabled={courses.length === 0 || hasErrors}>
                         <Check className='w-5 h-5 mr-2' />
                         Confirm and Continue
@@ -409,8 +409,8 @@ function ReviewCourses() {
                 </div>
 
                 {hasErrors && (
-                    <div className='flex justify-center mb-6'>
-                        <div className='tooltip tooltip-bottom' data-tip="Look for cards with 'Needs Info' and click their edit button to complete required information">
+                    <div className='flex mb-8'>
+                        <div className='tooltip tooltip-bottom'>
                             <div className='flex items-center gap-3 px-4 py-2 rounded-lg bg-warning/10 backdrop-blur-sm border border-warning/20'>
                                 <AlertCircle className='w-5 h-5 text-warning' />
                                 <span className='text-sm font-medium text-warning'>
