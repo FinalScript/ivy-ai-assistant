@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { AlertCircle, Clock, Globe, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { Course as BaseCoursetype } from '../__generated__/graphql';
@@ -210,6 +210,15 @@ interface CourseCardProps {
 }
 
 const CourseCard = ({ course }: CourseCardProps) => {
+    const navigate = useNavigate();
+
+    const handleCardClick = () => {
+        navigate({ 
+            to: '/course',
+            search: { courseId: course.code }
+        });
+    };
+
     return (
         <div
             onClick={handleCardClick}
