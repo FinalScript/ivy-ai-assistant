@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Calendar, Clock, Globe, GraduationCap, MapPin, Users, ChevronLeft, Target, Trophy, Brain } from 'lucide-react';
+import { Calendar, Globe, Users, ChevronLeft, Target, Trophy, Brain, MapPin, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 import { Course as BaseCoursetype } from '../__generated__/graphql';
 
@@ -255,10 +255,6 @@ export const Route = createFileRoute('/course')({
     },
 });
 
-function UpcomingBadge() {
-    return <div className='badge badge-warning badge-outline gap-2 p-3 group-hover/item:animate-pulse flex items-center justify-center'>upcoming</div>;
-}
-
 function formatDateTime(date: string) {
     const d = new Date(date);
     const month = d.toLocaleString('en-US', { month: 'short' });
@@ -267,8 +263,16 @@ function formatDateTime(date: string) {
         hour: 'numeric',
         minute: '2-digit',
         hour12: true,
-    });
-    return `${month} ${day} ${time}`;
+    }).toLowerCase();
+    return `${month} ${day} at ${time}`;
+}
+
+function formatTime(time: string) {
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'pm' : 'am';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minutes} ${ampm}`;
 }
 
 function CoursePage() {
@@ -277,9 +281,24 @@ function CoursePage() {
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-base-200 via-base-300 to-base-200 py-8 px-4 mt-14 relative overflow-hidden'>
-            {/* Ambient background animations */}
-            <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.primary)_1px,transparent_0)] opacity-[0.03] [background-size:24px_24px] animate-[grain_8s_steps(10)_infinite]' />
-            <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 animate-gradient-shift [animation-duration:10s]' />
+            {/* Enhanced ambient background animations */}
+            <div className='absolute inset-0 opacity-[0.02] pointer-events-none 
+                bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:16px_16px] 
+                animate-subtle-bounce' />
+            
+            {/* Animated gradient blobs */}
+            <div className='absolute inset-0 opacity-10'>
+                <div className='absolute w-72 sm:w-96 h-72 sm:h-96 top-1/4 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob'></div>
+                <div className='absolute w-72 sm:w-96 h-72 sm:h-96 top-1/4 -right-48 bg-secondary rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000'></div>
+                <div className='absolute w-72 sm:w-96 h-72 sm:h-96 bottom-1/4 -left-48 bg-accent rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000'></div>
+                <div className='absolute w-72 sm:w-96 h-72 sm:h-96 bottom-1/4 -right-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob'></div>
+            </div>
+
+            {/* Ambient gradient animation */}
+            <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-30 animate-gradient-shift [animation-duration:10s]' />
+
+            {/* Animated shine pattern */}
+            <div className='absolute inset-0 bg-[linear-gradient(110deg,transparent,45%,var(--base-content-rgb)/2%,55%,transparent)] bg-[length:400%_100%] animate-background-shine' />
 
             <div className='max-w-7xl mx-auto space-y-8 relative'>
                 {/* Course Header */}
@@ -291,9 +310,10 @@ function CoursePage() {
                         Back to Courses
                     </button>
                     <div className='card bg-base-100 shadow-xl group relative overflow-hidden'>
-                        {/* Card glow effects */}
+                        {/* Enhanced card glow effects */}
                         <div className='absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700' />
                         <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(var(--primary-rgb),0.1)_100%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700' />
+                        <div className='absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 opacity-30 animate-gradient-shift [animation-duration:8s]' />
 
                         <div className='card-body p-8 relative z-10'>
                             <div className='flex flex-col gap-4'>
@@ -306,13 +326,13 @@ function CoursePage() {
                                 <p className='text-base-content/70 max-w-3xl text-lg leading-relaxed'>{course.description}</p>
                             </div>
                             <div className='flex flex-wrap gap-6 pt-4'>
-                                <div className='flex items-center gap-2 px-3 py-2 rounded-lg bg-base-200/50 hover:bg-base-300/50 transition-colors'>
-                                    <Calendar className='w-5 h-5 text-primary' />
-                                    <span className='font-medium'>{course.term}</span>
+                                <div className='flex items-center gap-2 px-3 py-2 rounded-lg bg-base-200/50 hover:bg-primary/10 transition-colors group/badge'>
+                                    <Calendar className='w-5 h-5 text-primary group-hover/badge:animate-pulse' />
+                                    <span className='font-medium group-hover/badge:text-primary transition-colors'>{course.term}</span>
                                 </div>
-                                <div className='flex items-center gap-2 px-3 py-2 rounded-lg bg-base-200/50 hover:bg-base-300/50 transition-colors'>
-                                    <Users className='w-5 h-5 text-primary' />
-                                    <span className='font-medium'>{course.sections?.length} sections</span>
+                                <div className='flex items-center gap-2 px-3 py-2 rounded-lg bg-base-200/50 hover:bg-secondary/10 transition-colors group/badge'>
+                                    <Users className='w-5 h-5 text-secondary group-hover/badge:animate-pulse' />
+                                    <span className='font-medium group-hover/badge:text-secondary transition-colors'>{course.sections?.length} sections</span>
                                 </div>
                             </div>
                         </div>
@@ -327,14 +347,15 @@ function CoursePage() {
                             <div className='grid gap-8'>
                                 {/* Exams */}
                                 {course.outline.assessments?.some((a) => a.type === 'exam') && (
-                                    <div className='card bg-base-100 shadow-xl hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.2)] transition-all duration-300'>
-                                        <div className='card-body relative overflow-hidden group'>
+                                    <div className='card bg-base-100 shadow-xl group hover:shadow-[0_0_30px_-5px_rgba(var(--error-rgb),0.2)] transition-all duration-300'>
+                                        <div className='card-body relative overflow-hidden'>
                                             {/* Section background effects */}
                                             <div className='absolute inset-0 bg-gradient-to-br from-error/5 via-transparent to-error/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+                                            <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.error)_1px,transparent_0)] opacity-[0.02] [background-size:16px_16px]' />
 
-                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full'>
-                                                <Target className='w-6 h-6 text-error animate-pulse' />
-                                                <span>Exams</span>
+                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full relative'>
+                                                <Target className='w-6 h-6 text-error' />
+                                                <span className='group-hover:text-error transition-colors'>Exams</span>
                                             </div>
                                             <div className='grid gap-4'>
                                                 {course.outline.assessments
@@ -342,8 +363,8 @@ function CoursePage() {
                                                     .map((assessment, index) => (
                                                         <div
                                                             key={index}
-                                                            className='group/item flex items-start justify-between p-4 bg-base-200 rounded-lg
-                            hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
+                                                            className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
+                                                            hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
                                                             {/* Item hover effects */}
                                                             <div className='absolute inset-0 bg-gradient-to-r from-error/10 via-transparent to-error/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
 
@@ -354,12 +375,12 @@ function CoursePage() {
                                                                 <div className='text-base-content/70'>{assessment.description}</div>
                                                                 <div className='flex flex-wrap items-center gap-4 mt-2'>
                                                                     {assessment.weight && (
-                                                                        <div className='badge badge-error badge-outline gap-2 p-3 group-hover/item:animate-pulse'>
+                                                                        <div className='badge badge-error badge-outline gap-2 p-3'>
                                                                             Weight: {assessment.weight}%
                                                                         </div>
                                                                     )}
                                                                     {assessment.location && (
-                                                                        <div className='badge badge-ghost gap-2 p-3'>
+                                                                        <div className='badge badge-ghost gap-2 p-3 group-hover/item:bg-error/10'>
                                                                             <MapPin className='w-4 h-4' />
                                                                             {assessment.location}
                                                                         </div>
@@ -367,8 +388,8 @@ function CoursePage() {
                                                                 </div>
                                                             </div>
                                                             <div className='text-right relative z-10 flex flex-col items-end gap-2'>
-                                                                <div className='text-sm text-base-content/70'>{formatDateTime(assessment.due_date)}</div>
-                                                                <UpcomingBadge />
+                                                                <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
+                                                                <div className='badge badge-error badge-outline gap-2 p-3'>upcoming</div>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -379,13 +400,14 @@ function CoursePage() {
 
                                 {/* Assignments */}
                                 {course.outline.assessments?.some((a) => a.type === 'assignment') && (
-                                    <div className='card bg-base-100 shadow-xl hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.2)] transition-all duration-300'>
-                                        <div className='card-body relative overflow-hidden group'>
+                                    <div className='card bg-base-100 shadow-xl group hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.2)] transition-all duration-300'>
+                                        <div className='card-body relative overflow-hidden'>
                                             <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+                                            <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.primary)_1px,transparent_0)] opacity-[0.02] [background-size:16px_16px]' />
 
-                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full'>
-                                                <Brain className='w-6 h-6 text-primary animate-pulse' />
-                                                <span>Assignments</span>
+                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full relative'>
+                                                <Brain className='w-6 h-6 text-primary' />
+                                                <span className='group-hover:text-primary transition-colors'>Assignments</span>
                                             </div>
                                             <div className='grid gap-4'>
                                                 {course.outline.assessments
@@ -393,8 +415,8 @@ function CoursePage() {
                                                     .map((assessment, index) => (
                                                         <div
                                                             key={index}
-                                                            className='group/item flex items-start justify-between p-4 bg-base-200 rounded-lg
-                            hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
+                                                            className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
+                                                            hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
                                                             <div className='absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
 
                                                             <div className='space-y-2 relative z-10'>
@@ -404,15 +426,15 @@ function CoursePage() {
                                                                 <div className='text-base-content/70'>{assessment.description}</div>
                                                                 <div className='flex flex-wrap items-center gap-4 mt-2'>
                                                                     {assessment.weight && (
-                                                                        <div className='badge badge-primary badge-outline gap-2 p-3 group-hover/item:animate-pulse'>
+                                                                        <div className='badge badge-primary badge-outline gap-2 p-3'>
                                                                             Weight: {assessment.weight}%
                                                                         </div>
                                                                     )}
                                                                 </div>
                                                             </div>
                                                             <div className='text-right relative z-10 flex flex-col items-end gap-2'>
-                                                                <div className='text-sm text-base-content/70'>{formatDateTime(assessment.due_date)}</div>
-                                                                <UpcomingBadge />
+                                                                <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
+                                                                <div className='badge badge-primary badge-outline gap-2 p-3'>upcoming</div>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -423,13 +445,14 @@ function CoursePage() {
 
                                 {/* Projects */}
                                 {course.outline.assessments?.some((a) => a.type === 'project') && (
-                                    <div className='card bg-base-100 shadow-xl hover:shadow-[0_0_30px_-5px_rgba(var(--secondary-rgb),0.2)] transition-all duration-300'>
-                                        <div className='card-body relative overflow-hidden group'>
+                                    <div className='card bg-base-100 shadow-xl group hover:shadow-[0_0_30px_-5px_rgba(var(--secondary-rgb),0.2)] transition-all duration-300'>
+                                        <div className='card-body relative overflow-hidden'>
                                             <div className='absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+                                            <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.secondary)_1px,transparent_0)] opacity-[0.02] [background-size:16px_16px]' />
 
-                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full'>
-                                                <Trophy className='w-6 h-6 text-secondary animate-pulse' />
-                                                <span>Projects</span>
+                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full relative'>
+                                                <Trophy className='w-6 h-6 text-secondary' />
+                                                <span className='group-hover:text-secondary transition-colors'>Projects</span>
                                             </div>
                                             <div className='grid gap-4'>
                                                 {course.outline.assessments
@@ -437,8 +460,8 @@ function CoursePage() {
                                                     .map((assessment, index) => (
                                                         <div
                                                             key={index}
-                                                            className='group/item flex items-start justify-between p-4 bg-base-200 rounded-lg
-                            hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
+                                                            className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
+                                                            hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
                                                             <div className='absolute inset-0 bg-gradient-to-r from-secondary/10 via-transparent to-secondary/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
 
                                                             <div className='space-y-2 relative z-10'>
@@ -448,15 +471,15 @@ function CoursePage() {
                                                                 <div className='text-base-content/70'>{assessment.description}</div>
                                                                 <div className='flex flex-wrap items-center gap-4 mt-2'>
                                                                     {assessment.weight && (
-                                                                        <div className='badge badge-secondary badge-outline gap-2 p-3 group-hover/item:animate-pulse'>
+                                                                        <div className='badge badge-secondary badge-outline gap-2 p-3'>
                                                                             Weight: {assessment.weight}%
                                                                         </div>
                                                                     )}
                                                                 </div>
                                                             </div>
                                                             <div className='text-right relative z-10 flex flex-col items-end gap-2'>
-                                                                <div className='text-sm text-base-content/70'>{formatDateTime(assessment.due_date)}</div>
-                                                                <UpcomingBadge />
+                                                                <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
+                                                                <div className='badge badge-secondary badge-outline gap-2 p-3'>upcoming</div>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -467,13 +490,14 @@ function CoursePage() {
 
                                 {/* Quizzes */}
                                 {course.outline.assessments?.some((a) => a.type === 'quiz') && (
-                                    <div className='card bg-base-100 shadow-xl hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.2)] transition-all duration-300'>
-                                        <div className='card-body relative overflow-hidden group'>
-                                            <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+                                    <div className='card bg-base-100 shadow-xl group hover:shadow-[0_0_30px_-5px_rgba(var(--accent-rgb),0.2)] transition-all duration-300'>
+                                        <div className='card-body relative overflow-hidden'>
+                                            <div className='absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+                                            <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.accent)_1px,transparent_0)] opacity-[0.02] [background-size:16px_16px]' />
 
-                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full'>
-                                                <Brain className='w-6 h-6 text-primary animate-pulse' />
-                                                <span>Quizzes</span>
+                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full relative'>
+                                                <Brain className='w-6 h-6 text-accent' />
+                                                <span className='group-hover:text-accent transition-colors'>Quizzes</span>
                                             </div>
                                             <div className='grid gap-4'>
                                                 {course.outline.assessments
@@ -481,21 +505,19 @@ function CoursePage() {
                                                     .map((assessment, index) => (
                                                         <div
                                                             key={index}
-                                                            className='group/item flex items-start justify-between p-4 bg-base-200 rounded-lg
+                                                            className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
                                                             hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
-                                                            <div className='absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
+                                                            <div className='absolute inset-0 bg-gradient-to-r from-accent/10 via-transparent to-accent/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
 
                                                             <div className='space-y-2 relative z-10'>
-                                                                <div className='font-medium text-lg group-hover/item:text-primary transition-colors'>
+                                                                <div className='font-medium text-lg group-hover/item:text-accent transition-colors'>
                                                                     {assessment.title}
                                                                 </div>
                                                                 <div className='text-base-content/70'>{assessment.description}</div>
-                                                                <div className='flex flex-wrap items-center gap-4 mt-2'>
-                                                                </div>
                                                             </div>
                                                             <div className='text-right relative z-10 flex flex-col items-end gap-2'>
-                                                                <div className='text-sm text-base-content/70'>{formatDateTime(assessment.due_date)}</div>
-                                                                <UpcomingBadge />
+                                                                <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
+                                                                <div className='badge badge-accent badge-outline gap-2 p-3'>upcoming</div>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -505,52 +527,122 @@ function CoursePage() {
                                 )}
                             </div>
                         )}
-
-                        {/* Schedule */}
-                        <div className='card bg-base-100 shadow-lg'>
-                            <div className='card-body'>
-                                <h2 className='card-title text-xl mb-6 pb-2 border-b border-base-300'>Schedule</h2>
-                                <div className='space-y-8'>
-                                    {course.sections?.map((section) => (
-                                        <div key={section?.section_id} className='space-y-4'>
-                                            <div className='flex items-center gap-2 text-lg font-semibold'>
-                                                <GraduationCap className='w-5 h-5 text-primary' />
-                                                Section {section?.section_id}
-                                            </div>
-                                            <div className='grid gap-3'>
-                                                {section?.schedule?.map((item, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className='flex items-center justify-between p-4 bg-base-200 rounded-lg hover:bg-base-300/50 transition-colors'>
-                                                        <div className='flex items-center gap-6'>
-                                                            <div className='flex items-center gap-2'>
-                                                                <Clock className='w-4 h-4 text-primary' />
-                                                                <span className='font-medium'>{item?.day}</span>
-                                                            </div>
-                                                            <div className='text-base-content/70'>
-                                                                {item?.start_time} - {item?.end_time}
-                                                            </div>
-                                                            <div className='badge badge-outline'>{item?.type}</div>
-                                                        </div>
-                                                        <div className='flex items-center gap-2 text-base-content/70'>
-                                                            <MapPin className='w-4 h-4' />
-                                                            {item?.location}
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     {/* Instructors Sidebar */}
                     <div className='space-y-8'>
-                        <div className='card bg-base-100 shadow-lg'>
-                            <div className='card-body'>
-                                <h2 className='card-title text-xl mb-6 pb-2 border-b border-base-300'>Instructors</h2>
+                        {/* This Week Section */}
+                        <div className='card bg-base-100 shadow-xl group hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.2)] transition-all duration-300'>
+                            <div className='card-body relative overflow-hidden'>
+                                {/* Subtle background effects */}
+                                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-100 transition-opacity duration-500' />
+                                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.primary)_1px,transparent_0)] opacity-[0.02] [background-size:16px_16px]' />
+
+                                <div className='flex items-center gap-3 mb-6 pb-2 border-b border-base-300 relative'>
+                                    <Calendar className='w-6 h-6 text-primary' />
+                                    <h2 className='card-title text-xl'>This Week's Schedule</h2>
+                                </div>
+
+                                <div className='space-y-6'>
+                                    {/* Monday */}
+                                    <div>
+                                        <div className='flex items-center gap-2 mb-3'>
+                                            <div className='w-2 h-2 rounded-full bg-primary'></div>
+                                            <h3 className='font-medium text-base-content'>Monday</h3>
+                                        </div>
+                                        <div className='ml-4 space-y-2'>
+                                            <div className='flex items-center gap-4 p-3 bg-base-200/50 rounded-lg hover:bg-primary/5 transition-all duration-300 group/item'>
+                                                <div className='shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center'>
+                                                    <BookOpen className='w-5 h-5 text-primary' />
+                                                </div>
+                                                <div className='min-w-0 flex-1'>
+                                                    <div className='flex items-center justify-between gap-2'>
+                                                        <span className='font-medium'>Lecture</span>
+                                                        <span className='text-sm text-base-content/70 whitespace-nowrap'>{formatTime('09:00')} - {formatTime('10:20')}</span>
+                                                    </div>
+                                                    <div className='text-sm text-base-content/70 mt-0.5'>Room 101</div>
+                                                </div>
+                                            </div>
+                                            <div className='flex items-center gap-4 p-3 bg-base-200/50 rounded-lg hover:bg-primary/5 transition-all duration-300 group/item'>
+                                                <div className='shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center'>
+                                                    <Brain className='w-5 h-5 text-primary' />
+                                                </div>
+                                                <div className='min-w-0 flex-1'>
+                                                    <div className='flex items-center justify-between gap-2'>
+                                                        <span className='font-medium'>Assignment Due</span>
+                                                        <span className='text-sm text-base-content/70 whitespace-nowrap'>{formatTime('23:59')}</span>
+                                                    </div>
+                                                    <div className='text-sm text-base-content/70 mt-0.5'>Assignment 3: Strings and Structures</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Wednesday */}
+                                    <div>
+                                        <div className='flex items-center gap-2 mb-3'>
+                                            <div className='w-2 h-2 rounded-full bg-primary'></div>
+                                            <h3 className='font-medium text-base-content'>Wednesday</h3>
+                                        </div>
+                                        <div className='ml-4 space-y-2'>
+                                            <div className='flex items-center gap-4 p-3 bg-base-200/50 rounded-lg hover:bg-primary/5 transition-all duration-300 group/item'>
+                                                <div className='shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center'>
+                                                    <BookOpen className='w-5 h-5 text-primary' />
+                                                </div>
+                                                <div className='min-w-0 flex-1'>
+                                                    <div className='flex items-center justify-between gap-2'>
+                                                        <span className='font-medium'>Lecture</span>
+                                                        <span className='text-sm text-base-content/70 whitespace-nowrap'>{formatTime('09:00')} - {formatTime('10:20')}</span>
+                                                    </div>
+                                                    <div className='text-sm text-base-content/70 mt-0.5'>Room 101</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Friday */}
+                                    <div>
+                                        <div className='flex items-center gap-2 mb-3'>
+                                            <div className='w-2 h-2 rounded-full bg-primary'></div>
+                                            <h3 className='font-medium text-base-content'>Friday</h3>
+                                        </div>
+                                        <div className='ml-4 space-y-2'>
+                                            <div className='flex items-center gap-4 p-3 bg-base-200/50 rounded-lg hover:bg-secondary/5 transition-all duration-300 group/item'>
+                                                <div className='shrink-0 w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center'>
+                                                    <Brain className='w-5 h-5 text-secondary' />
+                                                </div>
+                                                <div className='min-w-0 flex-1'>
+                                                    <div className='flex items-center justify-between gap-2'>
+                                                        <span className='font-medium'>Lab</span>
+                                                        <span className='text-sm text-base-content/70 whitespace-nowrap'>{formatTime('14:00')} - {formatTime('15:20')}</span>
+                                                    </div>
+                                                    <div className='text-sm text-base-content/70 mt-0.5'>Computer Lab 2</div>
+                                                </div>
+                                            </div>
+                                            <div className='flex items-center gap-4 p-3 bg-base-200/50 rounded-lg hover:bg-accent/5 transition-all duration-300 group/item'>
+                                                <div className='shrink-0 w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center'>
+                                                    <Brain className='w-5 h-5 text-accent' />
+                                                </div>
+                                                <div className='min-w-0 flex-1'>
+                                                    <div className='flex items-center justify-between gap-2'>
+                                                        <span className='font-medium'>Quiz Due</span>
+                                                        <span className='text-sm text-base-content/70 whitespace-nowrap'>{formatTime('23:59')}</span>
+                                                    </div>
+                                                    <div className='text-sm text-base-content/70 mt-0.5'>Weekly Progress Check</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='card bg-base-100 shadow-xl group hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.2)] transition-all duration-300'>
+                            <div className='card-body relative overflow-hidden'>
+                                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+                                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.primary)_1px,transparent_0)] opacity-[0.02] [background-size:16px_16px]' />
+
+                                <h2 className='card-title text-xl mb-6 pb-2 border-b border-base-300 relative'>Instructors</h2>
                                 <div className='space-y-8'>
                                     {course.sections?.map((section) => (
                                         <div key={section?.section_id} className='space-y-4'>
@@ -561,25 +653,26 @@ function CoursePage() {
                                             {section?.instructor && (
                                                 <div className='space-y-4'>
                                                     <div>
-                                                        <div className='font-medium text-lg'>{section.instructor.name}</div>
+                                                        <div className='font-medium text-lg group-hover:text-primary transition-colors'>{section.instructor.name}</div>
                                                         <div className='text-base-content/70'>{section.instructor.email}</div>
                                                     </div>
                                                     {section.instructor.office && (
                                                         <div className='space-y-4'>
                                                             <div>
-                                                                <div className='font-medium mb-1'>Office</div>
+                                                                <div className='font-medium mb-1 group-hover:text-primary transition-colors'>Office</div>
                                                                 <div className='text-base-content/70'>{section.instructor.office.location}</div>
                                                             </div>
                                                             <div>
-                                                                <div className='font-medium mb-2'>Office Hours</div>
+                                                                <div className='font-medium mb-2 group-hover:text-primary transition-colors'>Office Hours</div>
                                                                 <div className='grid gap-2'>
                                                                     {section.instructor.office.hours?.map((hour, index) => (
                                                                         <div
                                                                             key={index}
-                                                                            className='flex items-center justify-between p-3 bg-base-200 rounded-lg hover:bg-base-300/50 transition-colors'>
-                                                                            <span className='font-medium'>{hour?.day}</span>
-                                                                            <span className='text-base-content/70'>
-                                                                                {hour?.start_time} - {hour?.end_time}
+                                                                            className='flex items-center justify-between p-3 bg-base-200/80 rounded-lg 
+                                                                            hover:bg-primary/10 transition-colors group/hour'>
+                                                                            <span className='font-medium group-hover/hour:text-primary transition-colors'>{hour?.day}</span>
+                                                                            <span className='text-base-content/70 whitespace-nowrap'>
+                                                                                {hour?.start_time && hour?.end_time ? `${formatTime(hour.start_time)} - ${formatTime(hour.end_time)}` : 'Time TBD'}
                                                                             </span>
                                                                         </div>
                                                                     ))}
