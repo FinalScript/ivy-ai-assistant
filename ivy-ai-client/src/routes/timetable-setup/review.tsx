@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { AlertCircle, Check, Clock, Edit3, MapPin, Upload, Globe, Trash2 } from 'lucide-react';
+import { AlertCircle, Check, Clock, Edit3, MapPin, Upload, Globe, Trash2, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Course } from '../../__generated__/graphql';
 import { CourseEditModal } from '../../components/CourseEditModal';
@@ -10,6 +10,7 @@ interface CourseCardProps {
     onUploadOutline: (courseId: string) => void;
     onDelete: () => void;
     hasOutline?: boolean;
+    isDeleteDisabled?: boolean;
 }
 
 const formatTimeForDisplay = (isoTime: string): string => {
@@ -34,7 +35,7 @@ const getMissingFields = (course: Course): string[] => {
     return missing;
 };
 
-const CourseCard = ({ course, onEdit, onUploadOutline, onDelete, hasOutline = false }: CourseCardProps) => {
+const CourseCard = ({ course, onEdit, onUploadOutline, onDelete, hasOutline = false, isDeleteDisabled = false }: CourseCardProps) => {
     const missingFields = getMissingFields(course);
     const needsEdits = missingFields.length > 0;
 
@@ -110,7 +111,8 @@ const CourseCard = ({ course, onEdit, onUploadOutline, onDelete, hasOutline = fa
                             e.stopPropagation();
                             onDelete();
                         }}
-                        data-tip="Delete Course"
+                        data-tip={isDeleteDisabled ? "At least one course is required" : "Delete Course"}
+                        disabled={isDeleteDisabled}
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
@@ -180,6 +182,22 @@ const CourseCard = ({ course, onEdit, onUploadOutline, onDelete, hasOutline = fa
     );
 };
 
+const AddCourseCard = ({ onClick }: { onClick: () => void }) => {
+    return (
+        <div
+            onClick={onClick}
+            className={`card bg-base-100 shadow-lg transition-all duration-500 border border-base-300/50 
+                relative group overflow-hidden cursor-pointer min-h-[200px]
+                hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.3)] hover:border-primary/30
+                flex items-center justify-center`}>
+            <div className="flex flex-col items-center gap-3 text-base-content/50 group-hover:text-primary transition-colors">
+                <Plus className="w-12 h-12" />
+                <span className="text-sm font-medium">Add New Course</span>
+            </div>
+        </div>
+    );
+};
+
 export const Route = createFileRoute('/timetable-setup/review')({
     component: ReviewCourses,
 });
@@ -192,6 +210,17 @@ function ReviewCourses() {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [originalCourseCode, setOriginalCourseCode] = useState<string>('');
     const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
+    const [isNewCourse, setIsNewCourse] = useState(false);
+    const [modalError, setModalError] = useState<string | null>(null);
+    // Counter for generating unique temporary IDs for new courses
+    const [tempIdCounter, setTempIdCounter] = useState(1);
+
+    // Generate a unique temporary ID for new courses
+    const generateTempId = () => {
+        const tempId = `NEW_COURSE_${tempIdCounter}`;
+        setTempIdCounter(prev => prev + 1);
+        return tempId;
+    };
 
     // Get initial courses data from URL state
     useEffect(() => {
@@ -219,16 +248,52 @@ function ReviewCourses() {
             setOriginalCourseCode(course.code);
             setSelectedCourse(course);
             setEditModalOpen(true);
+            setIsNewCourse(false);
         }
     };
 
     const handleSaveCourse = (updatedCourse: Course) => {
-        setCourses((prevCourses) => prevCourses.map((course) => 
-            course.code === originalCourseCode ? updatedCourse : course
-        ));
+        // Reset any previous error
+        setModalError(null);
+
+        // Trim and validate course code
+        const trimmedCode = updatedCourse.code?.trim() || '';
+        if (!trimmedCode) {
+            setModalError('Please enter a course code');
+            return;
+        }
+
+        // Check for duplicate course code (using trimmed codes for comparison)
+        const isDuplicate = courses.some(course => 
+            course.code?.trim() === trimmedCode && trimmedCode !== originalCourseCode?.trim()
+        );
+
+        if (isDuplicate) {
+            setModalError('This course code already exists. Please use a unique code.');
+            return;
+        }
+
+        // If we get here, validation passed - proceed with save
+        // Ensure we save the course with trimmed code
+        const sanitizedCourse = {
+            ...updatedCourse,
+            code: trimmedCode
+        };
+
+        if (isNewCourse) {
+            setCourses((prevCourses) => [...prevCourses, sanitizedCourse]);
+        } else {
+            setCourses((prevCourses) => prevCourses.map((course) => 
+                course.code === originalCourseCode ? sanitizedCourse : course
+            ));
+        }
+
+        // Clear all states and close modal only after successful save
         setEditModalOpen(false);
         setSelectedCourse(null);
         setOriginalCourseCode('');
+        setIsNewCourse(false);
+        setModalError(null);
     };
 
     const handleUploadOutline = (courseId: string) => {
@@ -242,6 +307,10 @@ function ReviewCourses() {
     };
 
     const handleDeleteCourse = (course: Course) => {
+        // Prevent deletion if this is the last course
+        if (courses.length <= 1) {
+            return;
+        }
         setCourseToDelete(course);
     };
 
@@ -261,8 +330,37 @@ function ReviewCourses() {
     }
 
     return (
-        <div className='min-h-screen bg-gradient-to-b from-base-200 to-base-300 py-8 px-4 mt-14'>
-            <div className='max-w-7xl mx-auto'>
+        <div className='min-h-screen bg-base-200 py-8 px-4 mt-14 relative overflow-hidden'>
+            {/* Animated Background Elements */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                {/* Base gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-base-100 via-base-200 to-base-300" />
+                
+                {/* Animated background pattern */}
+                <div className='absolute inset-0 opacity-10'>
+                    {/* Huge top left orb */}
+                    <div className='absolute w-96 sm:w-[32rem] h-96 sm:h-[32rem] -top-48 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl 
+                        animate-[blob_15s_infinite]'></div>
+                    
+                    {/* Small top right orb */}
+                    <div className='absolute w-32 sm:w-48 h-32 sm:h-48 top-20 -right-12 bg-secondary rounded-full mix-blend-multiply filter blur-xl 
+                        animate-[blob_12s_infinite] [animation-delay:1s]'></div>
+                    
+                    {/* Tiny center-left orb */}
+                    <div className='absolute w-24 sm:w-32 h-24 sm:h-32 top-1/2 -left-16 bg-accent rounded-full mix-blend-multiply filter blur-xl 
+                        animate-[blob_10s_infinite] [animation-delay:2s]'></div>
+                    
+                    {/* Medium bottom-center orb */}
+                    <div className='absolute w-64 sm:w-80 h-64 sm:h-80 -bottom-20 left-1/3 bg-primary rounded-full mix-blend-multiply filter blur-xl 
+                        animate-[blob_18s_infinite] [animation-delay:3s]'></div>
+                    
+                    {/* Large bottom right orb */}
+                    <div className='absolute w-80 sm:w-[28rem] h-80 sm:h-[28rem] -bottom-40 -right-32 bg-secondary rounded-full mix-blend-multiply filter blur-xl 
+                        animate-[blob_14s_infinite] [animation-delay:4s]'></div>
+                </div>
+            </div>
+
+            <div className='max-w-7xl mx-auto relative'>
                 <div className='flex justify-between items-center mb-8'>
                     <h2 className='text-2xl font-bold'>Review Your Courses</h2>
                     <button className='btn btn-primary' onClick={handleConfirm} disabled={courses.length === 0 || hasErrors}>
@@ -286,8 +384,22 @@ function ReviewCourses() {
                             onEdit={handleEditCourse} 
                             onUploadOutline={handleUploadOutline}
                             onDelete={() => handleDeleteCourse(course)}
+                            isDeleteDisabled={courses.length <= 1}
                         />
                     ))}
+                    <AddCourseCard 
+                        onClick={() => {
+                            setSelectedCourse({
+                                code: '', // Start with empty code
+                                name: '',
+                                term: '',
+                                sections: [],
+                            } as Course);
+                            setOriginalCourseCode(''); // No original code for new courses
+                            setIsNewCourse(true);
+                            setEditModalOpen(true);
+                        }} 
+                    />
                 </div>
 
                 {selectedCourse && (
@@ -297,8 +409,10 @@ function ReviewCourses() {
                         onClose={() => {
                             setEditModalOpen(false);
                             setSelectedCourse(null);
+                            setModalError(null);
                         }}
                         onSave={handleSaveCourse}
+                        error={modalError}
                     />
                 )}
 

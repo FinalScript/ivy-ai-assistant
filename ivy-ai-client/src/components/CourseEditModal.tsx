@@ -1,5 +1,5 @@
 import { Course, Section } from '../__generated__/graphql';
-import { Clock, Edit3, MapPin, Save, Trash2, X, Plus } from 'lucide-react';
+import { Clock, Edit3, MapPin, Save, Trash2, X, Plus, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface CourseEditModalProps {
@@ -7,6 +7,7 @@ interface CourseEditModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: (updatedCourse: Course) => void;
+    error?: string | null;
 }
 
 const formatTimeForInput = (isoTime: string): string => {
@@ -32,7 +33,7 @@ const formatTimeForSubmission = (timeStr: string): string => {
     }
 };
 
-export function CourseEditModal({ course, isOpen, onClose, onSave }: CourseEditModalProps) {
+export function CourseEditModal({ course, isOpen, onClose, onSave, error }: CourseEditModalProps) {
     const [editedCourse, setEditedCourse] = useState<Course>(course);
 
     // Update editedCourse when course prop changes
@@ -42,7 +43,6 @@ export function CourseEditModal({ course, isOpen, onClose, onSave }: CourseEditM
 
     const handleSave = () => {
         onSave(editedCourse);
-        onClose();
     };
 
     if (!isOpen) return null;
@@ -62,6 +62,14 @@ export function CourseEditModal({ course, isOpen, onClose, onSave }: CourseEditM
                         <X className="w-5 h-5" />
                     </button>
                 </div>
+
+                {/* Error Alert */}
+                {error && (
+                    <div className="alert alert-error mb-4">
+                        <AlertCircle className="w-5 h-5" />
+                        <span>{error}</span>
+                    </div>
+                )}
 
                 {/* Course Basic Info */}
                 <div className="form-control gap-4 mb-6">
