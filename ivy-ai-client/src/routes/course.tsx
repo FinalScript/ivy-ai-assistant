@@ -278,6 +278,19 @@ function formatTime(time: string) {
 function CoursePage() {
     const navigate = useNavigate();
     const [course] = useState<Course>(mockCourse);
+    const [openSections, setOpenSections] = useState({
+        exams: true,
+        assignments: true,
+        projects: true,
+        quizzes: true,
+    });
+
+    const toggleSection = (section: keyof typeof openSections) => {
+        setOpenSections(prev => ({
+            ...prev,
+            [section]: !prev[section]
+        }));
+    };
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-base-200 via-base-300 to-base-200 py-8 px-4 mt-14 relative overflow-hidden'>
@@ -353,46 +366,58 @@ function CoursePage() {
                                             <div className='absolute inset-0 bg-gradient-to-br from-error/5 via-transparent to-error/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
                                             <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.error)_1px,transparent_0)] opacity-[0.02] [background-size:16px_16px]' />
 
-                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full relative'>
-                                                <Target className='w-6 h-6 text-error' />
-                                                <span className='group-hover:text-error transition-colors'>Exams</span>
+                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center justify-between w-full relative'>
+                                                <div className='flex items-center gap-3'>
+                                                    <Target className='w-6 h-6 text-error' />
+                                                    <span className='group-hover:text-error transition-colors'>Exams</span>
+                                                </div>
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleSection('exams');
+                                                    }}
+                                                    className='btn btn-ghost btn-sm btn-circle'>
+                                                    <ChevronLeft className={`w-5 h-5 transition-transform duration-300 ${openSections.exams ? '-rotate-90' : 'rotate-90'}`} />
+                                                </button>
                                             </div>
-                                            <div className='grid gap-4'>
-                                                {course.outline.assessments
-                                                    .filter((a) => a.type === 'exam')
-                                                    .map((assessment, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
-                                                            hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
-                                                            {/* Item hover effects */}
-                                                            <div className='absolute inset-0 bg-gradient-to-r from-error/10 via-transparent to-error/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
+                                            <div className={`grid gap-4 transition-all duration-300 ${openSections.exams ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                                                <div className='overflow-hidden'>
+                                                    {course.outline.assessments
+                                                        .filter((a) => a.type === 'exam')
+                                                        .map((assessment, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
+                                                                hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
+                                                                {/* Item hover effects */}
+                                                                <div className='absolute inset-0 bg-gradient-to-r from-error/10 via-transparent to-error/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
 
-                                                            <div className='space-y-2 relative z-10'>
-                                                                <div className='font-medium text-lg group-hover/item:text-error transition-colors'>
-                                                                    {assessment.title}
+                                                                <div className='space-y-2 relative z-10'>
+                                                                    <div className='font-medium text-lg group-hover/item:text-error transition-colors'>
+                                                                        {assessment.title}
+                                                                    </div>
+                                                                    <div className='text-base-content/70'>{assessment.description}</div>
+                                                                    <div className='flex flex-wrap items-center gap-4 mt-2'>
+                                                                        {assessment.weight && (
+                                                                            <div className='badge badge-error badge-outline gap-2 p-3'>
+                                                                                Weight: {assessment.weight}%
+                                                                            </div>
+                                                                        )}
+                                                                        {assessment.location && (
+                                                                            <div className='badge badge-ghost gap-2 p-3 group-hover/item:bg-error/10'>
+                                                                                <MapPin className='w-4 h-4' />
+                                                                                {assessment.location}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
-                                                                <div className='text-base-content/70'>{assessment.description}</div>
-                                                                <div className='flex flex-wrap items-center gap-4 mt-2'>
-                                                                    {assessment.weight && (
-                                                                        <div className='badge badge-error badge-outline gap-2 p-3'>
-                                                                            Weight: {assessment.weight}%
-                                                                        </div>
-                                                                    )}
-                                                                    {assessment.location && (
-                                                                        <div className='badge badge-ghost gap-2 p-3 group-hover/item:bg-error/10'>
-                                                                            <MapPin className='w-4 h-4' />
-                                                                            {assessment.location}
-                                                                        </div>
-                                                                    )}
+                                                                <div className='text-right relative z-10 flex flex-col items-end gap-2'>
+                                                                    <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
+                                                                    <div className='badge badge-error badge-outline gap-2 p-3'>upcoming</div>
                                                                 </div>
                                                             </div>
-                                                            <div className='text-right relative z-10 flex flex-col items-end gap-2'>
-                                                                <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
-                                                                <div className='badge badge-error badge-outline gap-2 p-3'>upcoming</div>
-                                                            </div>
-                                                        </div>
-                                                    ))}
+                                                        ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -405,39 +430,51 @@ function CoursePage() {
                                             <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
                                             <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.primary)_1px,transparent_0)] opacity-[0.02] [background-size:16px_16px]' />
 
-                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full relative'>
-                                                <Brain className='w-6 h-6 text-primary' />
-                                                <span className='group-hover:text-primary transition-colors'>Assignments</span>
+                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center justify-between w-full relative'>
+                                                <div className='flex items-center gap-3'>
+                                                    <Brain className='w-6 h-6 text-primary' />
+                                                    <span className='group-hover:text-primary transition-colors'>Assignments</span>
+                                                </div>
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleSection('assignments');
+                                                    }}
+                                                    className='btn btn-ghost btn-sm btn-circle'>
+                                                    <ChevronLeft className={`w-5 h-5 transition-transform duration-300 ${openSections.assignments ? '-rotate-90' : 'rotate-90'}`} />
+                                                </button>
                                             </div>
-                                            <div className='grid gap-4'>
-                                                {course.outline.assessments
-                                                    .filter((a) => a.type === 'assignment')
-                                                    .map((assessment, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
-                                                            hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
-                                                            <div className='absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
+                                            <div className={`grid gap-4 transition-all duration-300 ${openSections.assignments ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                                                <div className='overflow-hidden'>
+                                                    {course.outline.assessments
+                                                        .filter((a) => a.type === 'assignment')
+                                                        .map((assessment, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
+                                                                hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
+                                                                <div className='absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
 
-                                                            <div className='space-y-2 relative z-10'>
-                                                                <div className='font-medium text-lg group-hover/item:text-primary transition-colors'>
-                                                                    {assessment.title}
+                                                                <div className='space-y-2 relative z-10'>
+                                                                    <div className='font-medium text-lg group-hover/item:text-primary transition-colors'>
+                                                                        {assessment.title}
+                                                                    </div>
+                                                                    <div className='text-base-content/70'>{assessment.description}</div>
+                                                                    <div className='flex flex-wrap items-center gap-4 mt-2'>
+                                                                        {assessment.weight && (
+                                                                            <div className='badge badge-primary badge-outline gap-2 p-3'>
+                                                                                Weight: {assessment.weight}%
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
-                                                                <div className='text-base-content/70'>{assessment.description}</div>
-                                                                <div className='flex flex-wrap items-center gap-4 mt-2'>
-                                                                    {assessment.weight && (
-                                                                        <div className='badge badge-primary badge-outline gap-2 p-3'>
-                                                                            Weight: {assessment.weight}%
-                                                                        </div>
-                                                                    )}
+                                                                <div className='text-right relative z-10 flex flex-col items-end gap-2'>
+                                                                    <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
+                                                                    <div className='badge badge-primary badge-outline gap-2 p-3'>upcoming</div>
                                                                 </div>
                                                             </div>
-                                                            <div className='text-right relative z-10 flex flex-col items-end gap-2'>
-                                                                <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
-                                                                <div className='badge badge-primary badge-outline gap-2 p-3'>upcoming</div>
-                                                            </div>
-                                                        </div>
-                                                    ))}
+                                                        ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -450,39 +487,51 @@ function CoursePage() {
                                             <div className='absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
                                             <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.secondary)_1px,transparent_0)] opacity-[0.02] [background-size:16px_16px]' />
 
-                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full relative'>
-                                                <Trophy className='w-6 h-6 text-secondary' />
-                                                <span className='group-hover:text-secondary transition-colors'>Projects</span>
+                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center justify-between w-full relative'>
+                                                <div className='flex items-center gap-3'>
+                                                    <Trophy className='w-6 h-6 text-secondary' />
+                                                    <span className='group-hover:text-secondary transition-colors'>Projects</span>
+                                                </div>
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleSection('projects');
+                                                    }}
+                                                    className='btn btn-ghost btn-sm btn-circle'>
+                                                    <ChevronLeft className={`w-5 h-5 transition-transform duration-300 ${openSections.projects ? '-rotate-90' : 'rotate-90'}`} />
+                                                </button>
                                             </div>
-                                            <div className='grid gap-4'>
-                                                {course.outline.assessments
-                                                    .filter((a) => a.type === 'project')
-                                                    .map((assessment, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
-                                                            hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
-                                                            <div className='absolute inset-0 bg-gradient-to-r from-secondary/10 via-transparent to-secondary/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
+                                            <div className={`grid gap-4 transition-all duration-300 ${openSections.projects ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                                                <div className='overflow-hidden'>
+                                                    {course.outline.assessments
+                                                        .filter((a) => a.type === 'project')
+                                                        .map((assessment, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
+                                                                hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
+                                                                <div className='absolute inset-0 bg-gradient-to-r from-secondary/10 via-transparent to-secondary/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
 
-                                                            <div className='space-y-2 relative z-10'>
-                                                                <div className='font-medium text-lg group-hover/item:text-secondary transition-colors'>
-                                                                    {assessment.title}
+                                                                <div className='space-y-2 relative z-10'>
+                                                                    <div className='font-medium text-lg group-hover/item:text-secondary transition-colors'>
+                                                                        {assessment.title}
+                                                                    </div>
+                                                                    <div className='text-base-content/70'>{assessment.description}</div>
+                                                                    <div className='flex flex-wrap items-center gap-4 mt-2'>
+                                                                        {assessment.weight && (
+                                                                            <div className='badge badge-secondary badge-outline gap-2 p-3'>
+                                                                                Weight: {assessment.weight}%
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
-                                                                <div className='text-base-content/70'>{assessment.description}</div>
-                                                                <div className='flex flex-wrap items-center gap-4 mt-2'>
-                                                                    {assessment.weight && (
-                                                                        <div className='badge badge-secondary badge-outline gap-2 p-3'>
-                                                                            Weight: {assessment.weight}%
-                                                                        </div>
-                                                                    )}
+                                                                <div className='text-right relative z-10 flex flex-col items-end gap-2'>
+                                                                    <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
+                                                                    <div className='badge badge-secondary badge-outline gap-2 p-3'>upcoming</div>
                                                                 </div>
                                                             </div>
-                                                            <div className='text-right relative z-10 flex flex-col items-end gap-2'>
-                                                                <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
-                                                                <div className='badge badge-secondary badge-outline gap-2 p-3'>upcoming</div>
-                                                            </div>
-                                                        </div>
-                                                    ))}
+                                                        ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -495,32 +544,44 @@ function CoursePage() {
                                             <div className='absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
                                             <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.accent)_1px,transparent_0)] opacity-[0.02] [background-size:16px_16px]' />
 
-                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center gap-3 w-full relative'>
-                                                <Brain className='w-6 h-6 text-accent' />
-                                                <span className='group-hover:text-accent transition-colors'>Quizzes</span>
+                                            <div className='card-title text-xl mb-6 pb-2 border-b border-base-300 flex items-center justify-between w-full relative'>
+                                                <div className='flex items-center gap-3'>
+                                                    <Brain className='w-6 h-6 text-accent' />
+                                                    <span className='group-hover:text-accent transition-colors'>Quizzes</span>
+                                                </div>
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleSection('quizzes');
+                                                    }}
+                                                    className='btn btn-ghost btn-sm btn-circle'>
+                                                    <ChevronLeft className={`w-5 h-5 transition-transform duration-300 ${openSections.quizzes ? '-rotate-90' : 'rotate-90'}`} />
+                                                </button>
                                             </div>
-                                            <div className='grid gap-4'>
-                                                {course.outline.assessments
-                                                    .filter((a) => a.type === 'quiz')
-                                                    .map((assessment, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
-                                                            hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
-                                                            <div className='absolute inset-0 bg-gradient-to-r from-accent/10 via-transparent to-accent/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
+                                            <div className={`grid gap-4 transition-all duration-300 ${openSections.quizzes ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                                                <div className='overflow-hidden'>
+                                                    {course.outline.assessments
+                                                        .filter((a) => a.type === 'quiz')
+                                                        .map((assessment, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className='group/item flex items-start justify-between p-4 bg-base-200/80 rounded-lg
+                                                                hover:bg-base-300/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden'>
+                                                                <div className='absolute inset-0 bg-gradient-to-r from-accent/10 via-transparent to-accent/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300' />
 
-                                                            <div className='space-y-2 relative z-10'>
-                                                                <div className='font-medium text-lg group-hover/item:text-accent transition-colors'>
-                                                                    {assessment.title}
+                                                                <div className='space-y-2 relative z-10'>
+                                                                    <div className='font-medium text-lg group-hover/item:text-accent transition-colors'>
+                                                                        {assessment.title}
+                                                                    </div>
+                                                                    <div className='text-base-content/70'>{assessment.description}</div>
                                                                 </div>
-                                                                <div className='text-base-content/70'>{assessment.description}</div>
+                                                                <div className='text-right relative z-10 flex flex-col items-end gap-2'>
+                                                                    <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
+                                                                    <div className='badge badge-accent badge-outline gap-2 p-3'>upcoming</div>
+                                                                </div>
                                                             </div>
-                                                            <div className='text-right relative z-10 flex flex-col items-end gap-2'>
-                                                                <div className='text-sm text-base-content/70 whitespace-nowrap'>{formatDateTime(assessment.due_date)}</div>
-                                                                <div className='badge badge-accent badge-outline gap-2 p-3'>upcoming</div>
-                                                            </div>
-                                                        </div>
-                                                    ))}
+                                                        ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
