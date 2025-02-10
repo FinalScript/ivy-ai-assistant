@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { AlertCircle, Clock, Edit3, Globe, MapPin } from 'lucide-react';
+import { createFileRoute } from '@tanstack/react-router';
+import { AlertCircle, Clock, Globe, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { Course as BaseCoursetype } from '../__generated__/graphql';
-import { CourseEditModal } from '../components/CourseEditModal';
+import { twMerge } from '../utils/tw-merge';
 
 // Extend the base Course type to include hasOutline
 interface Course extends BaseCoursetype {
@@ -30,18 +30,18 @@ const mockCourses: Course[] = [
                         start_time: '09:00',
                         end_time: '10:20',
                         location: 'Room 101',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Wednesday',
                         start_time: '09:00',
                         end_time: '10:20',
                         location: 'Room 101',
-                        type: 'Lecture'
-                    }
-                ]
-            }
-        ]
+                        type: 'Lecture',
+                    },
+                ],
+            },
+        ],
     },
     {
         code: 'MATH201',
@@ -62,18 +62,18 @@ const mockCourses: Course[] = [
                         start_time: '13:00',
                         end_time: '14:20',
                         location: 'Room 205',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Thursday',
                         start_time: '13:00',
                         end_time: '14:20',
                         location: 'Room 205',
-                        type: 'Lecture'
-                    }
-                ]
-            }
-        ]
+                        type: 'Lecture',
+                    },
+                ],
+            },
+        ],
     },
     {
         code: 'PHYS202',
@@ -94,18 +94,18 @@ const mockCourses: Course[] = [
                         start_time: '14:30',
                         end_time: '15:50',
                         location: 'Physics Lab 1',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Wednesday',
                         start_time: '14:30',
                         end_time: '15:50',
                         location: 'Physics Lab 1',
-                        type: 'Lab'
-                    }
-                ]
-            }
-        ]
+                        type: 'Lab',
+                    },
+                ],
+            },
+        ],
     },
     {
         code: 'CHEM301',
@@ -126,18 +126,18 @@ const mockCourses: Course[] = [
                         start_time: '10:30',
                         end_time: '11:50',
                         location: 'Chemistry Lab A',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Friday',
                         start_time: '13:30',
                         end_time: '16:20',
                         location: 'Chemistry Lab A',
-                        type: 'Lab'
-                    }
-                ]
-            }
-        ]
+                        type: 'Lab',
+                    },
+                ],
+            },
+        ],
     },
     {
         code: 'PSYC101',
@@ -158,18 +158,18 @@ const mockCourses: Course[] = [
                         start_time: '11:00',
                         end_time: '12:20',
                         location: 'Room 302',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Wednesday',
                         start_time: '11:00',
                         end_time: '12:20',
                         location: 'Room 302',
-                        type: 'Lecture'
-                    }
-                ]
-            }
-        ]
+                        type: 'Lecture',
+                    },
+                ],
+            },
+        ],
     },
     {
         code: 'HIST205',
@@ -190,40 +190,26 @@ const mockCourses: Course[] = [
                         start_time: '15:30',
                         end_time: '16:50',
                         location: 'Room 405',
-                        type: 'Lecture'
+                        type: 'Lecture',
                     },
                     {
                         day: 'Thursday',
                         start_time: '15:30',
                         end_time: '16:50',
                         location: 'Room 405',
-                        type: 'Lecture'
-                    }
-                ]
-            }
-        ]
-    }
+                        type: 'Lecture',
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
 interface CourseCardProps {
     course: Course;
-    onEdit: (courseId: string) => void;
 }
 
-const CourseCard = ({ course, onEdit }: CourseCardProps) => {
-    const navigate = useNavigate();
-
-    const handleCardClick = (e: React.MouseEvent) => {
-        // Prevent navigation when clicking the edit button
-        if ((e.target as HTMLElement).closest('button')) {
-            return;
-        }
-        navigate({ 
-            to: '/course',
-            search: { courseId: course.code }
-        });
-    };
-
+const CourseCard = ({ course }: CourseCardProps) => {
     return (
         <div
             onClick={handleCardClick}
@@ -265,22 +251,6 @@ const CourseCard = ({ course, onEdit }: CourseCardProps) => {
                 />
             </div>
 
-            {/* Edit Button with enhanced glow */}
-            <button
-                className='absolute top-3 right-3 btn btn-sm normal-case gap-2 
-                    bg-base-200/80 hover:bg-primary/20 border-none
-                    shadow-[0_0_10px_-3px_rgba(var(--base-content-rgb),0.1)]
-                    backdrop-blur-sm transition-all duration-300
-                    hover:shadow-[0_0_15px_-3px_rgba(var(--primary-rgb),0.5)]
-                    hover:scale-105 group/edit z-10'
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(course.code);
-                }}>
-                <Edit3 className='w-4 h-4 group-hover/edit:text-primary transition-colors animate-pulse [animation-duration:4s]' />
-                <span className='text-xs group-hover/edit:text-primary transition-colors'>Edit Course</span>
-            </button>
-
             <div className='card-body p-4'>
                 {/* Course Header with gradient text */}
                 <div className='mb-1 relative'>
@@ -314,20 +284,22 @@ const CourseCard = ({ course, onEdit }: CourseCardProps) => {
                         <Globe className='w-3 h-3 animate-pulse [animation-duration:4s] [animation-delay:1s]' />
                         {course.sections?.length || 0} section{(course.sections?.length || 0) !== 1 ? 's' : ''}
                     </span>
-                    <div
-                        className={`tooltip tooltip-bottom ${course.hasOutline ? 'tooltip-success' : 'tooltip-warning'}`}
-                        data-tip={course.hasOutline ? 'Course outline uploaded' : 'Course outline not uploaded'}>
-                        <span
-                            className={`flex items-center gap-1.5 px-2 py-1 rounded-lg 
-                            ${course.hasOutline 
-                                ? 'bg-success/10 hover:bg-success/20' 
-                                : 'bg-warning/10 hover:bg-warning/20'} 
-                            backdrop-blur-sm transition-all duration-300
-                            animate-subtle-bounce [animation-delay:300ms]`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${course.hasOutline ? 'bg-success' : 'bg-warning'} animate-pulse`} />
-                            Outline
-                        </span>
-                    </div>
+                    {!course.hasOutline && (
+                        <div>
+                            <span
+                                className={twMerge(
+                                    'flex items-center gap-1.5 px-2 py-1 rounded-lg',
+                                    'dark:bg-warning/20 hover:dark:bg-warning/30',
+                                    'bg-warning/20 hover:bg-warning/30',
+                                    'shadow-warning/20 hover:shadow-warning/30',
+                                    'backdrop-blur-sm transition-all duration-300',
+                                    'animate-subtle-bounce'
+                                )}>
+                                <div className='w-1.5 h-1.5 rounded-full bg-warning animate-pulse' />
+                                <span className='dark:text-warning text-warning-content/80'>Outline Missing</span>
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Outline Section with enhanced effects */}
@@ -365,14 +337,13 @@ const CourseCard = ({ course, onEdit }: CourseCardProps) => {
                                 <div className='font-medium text-sm group-hover/outline:text-primary transition-colors'>Schedule</div>
                                 {course.sections?.[0]?.schedule?.[0] && (
                                     <div className='text-xs text-base-content/60 animate-fade-in'>
-                                        {course.sections[0].schedule[0].day} {course.sections[0].schedule[0].start_time} - {course.sections[0].schedule[0].end_time}
+                                        {course.sections[0].schedule[0].day} {course.sections[0].schedule[0].start_time} -{' '}
+                                        {course.sections[0].schedule[0].end_time}
                                     </div>
                                 )}
                             </div>
                         </div>
-                        <div className='text-xs text-base-content/60'>
-                            {course.sections?.[0]?.schedule?.[0]?.location}
-                        </div>
+                        <div className='text-xs text-base-content/60'>{course.sections?.[0]?.schedule?.[0]?.location}</div>
                     </div>
                 </div>
             </div>
@@ -387,23 +358,7 @@ export const Route = createFileRoute('/courses')({
 function CoursesPage() {
     const [loading] = useState(false);
     const [error] = useState<string | null>(null);
-    const [courses, setCourses] = useState<Course[]>(mockCourses);
-    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-    const [editModalOpen, setEditModalOpen] = useState(false);
-
-    const handleEditCourse = (courseId: string) => {
-        const course = courses.find((c) => c.code === courseId);
-        if (course) {
-            setSelectedCourse(course);
-            setEditModalOpen(true);
-        }
-    };
-
-    const handleSaveCourse = (updatedCourse: Course) => {
-        setCourses((prevCourses) => prevCourses.map((course) => (course.code === updatedCourse.code ? updatedCourse : course)));
-        setEditModalOpen(false);
-        setSelectedCourse(null);
-    };
+    const [courses] = useState<Course[]>(mockCourses);
 
     if (loading) {
         return (
@@ -433,22 +388,10 @@ function CoursesPage() {
 
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {courses.map((course) => (
-                        <CourseCard key={course.code} course={course} onEdit={handleEditCourse} />
+                        <CourseCard key={course.code} course={course} />
                     ))}
                 </div>
-
-                {selectedCourse && (
-                    <CourseEditModal
-                        isOpen={editModalOpen}
-                        onClose={() => {
-                            setEditModalOpen(false);
-                            setSelectedCourse(null);
-                        }}
-                        course={selectedCourse}
-                        onSave={handleSaveCourse}
-                    />
-                )}
             </div>
         </div>
     );
-} 
+}
