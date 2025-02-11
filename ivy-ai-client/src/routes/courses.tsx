@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { AlertCircle, Clock, Globe, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { Course as BaseCoursetype } from '../__generated__/graphql';
@@ -210,11 +210,21 @@ interface CourseCardProps {
 }
 
 const CourseCard = ({ course }: CourseCardProps) => {
+    const navigate = useNavigate();
+
+    const handleCardClick = () => {
+        navigate({ 
+            to: '/course',
+            search: { courseId: course.code }
+        });
+    };
+
     return (
         <div
+            onClick={handleCardClick}
             className='card bg-base-100 shadow-lg transition-all duration-500 border border-base-300/50 relative group overflow-hidden
             hover:shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.3)] hover:border-primary/30
-            animate-background-shine bg-[length:400%_100%]
+            animate-background-shine bg-[length:400%_100%] cursor-pointer
             bg-[linear-gradient(110deg,transparent,45%,var(--base-content-rgb)/2%,55%,transparent)]'>
             {/* Ambient Corner Glow */}
             <div className='absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent opacity-40 blur-2xl' />
