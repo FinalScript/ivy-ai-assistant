@@ -93,6 +93,18 @@ function Index() {
                             </div>
                         </div>
                     </div>
+
+                    {/* Scroll Indicator */}
+                    <div className='absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-bounce-slow opacity-80 hover:opacity-100 transition-opacity cursor-pointer group'>
+                        <span className='text-sm font-medium text-base-content/70 group-hover:text-primary transition-colors'>Scroll to explore</span>
+                        <div className='relative flex justify-center items-center w-full'>
+                            <div className='relative'>
+                                <div className='w-8 h-8 rotate-45 border-b-2 border-r-2 border-base-content/30 group-hover:border-primary transition-colors'></div>
+                                <div className='absolute -top-4 left-0 w-8 h-8 rotate-45 border-b-2 border-r-2 border-base-content/30 group-hover:border-primary transition-colors opacity-50'></div>
+                                <div className='absolute -top-8 left-0 w-8 h-8 rotate-45 border-b-2 border-r-2 border-base-content/30 group-hover:border-primary transition-colors opacity-25'></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* How It Works Section */}
