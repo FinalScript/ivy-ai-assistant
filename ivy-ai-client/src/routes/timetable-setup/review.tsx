@@ -7,9 +7,7 @@ import { CourseEditModal } from '../../components/CourseEditModal';
 interface CourseCardProps {
     course: Course;
     onEdit: (courseId: string) => void;
-    onUploadOutline: (courseId: string) => void;
     onDelete: () => void;
-    hasOutline?: boolean;
     isDeleteDisabled?: boolean;
 }
 
@@ -35,7 +33,7 @@ const getMissingFields = (course: Course): string[] => {
     return missing;
 };
 
-const CourseCard = ({ course, onEdit, onUploadOutline, onDelete, hasOutline = false, isDeleteDisabled = false }: CourseCardProps) => {
+const CourseCard = ({ course, onEdit, onDelete, isDeleteDisabled = false }: CourseCardProps) => {
     const missingFields = getMissingFields(course);
     const needsEdits = missingFields.length > 0;
 
@@ -256,15 +254,6 @@ function ReviewCourses() {
     const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
     const [isNewCourse, setIsNewCourse] = useState(false);
     const [modalError, setModalError] = useState<string | null>(null);
-    // Counter for generating unique temporary IDs for new courses
-    const [tempIdCounter, setTempIdCounter] = useState(1);
-
-    // Generate a unique temporary ID for new courses
-    const generateTempId = () => {
-        const tempId = `NEW_COURSE_${tempIdCounter}`;
-        setTempIdCounter((prev) => prev + 1);
-        return tempId;
-    };
 
     // Get initial courses data from URL state
     useEffect(() => {
@@ -330,16 +319,6 @@ function ReviewCourses() {
         setModalError(null);
     };
 
-    const handleUploadOutline = (courseId: string) => {
-        // Handle uploading course outline
-        console.log('Upload outline for:', courseId);
-    };
-
-    const handleConfirm = () => {
-        // Handle confirmation and next steps
-        console.log('Confirming courses:', courses);
-    };
-
     const handleDeleteCourse = (course: Course) => {
         // Prevent deletion if this is the last course
         if (courses.length <= 1) {
@@ -402,7 +381,14 @@ function ReviewCourses() {
             <div className='max-w-7xl mx-auto relative'>
                 <div className='flex justify-between items-center mb-8'>
                     <h2 className='text-2xl font-bold'>Review Your Courses</h2>
-                    <button className='btn btn-primary' onClick={handleConfirm} disabled={courses.length === 0 || hasErrors}>
+                    <button className='btn btn-primary' onClick={() => {
+                        navigate({
+                            to: '/outline-setup/',
+                            state: {
+                                courses,
+                            },
+                        });
+                    }} disabled={courses.length === 0 || hasErrors}>
                         <Check className='w-5 h-5 mr-2' />
                         Confirm and Continue
                     </button>
@@ -427,7 +413,6 @@ function ReviewCourses() {
                             key={course.code}
                             course={course}
                             onEdit={handleEditCourse}
-                            onUploadOutline={handleUploadOutline}
                             onDelete={() => handleDeleteCourse(course)}
                             isDeleteDisabled={courses.length <= 1}
                         />
