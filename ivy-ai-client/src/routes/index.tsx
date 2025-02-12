@@ -33,12 +33,6 @@ function Index() {
                 <div className='absolute inset-0 bg-[radial-gradient(circle_at_2px_2px,theme(colors.secondary)_1px,transparent_0)] opacity-10 [background-size:24px_24px] animate-subtle-drift-reverse'></div>
             </div>
 
-            {/* Glowing accent lines */}
-            <div className='fixed inset-0 overflow-hidden'>
-                <div className='absolute top-[30%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent animate-scan'></div>
-                <div className='absolute top-[70%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-secondary/20 to-transparent animate-scan animation-delay-2000'></div>
-            </div>
-
             {/* Content container */}
             <div className='relative'>
                 {/* Hero Section */}
