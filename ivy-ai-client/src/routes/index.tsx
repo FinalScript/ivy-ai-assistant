@@ -1,564 +1,560 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
-import { Check, Calendar, BookOpen, Bot, Brain, Zap, Users, Star } from 'lucide-react';
-import { useState } from 'react';
+import { Calendar, BookOpen, Bot, Brain, Clock, Target, Trophy, CheckCircle2, Sparkles, Layout, GraduationCap, ArrowRight, Zap, Shield, Bell } from 'lucide-react';
 
 export const Route = createFileRoute('/')({
     component: Index,
 });
 
 function Index() {
-    const [isAnnual, setIsAnnual] = useState(true);
-    const annualDiscount = 0.44;
-
-    const prices = {
-        pro: {
-            monthly: 15,
-            annual: 15 * (1 - annualDiscount) * 12,
-        },
-        academic: {
-            monthly: 30,
-            annual: 30 * (1 - annualDiscount) * 12,
-        },
-    };
-
     return (
         <div className='min-h-screen'>
             {/* Hero Section */}
-            <div className='hero h-screen bg-base-200 relative overflow-hidden'>
-                {/* Animated background pattern */}
+            <div className='hero min-h-screen bg-base-200 relative overflow-hidden'>
+                {/* Enhanced animated background pattern */}
                 <div className='absolute inset-0 opacity-10'>
-                    <div className='absolute w-72 sm:w-96 h-72 sm:h-96 top-1/4 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob'></div>
-                    <div className='absolute w-72 sm:w-96 h-72 sm:h-96 top-1/4 -right-48 bg-secondary rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000'></div>
-                    <div className='absolute w-72 sm:w-96 h-72 sm:h-96 bottom-1/4 -left-48 bg-accent rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000'></div>
-                    <div className='absolute w-72 sm:w-96 h-72 sm:h-96 bottom-1/4 -right-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob'></div>
+                    {/* Larger animated blobs */}
+                    <div className='absolute w-96 sm:w-[600px] h-96 sm:h-[600px] top-1/4 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob'></div>
+                    <div className='absolute w-96 sm:w-[600px] h-96 sm:h-[600px] top-1/4 -right-48 bg-secondary rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000'></div>
+                    <div className='absolute w-96 sm:w-[600px] h-96 sm:h-[600px] bottom-1/4 -left-48 bg-accent rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000'></div>
+                    <div className='absolute w-96 sm:w-[600px] h-96 sm:h-[600px] bottom-1/4 -right-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob'></div>
+                </div>
+
+                {/* Multiple layered grid patterns */}
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.primary)_1px,transparent_0)] [background-size:80px_80px] opacity-[0.01] animate-subtle-spin'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01] animate-subtle-spin-reverse'></div>
+
+                {/* Floating particles effect */}
+                <div className='absolute inset-0'>
+                    <div className='absolute h-32 w-32 rounded-full bg-primary/5 -top-16 left-1/4 animate-float'></div>
+                    <div className='absolute h-24 w-24 rounded-full bg-secondary/5 top-1/3 right-1/4 animate-float animation-delay-2000'></div>
+                    <div className='absolute h-16 w-16 rounded-full bg-accent/5 bottom-1/4 left-1/3 animate-float animation-delay-4000'></div>
+                </div>
+
+                {/* Gradient overlays */}
+                <div className='absolute inset-0 bg-gradient-to-b from-base-200 via-transparent to-base-200 opacity-40'></div>
+                <div className='absolute inset-0 bg-gradient-to-r from-base-200 via-transparent to-base-200 opacity-40'></div>
+
+                {/* Animated lines */}
+                <div className='absolute inset-0 overflow-hidden'>
+                    <div className='absolute w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent top-1/4 animate-slide-left'></div>
+                    <div className='absolute w-full h-[1px] bg-gradient-to-r from-transparent via-secondary/20 to-transparent top-2/4 animate-slide-right animation-delay-2000'></div>
+                    <div className='absolute w-full h-[1px] bg-gradient-to-r from-transparent via-accent/20 to-transparent top-3/4 animate-slide-left animation-delay-4000'></div>
                 </div>
 
                 <div className='hero-content text-center z-10 w-full max-w-4xl px-4 mt-16 sm:mt-0'>
                     <div className='w-full'>
                         <div className='flex justify-center mb-6 animate-bounce-slow'>
-                            <Bot className='w-12 h-12 sm:w-16 sm:h-16 text-primary' />
+                            <div className='relative'>
+                                <Bot className='w-12 h-12 sm:w-16 sm:h-16 text-primary relative z-10' />
+                                <div className='absolute inset-0 bg-primary/20 blur-xl rounded-full scale-150'></div>
+                            </div>
                         </div>
 
-                        <h1>
-                            <span className='block text-5xl sm:text-6xl font-bold mb-2 animate-slide-up'>Meet Ivy,</span>
-                            <span className='block text-2xl sm:text-4xl text-base-content/80 animate-slide-up-delayed'>Your new AI Study Assistant</span>
+                        <h1 className='mb-6'>
+                            <span className='block text-5xl sm:text-7xl font-bold mb-6 animate-slide-up bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-[1.2] sm:leading-[1.2] py-1'>
+                                Your AI-Powered Academic Assistant
+                            </span>
+                            <span className='block text-2xl sm:text-4xl text-base-content/80 animate-slide-up-delayed leading-relaxed'>
+                                Organize your courses, track assignments, and manage your academic schedule - all in one place
+                            </span>
                         </h1>
 
-                        <p className='py-4 sm:py-6 text-base sm:text-xl animate-slide-up-delayed max-w-2xl mx-auto'>
-                            Upload your syllabi once, and watch as your entire semester transforms into a perfectly structured schedule.
+                        <p className='py-8 text-base sm:text-xl animate-slide-up-delayed max-w-2xl mx-auto text-base-content/70 leading-relaxed'>
+                            Experience a smarter way to manage your academic life with our intuitive course organization system.
                         </p>
-                        <div className='flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-slide-up-delayed'>
-                            <Link to='/auth' className='btn btn-primary btn-lg'>
-                                Get Started
-                            </Link>
-                            <Link to='/' className='btn btn-outline btn-lg'>
-                                See Demo
+
+                        {/* Quick Feature Pills */}
+                        <div className='flex flex-wrap justify-center gap-3 mb-10 animate-slide-up-delayed'>
+                            <div className='badge badge-primary badge-outline gap-2 p-4 hover:bg-primary/10 transition-colors cursor-default group'>
+                                <CheckCircle2 className='w-4 h-4 group-hover:scale-110 transition-transform' /> Free for Students
+                            </div>
+                            <div className='badge badge-secondary badge-outline gap-2 p-4 hover:bg-secondary/10 transition-colors cursor-default group'>
+                                <Sparkles className='w-4 h-4 group-hover:scale-110 transition-transform' /> Smart Organization
+                            </div>
+                            <div className='badge badge-accent badge-outline gap-2 p-4 hover:bg-accent/10 transition-colors cursor-default group'>
+                                <Layout className='w-4 h-4 group-hover:scale-110 transition-transform' /> Beautiful Interface
+                            </div>
+                        </div>
+
+                        <div className='flex flex-col sm:flex-row gap-4 justify-center animate-slide-up-delayed'>
+                            <Link 
+                                to='/auth' 
+                                className='btn btn-primary btn-lg gap-3 group relative overflow-hidden'
+                            >
+                                <div className='absolute inset-0 bg-gradient-to-r from-primary/0 via-base-100/10 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'></div>
+                                Get Started - It's Free
+                                <ArrowRight className='w-5 h-5 group-hover:translate-x-1 transition-transform' />
                             </Link>
                         </div>
                     </div>
                 </div>
 
-                {/* Scroll indicator */}
+                {/* Enhanced scroll indicator */}
                 <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce'>
-                    <div className='w-8 h-8 rounded-full border-2 border-base-content/20 flex items-center justify-center'>
-                        <div className='w-1 h-3 bg-base-content/20 rounded-full'></div>
+                    <div className='w-8 h-8 rounded-full border-2 border-base-content/20 flex items-center justify-center group hover:border-primary/50 transition-colors cursor-pointer'>
+                        <div className='w-1 h-3 bg-base-content/20 rounded-full group-hover:bg-primary/50 transition-colors'></div>
                     </div>
                 </div>
             </div>
 
-            {/* Features Section */}
-            <div className='py-16 sm:py-24 px-4 bg-base-100'>
-                <div className='max-w-6xl mx-auto'>
-                    <h2 className='text-3xl font-bold text-center mb-4'>Smart Student Organization</h2>
-                    <p className='text-center text-base sm:text-lg text-base-content/70 mb-8 sm:mb-16 max-w-2xl mx-auto'>
-                        Powerful features designed to make your academic life easier and more organized.
-                    </p>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8'>
-                        {/* Feature 1 */}
-                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2'>
-                            <div className='card-body items-center text-center'>
-                                <div className='w-16 h-16 mask mask-hexagon bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform'>
-                                    <Calendar className='w-8 h-8 text-primary' />
+            {/* How It Works Section - Enhanced */}
+            <div className='py-16 sm:py-24 px-4 bg-base-200 relative overflow-hidden'>
+                {/* Enhanced background patterns */}
+                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
+                <div className='absolute inset-0 overflow-hidden'>
+                    <div className='absolute w-full h-[1px] bg-gradient-to-r from-transparent via-primary/10 to-transparent top-1/4 animate-slide-left'></div>
+                    <div className='absolute w-full h-[1px] bg-gradient-to-r from-transparent via-secondary/10 to-transparent top-3/4 animate-slide-right'></div>
+                </div>
+                <div className='max-w-6xl mx-auto relative'>
+                    <div className='text-center mb-16'>
+                        <span className='text-primary font-semibold tracking-wider block mb-2'>GET STARTED</span>
+                        <h2 className='text-4xl sm:text-5xl font-bold mt-3 mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-tight sm:leading-tight px-2'>How It Works</h2>
+                        <p className='text-base sm:text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed px-4'>
+                            Get started in three simple steps and transform your academic journey
+                        </p>
+                    </div>
+                    <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center relative'>
+                                <div className='absolute top-4 right-4 text-4xl font-bold text-primary/20 group-hover:scale-125 transition-transform'>1</div>
+                                <div className='w-16 h-16 mask mask-hexagon bg-primary/10 flex items-center justify-center mb-4'>
+                                    <Bot className='w-8 h-8 text-primary' />
                                 </div>
-                                <h3 className='card-title'>Smart Calendar</h3>
-                                <p className='text-base-content/70'>Intelligent scheduling that adapts to your learning style and preferences</p>
+                                <h3 className='card-title group-hover:text-primary transition-colors'>Sign Up</h3>
+                                <p className='text-base-content/70'>Create your free account to get started</p>
                             </div>
                         </div>
 
-                        {/* Feature 2 */}
-                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2'>
-                            <div className='card-body items-center text-center'>
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center relative'>
+                                <div className='absolute top-4 right-4 text-4xl font-bold text-secondary/20 group-hover:scale-125 transition-transform'>2</div>
                                 <div className='w-16 h-16 mask mask-hexagon bg-secondary/10 flex items-center justify-center mb-4'>
-                                    <Brain className='w-8 h-8 text-secondary' />
+                                    <BookOpen className='w-8 h-8 text-secondary' />
                                 </div>
-                                <h3 className='card-title'>AI-Powered</h3>
-                                <p className='text-base-content/70'>Advanced AI that understands your academic needs and optimizes your schedule</p>
+                                <h3 className='card-title group-hover:text-secondary transition-colors'>Add Your Courses</h3>
+                                <p className='text-base-content/70'>Input your course details and schedules</p>
                             </div>
                         </div>
 
-                        {/* Feature 3 */}
-                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2'>
-                            <div className='card-body items-center text-center'>
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center relative'>
+                                <div className='absolute top-4 right-4 text-4xl font-bold text-accent/20 group-hover:scale-125 transition-transform'>3</div>
                                 <div className='w-16 h-16 mask mask-hexagon bg-accent/10 flex items-center justify-center mb-4'>
-                                    <Zap className='w-8 h-8 text-accent' />
+                                    <Layout className='w-8 h-8 text-accent' />
                                 </div>
-                                <h3 className='card-title'>Instant Setup</h3>
-                                <p className='text-base-content/70'>Upload your syllabi and get an organized schedule in seconds</p>
+                                <h3 className='card-title group-hover:text-accent transition-colors'>Stay Organized</h3>
+                                <p className='text-base-content/70'>Access your organized dashboard anytime</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Testimonials Section */}
-            <div className='py-16 sm:py-24 px-4 bg-base-200'>
-                <div className='max-w-6xl mx-auto'>
-                    <h2 className='text-3xl font-bold text-center mb-4'>What Students Say</h2>
-                    <p className='text-center text-base sm:text-lg text-base-content/70 mb-8 sm:mb-16 max-w-2xl mx-auto'>
-                        Join thousands of students who have transformed their academic life with Ivy AI.
-                    </p>
+            {/* Visual Demo Section */}
+            <div className='py-16 sm:py-24 px-4 bg-base-100 relative overflow-hidden'>
+                {/* Enhanced background patterns */}
+                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(-45deg,theme(colors.secondary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
+                <div className='absolute inset-0 overflow-hidden'>
+                    <div className='absolute w-[1px] h-full bg-gradient-to-b from-transparent via-primary/10 to-transparent left-1/4 animate-slide-down'></div>
+                    <div className='absolute w-[1px] h-full bg-gradient-to-b from-transparent via-secondary/10 to-transparent right-1/4 animate-slide-up'></div>
+                </div>
+                <div className='max-w-6xl mx-auto relative'>
+                    <div className='text-center mb-16'>
+                        <h2 className='text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent leading-tight sm:leading-tight px-2'>Beautiful & Intuitive Interface</h2>
+                        <p className='text-base sm:text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed px-4'>
+                            A clean, modern design that makes academic organization a pleasure
+                        </p>
+                    </div>
+                    <div className='mockup-browser border bg-base-300'>
+                        <div className='mockup-browser-toolbar'>
+                            <div className='input'>https://ivy-ai-assistant.com</div>
+                        </div>
+                        <div className='flex justify-center px-4 py-16 bg-base-200'>
+                            <div className='flex flex-col items-center gap-4'>
+                                <GraduationCap className='w-16 h-16 text-primary' />
+                                <p className='text-xl'>Interface Preview Coming Soon</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Key Features Section - Enhanced */}
+            <div className='py-16 sm:py-24 px-4 bg-base-100 relative overflow-hidden'>
+                {/* Enhanced background patterns */}
+                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
+                
+                {/* Animated elements */}
+                <div className='absolute inset-0'>
+                    <div className='absolute w-64 h-64 rounded-full bg-primary/5 blur-3xl -top-32 -left-32 animate-pulse'></div>
+                    <div className='absolute w-64 h-64 rounded-full bg-secondary/5 blur-3xl -bottom-32 -right-32 animate-pulse animation-delay-2000'></div>
+                </div>
+
+                <div className='max-w-6xl mx-auto relative'>
+                    <div className='text-center mb-16'>
+                        <span className='text-primary font-semibold tracking-wider block mb-3'>FEATURES</span>
+                        <h2 className='text-4xl sm:text-5xl font-bold mt-3 mb-8 bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent leading-[1.2] sm:leading-[1.2] py-1 px-4'>
+                            Everything You Need
+                        </h2>
+                        <p className='text-base sm:text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed px-4'>
+                            Designed to enhance your academic experience with practical, time-saving features
+                        </p>
+                    </div>
                     <div className='grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8'>
-                        {/* Testimonial 1 */}
-                        <div className='card bg-base-100 shadow-xl'>
-                            <div className='card-body'>
-                                <div className='flex items-center gap-4 mb-4'>
-                                    <div className='avatar flex-shrink-0'>
-                                        <div className='w-12 h-12 rounded-full bg-primary/10 !flex !items-center !justify-center'>
-                                            <span className='text-primary font-bold'>JD</span>
-                                        </div>
-                                    </div>
-                                    <div className='min-w-0'>
-                                        <h3 className='font-bold truncate'>John Doe</h3>
-                                        <p className='text-sm text-base-content/70 truncate'>Computer Science Major</p>
-                                    </div>
+                        {/* Course Organization */}
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center p-8'>
+                                <div className='w-16 h-16 mask mask-hexagon bg-primary/10 flex items-center justify-center mb-6'>
+                                    <BookOpen className='w-8 h-8 text-primary' />
                                 </div>
-                                <p className='text-base-content/70'>
-                                    "Ivy AI has completely transformed how I manage my coursework. The AI suggestions are incredibly helpful!"
-                                </p>
-                                <div className='flex gap-1 mt-4'>
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Testimonial 2 */}
-                        <div className='card bg-base-100 shadow-xl'>
-                            <div className='card-body'>
-                                <div className='flex items-center gap-4 mb-4'>
-                                    <div className='avatar flex-shrink-0'>
-                                        <div className='w-12 h-12 rounded-full bg-secondary/10 !flex !items-center !justify-center'>
-                                            <span className='text-secondary font-bold'>AS</span>
-                                        </div>
-                                    </div>
-                                    <div className='min-w-0'>
-                                        <h3 className='font-bold truncate'>Alice Smith</h3>
-                                        <p className='text-sm text-base-content/70 truncate'>Biology Student</p>
-                                    </div>
-                                </div>
-                                <p className='text-base-content/70'>
-                                    "The automatic syllabus parsing saved me hours of manual calendar entry. Best academic tool I've used!"
-                                </p>
-                                <div className='flex gap-1 mt-4'>
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Testimonial 3 */}
-                        <div className='card bg-base-100 shadow-xl'>
-                            <div className='card-body'>
-                                <div className='flex items-center gap-4 mb-4'>
-                                    <div className='avatar flex-shrink-0'>
-                                        <div className='w-12 h-12 rounded-full bg-accent/10 !flex !items-center !justify-center'>
-                                            <span className='text-accent font-bold'>MJ</span>
-                                        </div>
-                                    </div>
-                                    <div className='min-w-0'>
-                                        <h3 className='font-bold truncate'>Mike Johnson</h3>
-                                        <p className='text-sm text-base-content/70 truncate'>Engineering Graduate</p>
-                                    </div>
-                                </div>
-                                <p className='text-base-content/70'>
-                                    "The smart reminders and conflict detection have saved me from missing important deadlines multiple times!"
-                                </p>
-                                <div className='flex gap-1 mt-4'>
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                    <Star className='w-4 h-4 text-warning fill-warning' />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Stats Section */}
-            <div className='py-12 sm:py-16 bg-base-100'>
-                <div className='max-w-6xl mx-auto px-4'>
-                    <div className='stats stats-vertical lg:stats-horizontal shadow w-full'>
-                        <div className='stat'>
-                            <div className='stat-figure text-primary'>
-                                <Users className='w-8 h-8' />
-                            </div>
-                            <div className='stat-title'>Active Users</div>
-                            <div className='stat-value'>10K+</div>
-                            <div className='stat-desc'>Students using Ivy AI</div>
-                        </div>
-
-                        <div className='stat'>
-                            <div className='stat-figure text-secondary'>
-                                <Brain className='w-8 h-8' />
-                            </div>
-                            <div className='stat-title'>Study Hours</div>
-                            <div className='stat-value'>1M+</div>
-                            <div className='stat-desc'>Hours of study optimized</div>
-                        </div>
-
-                        <div className='stat'>
-                            <div className='stat-figure text-accent'>
-                                <Star className='w-8 h-8' />
-                            </div>
-                            <div className='stat-title'>Satisfaction</div>
-                            <div className='stat-value'>98%</div>
-                            <div className='stat-desc'>Student satisfaction rate</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Demo Section */}
-            <div className='bg-base-200 py-12 sm:py-16 px-4'>
-                <div className='max-w-6xl mx-auto'>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-8 items-center'>
-                        <div className='card bg-base-100 shadow-xl'>
-                            <div className='card-body'>
-                                <h3 className='card-title text-2xl mb-4'>How It Works</h3>
-                                <ul className='steps steps-vertical'>
-                                    <li className='step step-primary'>Upload your course schedules</li>
-                                    <li className='step step-primary'>AI processes your documents</li>
-                                    <li className='step step-primary'>Review your organized calendar</li>
-                                    <li className='step step-primary'>Sync with your preferred calendar app</li>
+                                <h3 className='card-title text-xl mb-4 group-hover:text-primary transition-colors leading-relaxed'>Course Organization</h3>
+                                <p className='text-base-content/70 leading-relaxed mb-6'>Keep all your course information, schedules, and materials in one organized place</p>
+                                <ul className='mt-4 space-y-3 text-left w-full'>
+                                    <li className='flex items-center gap-3'>
+                                        <CheckCircle2 className='w-4 h-4 text-primary shrink-0' />
+                                        <span className='leading-relaxed'>Centralized course details</span>
+                                    </li>
+                                    <li className='flex items-center gap-3'>
+                                        <CheckCircle2 className='w-4 h-4 text-primary shrink-0' />
+                                        <span className='leading-relaxed'>Easy schedule viewing</span>
+                                    </li>
+                                    <li className='flex items-center gap-3'>
+                                        <CheckCircle2 className='w-4 h-4 text-primary shrink-0' />
+                                        <span className='leading-relaxed'>Quick information access</span>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
-                        <div>
-                            <h3 className='text-2xl font-bold mb-6'>Stay Organized All Term</h3>
-                            <div className='space-y-4'>
-                                <div className='flex items-start gap-3'>
-                                    <div className='badge badge-primary badge-lg'>✓</div>
-                                    <p>Never miss assignment deadlines or exam dates</p>
+
+                        {/* Assignment Tracking */}
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center'>
+                                <div className='w-16 h-16 mask mask-hexagon bg-secondary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform'>
+                                    <Target className='w-8 h-8 text-secondary' />
                                 </div>
-                                <div className='flex items-start gap-3'>
-                                    <div className='badge badge-primary badge-lg'>✓</div>
-                                    <p>Get smart reminders for upcoming tasks</p>
+                                <h3 className='card-title group-hover:text-secondary transition-colors'>Assignment Tracking</h3>
+                                <p className='text-base-content/70'>Track all your assignments, exams, and projects with clear due dates and priorities</p>
+                                <ul className='mt-4 space-y-2 text-left'>
+                                    <li className='flex items-center gap-2'>
+                                        <CheckCircle2 className='w-4 h-4 text-secondary' />
+                                        <span>Clear due dates</span>
+                                    </li>
+                                    <li className='flex items-center gap-2'>
+                                        <CheckCircle2 className='w-4 h-4 text-secondary' />
+                                        <span>Assignment details</span>
+                                    </li>
+                                    <li className='flex items-center gap-2'>
+                                        <CheckCircle2 className='w-4 h-4 text-secondary' />
+                                        <span>Progress tracking</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* Schedule Management */}
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center'>
+                                <div className='w-16 h-16 mask mask-hexagon bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform'>
+                                    <Calendar className='w-8 h-8 text-accent' />
                                 </div>
-                                <div className='flex items-start gap-3'>
-                                    <div className='badge badge-primary badge-lg'>✓</div>
-                                    <p>View conflicts and overlaps at a glance</p>
-                                </div>
-                                <div className='flex items-start gap-3'>
-                                    <div className='badge badge-primary badge-lg'>✓</div>
-                                    <p>Access your schedule from any device</p>
-                                </div>
+                                <h3 className='card-title group-hover:text-accent transition-colors'>Schedule Management</h3>
+                                <p className='text-base-content/70'>View your weekly schedule at a glance with an intuitive calendar interface</p>
+                                <ul className='mt-4 space-y-2 text-left'>
+                                    <li className='flex items-center gap-2'>
+                                        <CheckCircle2 className='w-4 h-4 text-accent' />
+                                        <span>Weekly overview</span>
+                                    </li>
+                                    <li className='flex items-center gap-2'>
+                                        <CheckCircle2 className='w-4 h-4 text-accent' />
+                                        <span>Class schedules</span>
+                                    </li>
+                                    <li className='flex items-center gap-2'>
+                                        <CheckCircle2 className='w-4 h-4 text-accent' />
+                                        <span>Important dates</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Pricing Section */}
-            <div className='py-16 sm:py-24 px-4 bg-base-200'>
-                <div className='max-w-6xl mx-auto'>
-                    <div className='text-center mb-8 sm:mb-16'>
-                        <h2 className='text-3xl font-bold mb-4'>Simple, Transparent Pricing</h2>
-                        <p className='text-base sm:text-lg max-w-2xl mx-auto'>Choose the plan that best fits your needs. All plans include core features.</p>
-                    </div>
+            {/* Additional Features Section */}
+            <div className='py-16 sm:py-24 px-4 bg-base-100 relative overflow-hidden'>
+                {/* Enhanced background patterns */}
+                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(-45deg,theme(colors.secondary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
+                
+                {/* Animated elements */}
+                <div className='absolute inset-0'>
+                    <div className='absolute w-64 h-64 rounded-full bg-primary/5 blur-3xl -top-32 -right-32 animate-pulse'></div>
+                    <div className='absolute w-64 h-64 rounded-full bg-secondary/5 blur-3xl -bottom-32 -left-32 animate-pulse animation-delay-2000'></div>
+                </div>
 
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12'>
-                        {/* Free Tier */}
-                        <div className='card bg-base-100 shadow-xl'>
-                            <div className='card-body'>
-                                <h3 className='card-title text-2xl'>Free</h3>
-                                <div className='my-4'>
-                                    <span className='text-4xl font-bold'>$0</span>
-                                    <span className='text-base-content/60'>/forever</span>
-                                </div>
-                                <div className='space-y-4 flex-grow'>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Up to 4 courses</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Track all classes, assignments & exams</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Basic AI scheduling</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Calendar sync</span>
-                                    </div>
-                                </div>
-                                <div className='card-actions mt-6'>
-                                    <Link to='/auth' className='btn btn-outline btn-block'>
-                                        Get Started
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Pro Tier */}
-                        <div className='card bg-base-100 shadow-xl border-2 border-primary relative'>
-                            <div className='absolute -top-3 right-4'>
-                                <div className='badge badge-primary'>RECOMMENDED</div>
-                            </div>
-                            <div className='card-body'>
-                                <h3 className='card-title text-2xl'>Pro</h3>
-                                {/* Pro Tier price display */}
-                                <div className='my-4 flex items-center justify-between'>
-                                    <div>
-                                        <span className='text-4xl font-bold'>${isAnnual ? Math.round(prices.pro.annual / 12) : prices.pro.monthly}</span>
-                                        <span className='text-base-content/60'>/month</span>
-                                    </div>
-                                    {isAnnual && (
-                                        <div className='text-sm'>
-                                            <span className='line-through text-base-content/50'>${prices.pro.monthly}</span>
-                                            <span className='text-success ml-2'>Save ${prices.pro.monthly - Math.round(prices.pro.annual / 12)}</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className='space-y-4 flex-grow'>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Unlimited courses</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Smart AI optimization</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Deadline alerts</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Schedule conflict detection</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Study time planning</span>
-                                    </div>
-                                </div>
-                                <div className='card-actions mt-6'>
-                                    <Link to='/auth' className='btn btn-primary btn-block'>
-                                        Start Free Trial
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Academic Success Tier */}
-                        <div className='card bg-base-100 shadow-xl'>
-                            <div className='card-body'>
-                                <h3 className='card-title text-2xl'>Academic Success</h3>
-                                {/* Academic Success Tier price display */}
-                                <div className='my-4 flex items-center justify-between'>
-                                    <div>
-                                        <span className='text-4xl font-bold'>
-                                            ${isAnnual ? Math.round(prices.academic.annual / 12) : prices.academic.monthly}
-                                        </span>
-                                        <span className='text-base-content/60'>/month</span>
-                                    </div>
-                                    {isAnnual && (
-                                        <div className='text-sm'>
-                                            <span className='line-through text-base-content/50'>${prices.academic.monthly}</span>
-                                            <span className='text-success ml-2'>Save ${prices.academic.monthly - Math.round(prices.academic.annual / 12)}</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className='space-y-4 flex-grow'>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>All Pro features</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Smart study resources</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Performance tracking</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Achievement system</span>
-                                    </div>
-                                    <div className='flex items-center gap-2'>
-                                        <Check className='w-5 h-5 text-success' />
-                                        <span>Study pattern analysis</span>
-                                    </div>
-                                </div>
-                                <div className='card-actions mt-6'>
-                                    <Link to='/auth' className='btn btn-outline btn-block'>
-                                        Upgrade Now
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Billing Toggle */}
-                    <div className='text-center mt-8 select-none'>
-                        <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
-                            <span>Monthly</span>
-                            <input type='checkbox' className='toggle toggle-primary' checked={isAnnual} onChange={() => setIsAnnual(!isAnnual)} />
-                            <span>Annually (Save {annualDiscount * 100}%)</span>
-                        </div>
-                        <p className='text-sm text-base-content/70 mt-4'>Save {annualDiscount * 100}% on all plans when billed annually!</p>
-                    </div>
-
-                    {/* FAQ Preview */}
-                    <div className='mt-16 text-center'>
-                        <p className='text-base-content/60'>
-                            Have questions? Check out our{' '}
-                            <Link to='/' className='link link-primary'>
-                                FAQ
-                            </Link>{' '}
-                            or contact our support team.
+                <div className='max-w-6xl mx-auto relative'>
+                    <div className='text-center mb-16'>
+                        <span className='text-primary font-semibold tracking-wider'>MORE FEATURES</span>
+                        <h2 className='text-4xl sm:text-5xl font-bold mt-3 mb-6 bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent'>Packed with Powerful Features</h2>
+                        <p className='text-base sm:text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed'>
+                            Discover all the tools you need for academic success
                         </p>
                     </div>
-                </div>
-            </div>
-
-            {/* CTA Section */}
-            <div className='py-12 sm:py-16'>
-                <div className='max-w-3xl mx-auto text-center px-4'>
-                    <h2 className='text-2xl sm:text-3xl font-bold mb-4'>Start Your Organized Semester Today</h2>
-                    <p className='mb-6 sm:mb-8'>Join thousands of students who are mastering their academic schedules with Ivy AI.</p>
-                    <Link to='/auth' className='btn btn-primary btn-lg'>
-                        Try Ivy Now - It's Free
-                    </Link>
-                </div>
-            </div>
-
-            {/* Footer */}
-            <footer className='footer p-6 sm:p-10 bg-base-200 text-base-content'>
-                <div>
-                    <div className='flex items-center gap-2'>
-                        <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                            <path
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                strokeWidth='2'
-                                d='M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'
-                            />
-                        </svg>
-                        <span className='font-bold text-lg'>Ivy AI</span>
-                    </div>
-                    <p className='max-w-xs mt-2'>Making student life easier through intelligent schedule management and academic organization.</p>
-                </div>
-
-                <div>
-                    <span className='footer-title'>Product</span>
-                    <Link to='/' className='link link-hover'>
-                        Features
-                    </Link>
-                    <Link to='/' className='link link-hover'>
-                        Pricing
-                    </Link>
-                    <Link to='/' className='link link-hover'>
-                        Demo
-                    </Link>
-                    <Link to='/' className='link link-hover'>
-                        Integrations
-                    </Link>
-                </div>
-
-                <div>
-                    <span className='footer-title'>Support</span>
-                    <Link to='/' className='link link-hover'>
-                        Help Center
-                    </Link>
-                    <Link to='/' className='link link-hover'>
-                        Documentation
-                    </Link>
-                    <Link to='/' className='link link-hover'>
-                        Contact Us
-                    </Link>
-                    <Link to='/' className='link link-hover'>
-                        FAQ
-                    </Link>
-                </div>
-
-                <div>
-                    <span className='footer-title'>Legal</span>
-                    <Link to='/' className='link link-hover'>
-                        Terms of Service
-                    </Link>
-                    <Link to='/' className='link link-hover'>
-                        Privacy Policy
-                    </Link>
-                    <Link to='/' className='link link-hover'>
-                        Cookie Policy
-                    </Link>
-                </div>
-
-                <div>
-                    <span className='footer-title'>Connect</span>
-                    <div className='grid grid-flow-col gap-4'>
-                        <a className='hover:text-primary'>
-                            <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' className='fill-current'>
-                                <path d='M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z'></path>
-                            </svg>
-                        </a>
-                        <a className='hover:text-primary'>
-                            <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' className='fill-current'>
-                                <path d='M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z'></path>
-                            </svg>
-                        </a>
-                        <a className='hover:text-primary'>
-                            <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' className='fill-current'>
-                                <path d='M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z'></path>
-                            </svg>
-                        </a>
-                    </div>
-                    <div className='mt-4'>
-                        <span className='footer-title'>Download App</span>
-                        <div className='flex gap-2 mt-2'>
-                            <button className='btn btn-outline btn-sm'>
-                                <svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 mr-1' fill='currentColor' viewBox='0 0 24 24'>
-                                    <path d='M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.32 2.32-1.66 4.23-3.74 4.25z' />
-                                </svg>
-                                iOS
-                            </button>
-                            <button className='btn btn-outline btn-sm'>
-                                <svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 mr-1' fill='currentColor' viewBox='0 0 24 24'>
-                                    <path d='M17.523 15.334l2.038-3.534c.134-.233.334-.334.567-.334.2 0 .367.1.5.3.134.2.134.4.034.634l-2.038 3.534c-.1.233-.3.333-.534.333-.2 0-.367-.1-.5-.3-.133-.2-.133-.4-.067-.633zm-3.772-6.534l2.038-3.534c.134-.233.334-.333.567-.333.2 0 .366.1.5.3.133.2.133.4.033.634l-2.038 3.534c-.1.233-.3.334-.534.334-.2 0-.367-.1-.5-.3-.134-.2-.134-.4-.067-.633zm-3.771 6.534l2.038-3.534c.133-.233.333-.334.567-.334.2 0 .366.1.5.3.133.2.133.4.033.634l-2.038 3.534c-.1.233-.3.333-.534.333-.2 0-.367-.1-.5-.3-.133-.2-.133-.4-.066-.633zm-3.772-6.534l2.038-3.534c.134-.233.334-.333.567-.333.2 0 .367.1.5.3.134.2.134.4.034.633l-2.038 3.534c-.1.233-.3.334-.534.334-.2 0-.367-.1-.5-.3-.134-.2-.134-.4-.067-.634z' />
-                                </svg>
-                                Android
-                            </button>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center'>
+                                <Target className='w-8 h-8 text-primary mb-4 group-hover:scale-110 transition-transform' />
+                                <h3 className='font-bold mb-2 group-hover:text-primary transition-colors'>Assignment Progress</h3>
+                                <p className='text-sm text-base-content/70'>Track completion status and upcoming deadlines for all your assignments</p>
+                            </div>
+                        </div>
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center'>
+                                <Shield className='w-8 h-8 text-accent mb-4 group-hover:scale-110 transition-transform' />
+                                <h3 className='font-bold mb-2 group-hover:text-accent transition-colors'>Privacy First</h3>
+                                <p className='text-sm text-base-content/70'>Your data is always secure and private</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </footer>
+            </div>
 
-            {/* Copyright Bar */}
-            <footer className='footer footer-center p-4 bg-base-200 text-base-content border-t border-base-300'>
-                <div>
-                    <p className='text-base-content/60'>Copyright © {new Date().getFullYear()} - All rights reserved by Ivy AI</p>
+            {/* Benefits Section - Enhanced */}
+            <div className='py-16 sm:py-24 px-4 bg-base-100 relative overflow-hidden'>
+                {/* Enhanced background patterns */}
+                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.accent)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
+                
+                {/* Animated elements */}
+                <div className='absolute inset-0'>
+                    <div className='absolute w-64 h-64 rounded-full bg-accent/5 blur-3xl -top-32 -left-32 animate-pulse'></div>
+                    <div className='absolute w-64 h-64 rounded-full bg-primary/5 blur-3xl -bottom-32 -right-32 animate-pulse animation-delay-2000'></div>
+                </div>
+
+                <div className='max-w-6xl mx-auto relative'>
+                    <div className='text-center mb-16'>
+                        <span className='text-primary font-semibold tracking-wider'>BENEFITS</span>
+                        <h2 className='text-4xl sm:text-5xl font-bold mt-3 mb-6 bg-gradient-to-r from-error via-primary to-secondary bg-clip-text text-transparent'>Why Choose Ivy</h2>
+                        <p className='text-base sm:text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed'>
+                            Experience the advantages of a well-organized academic life
+                        </p>
+                    </div>
+                    <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center'>
+                                <Brain className='w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform' />
+                                <h3 className='text-xl font-bold mb-2 group-hover:text-primary transition-colors'>Stay Organized</h3>
+                                <p className='text-base-content/70'>Keep all your course information in one centralized location</p>
+                            </div>
+                        </div>
+
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center'>
+                                <Clock className='w-12 h-12 text-secondary mb-4 group-hover:scale-110 transition-transform' />
+                                <h3 className='text-xl font-bold mb-2 group-hover:text-secondary transition-colors'>Save Time</h3>
+                                <p className='text-base-content/70'>Quick access to schedules and upcoming deadlines</p>
+                            </div>
+                        </div>
+
+                        <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
+                            <div className='card-body items-center text-center'>
+                                <Trophy className='w-12 h-12 text-accent mb-4 group-hover:scale-110 transition-transform' />
+                                <h3 className='text-xl font-bold mb-2 group-hover:text-accent transition-colors'>Achieve More</h3>
+                                <p className='text-base-content/70'>Stay on top of your academic responsibilities</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Newsletter Section - Enhanced */}
+            <div className='py-16 sm:py-24 px-4 bg-base-200 relative overflow-hidden'>
+                {/* Enhanced background effects */}
+                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
+                
+                {/* Animated elements */}
+                <div className='absolute inset-0'>
+                    <div className='absolute w-64 h-64 rounded-full bg-primary/5 blur-3xl -top-32 -left-32 animate-pulse'></div>
+                    <div className='absolute w-64 h-64 rounded-full bg-secondary/5 blur-3xl -bottom-32 -right-32 animate-pulse animation-delay-2000'></div>
+                </div>
+
+                <div className='max-w-4xl mx-auto relative'>
+                    <div className='card bg-base-100 shadow-2xl group'>
+                        <div className='card-body p-8 sm:p-12'>
+                            {/* Card background effects */}
+                            <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                            <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.primary)_1px,transparent_0)] [background-size:20px_20px] opacity-0 group-hover:opacity-[0.02] transition-opacity duration-500'></div>
+
+                            <div className='relative'>
+                                <div className='flex justify-center mb-8'>
+                                    <div className='relative'>
+                                        <Bell className='w-16 h-16 text-primary relative z-10 group-hover:scale-110 transition-transform duration-500' />
+                                        <div className='absolute inset-0 bg-primary/20 blur-xl rounded-full scale-150'></div>
+                                    </div>
+                                </div>
+
+                                <div className='text-center mb-10'>
+                                    <h2 className='text-4xl sm:text-5xl font-bold mb-8 bg-gradient-to-r from-secondary via-accent to-error bg-clip-text text-transparent leading-[1.2] sm:leading-[1.2] py-1 px-4'>
+                                        Stay Updated
+                                    </h2>
+                                    <p className='text-lg sm:text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed px-4 mb-8'>
+                                        Get notified about new features, updates, and academic success tips
+                                    </p>
+                                </div>
+
+                                <div className='flex flex-col sm:flex-row gap-4 max-w-lg mx-auto'>
+                                    <input 
+                                        className='input input-bordered flex-1 bg-base-200/50 border-2 focus:border-primary transition-colors text-lg' 
+                                        placeholder='Enter your email'
+                                    />
+                                    <button className='btn btn-primary gap-2 group/btn min-w-[140px] relative overflow-hidden'>
+                                        <div className='absolute inset-0 bg-gradient-to-r from-primary/0 via-base-100/10 to-primary/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000'></div>
+                                        Subscribe
+                                        <ArrowRight className='w-4 h-4 group-hover/btn:translate-x-1 transition-transform' />
+                                    </button>
+                                </div>
+
+                                <div className='flex items-center justify-center gap-6 mt-8 pt-8 border-t border-base-200'>
+                                    <div className='flex items-center gap-2 text-sm text-base-content/60'>
+                                        <Shield className='w-4 h-4' />
+                                        <span>Privacy Protected</span>
+                                    </div>
+                                    <div className='flex items-center gap-2 text-sm text-base-content/60'>
+                                        <Zap className='w-4 h-4' />
+                                        <span>Instant Updates</span>
+                                    </div>
+                                    <div className='flex items-center gap-2 text-sm text-base-content/60'>
+                                        <CheckCircle2 className='w-4 h-4' />
+                                        <span>Unsubscribe Anytime</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Footer - Enhanced */}
+            <footer className='bg-base-100 text-base-content relative pt-16 pb-8'>
+                {/* Ambient background effects */}
+                <div className='absolute inset-0 bg-gradient-to-t from-base-200/50 to-transparent'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
+                
+                <div className='max-w-6xl mx-auto px-4 relative'>
+                    {/* Main Footer Content */}
+                    <div className='grid grid-cols-1 md:grid-cols-3 gap-12 mb-16'>
+                        {/* Brand Section */}
+                        <div className='flex flex-col items-center md:items-start gap-6'>
+                            <div className='relative group'>
+                                <Bot className='w-12 h-12 text-primary transition-transform duration-300 group-hover:scale-110' />
+                                <div className='absolute inset-0 bg-primary/20 blur-xl rounded-full scale-150 animate-pulse'></div>
+                            </div>
+                            <div className='text-center md:text-left'>
+                                <h3 className='font-bold text-2xl mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent leading-relaxed py-1'>Ivy AI Assistant</h3>
+                                <p className='text-base-content/70 max-w-xs leading-relaxed'>Your intelligent academic companion, empowering your educational journey</p>
+                            </div>
+                        </div>
+
+                        {/* Platform Links */}
+                        <div className='text-center md:text-left'>
+                            <h4 className='font-semibold mb-6 text-lg relative inline-block'>
+                                Platform
+                                <div className='absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/50 to-transparent'></div>
+                            </h4>
+                            <ul className='space-y-3'>
+                                <li>
+                                    <Link 
+                                        to='/courses' 
+                                        className='link link-hover text-base-content/70 hover:text-primary transition-all duration-300 flex items-center gap-2 group w-fit mx-auto md:mx-0'
+                                    >
+                                        <div className='w-1 h-1 rounded-full bg-primary/50 opacity-0 group-hover:opacity-100 transition-opacity'></div>
+                                        Courses
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link 
+                                        to='/dashboard' 
+                                        className='link link-hover text-base-content/70 hover:text-primary transition-all duration-300 flex items-center gap-2 group w-fit mx-auto md:mx-0'
+                                    >
+                                        <div className='w-1 h-1 rounded-full bg-primary/50 opacity-0 group-hover:opacity-100 transition-opacity'></div>
+                                        Dashboard
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link 
+                                        to='/auth' 
+                                        className='link link-hover text-base-content/70 hover:text-primary transition-all duration-300 flex items-center gap-2 group w-fit mx-auto md:mx-0'
+                                    >
+                                        <div className='w-1 h-1 rounded-full bg-primary/50 opacity-0 group-hover:opacity-100 transition-opacity'></div>
+                                        Get Started
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Support Links */}
+                        <div className='text-center md:text-left'>
+                            <h4 className='font-semibold mb-6 text-lg relative inline-block'>
+                                Support
+                                <div className='absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/50 to-transparent'></div>
+                            </h4>
+                            <ul className='space-y-3'>
+                                <li>
+                                    <Link 
+                                        to='/' 
+                                        className='link link-hover text-base-content/70 hover:text-primary transition-all duration-300 flex items-center gap-2 group w-fit mx-auto md:mx-0'
+                                    >
+                                        <div className='w-1 h-1 rounded-full bg-primary/50 opacity-0 group-hover:opacity-100 transition-opacity'></div>
+                                        Help Center
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link 
+                                        to='/' 
+                                        className='link link-hover text-base-content/70 hover:text-primary transition-all duration-300 flex items-center gap-2 group w-fit mx-auto md:mx-0'
+                                    >
+                                        <div className='w-1 h-1 rounded-full bg-primary/50 opacity-0 group-hover:opacity-100 transition-opacity'></div>
+                                        Privacy Policy
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link 
+                                        to='/' 
+                                        className='link link-hover text-base-content/70 hover:text-primary transition-all duration-300 flex items-center gap-2 group w-fit mx-auto md:mx-0'
+                                    >
+                                        <div className='w-1 h-1 rounded-full bg-primary/50 opacity-0 group-hover:opacity-100 transition-opacity'></div>
+                                        Terms of Service
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    {/* Bottom Bar */}
+                    <div className='flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-base-content/10'>
+                        <p className='text-base-content/50 text-sm order-2 sm:order-1 mt-4 sm:mt-0'>
+                            © {new Date().getFullYear()} Ivy AI Assistant. All rights reserved.
+                        </p>
+                        <div className='flex items-center gap-6 order-1 sm:order-2'>
+                            <Link to='/' className='text-base-content/40 hover:text-primary transition-all duration-300 hover:scale-110'>
+                                <Shield className='w-5 h-5' />
+                            </Link>
+                            <Link to='/' className='text-base-content/40 hover:text-primary transition-all duration-300 hover:scale-110'>
+                                <Brain className='w-5 h-5' />
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </footer>
         </div>
