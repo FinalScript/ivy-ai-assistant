@@ -8,18 +8,18 @@ export const Route = createFileRoute('/')({
 
 function Index() {
     return (
-        <div className='min-h-screen relative'>
+        <div className='min-h-screen relative overflow-x-hidden'>
             {/* Global background effects */}
             <div className='fixed inset-0 bg-gradient-to-br from-base-200 via-base-100 to-base-200'></div>
             
             {/* Subtle dot pattern */}
             <div className='fixed inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:24px_24px] opacity-[0.02]'></div>
             
-            {/* Global animated blobs */}
-            <div className='fixed inset-0'>
-                <div className='absolute w-[1500px] h-[1500px] -top-[20%] -left-[45%] bg-primary/20 rounded-full mix-blend-multiply filter blur-[96px] animate-blob'></div>
-                <div className='absolute w-[1500px] h-[1500px] top-[60%] -right-[45%] bg-secondary/20 rounded-full mix-blend-multiply filter blur-[96px] animate-blob animation-delay-2000'></div>
-                <div className='absolute w-[1500px] h-[1500px] top-[20%] left-[25%] bg-accent/20 rounded-full mix-blend-multiply filter blur-[96px] animate-blob animation-delay-4000'></div>
+            {/* Global animated blobs - Adjusted positioning */}
+            <div className='fixed inset-0 overflow-hidden'>
+                <div className='absolute w-[1500px] h-[1500px] -top-[20%] -left-[25%] bg-primary/20 rounded-full mix-blend-multiply filter blur-[96px] animate-blob'></div>
+                <div className='absolute w-[1500px] h-[1500px] top-[60%] -right-[25%] bg-secondary/20 rounded-full mix-blend-multiply filter blur-[96px] animate-blob animation-delay-2000'></div>
+                <div className='absolute w-[1500px] h-[1500px] top-[20%] left-[15%] bg-accent/20 rounded-full mix-blend-multiply filter blur-[96px] animate-blob animation-delay-4000'></div>
             </div>
 
             {/* Shimmering overlay */}
@@ -44,110 +44,177 @@ function Index() {
             <div className='relative'>
                 {/* Hero Section */}
                 <div className='hero min-h-screen relative'>
+                    {/* Enhanced animated background effects */}
+                    <div className='absolute inset-0'>
+                        <div className='absolute w-[800px] h-[800px] -top-[10%] -left-[45%] bg-primary/20 rounded-full mix-blend-multiply filter blur-[128px] animate-blob'></div>
+                        <div className='absolute w-[800px] h-[800px] top-[60%] -right-[45%] bg-secondary/20 rounded-full mix-blend-multiply filter blur-[128px] animate-blob animation-delay-2000'></div>
+                        <div className='absolute w-[800px] h-[800px] top-[20%] left-[25%] bg-accent/20 rounded-full mix-blend-multiply filter blur-[128px] animate-blob animation-delay-4000'></div>
+                    </div>
+
                     <div className='hero-content text-center z-10 w-full max-w-4xl px-4 mt-16 sm:mt-0'>
                         <div className='w-full relative'>
-                            {/* Enhanced logo glow effect */}
-                            <div className='flex justify-center mb-6 animate-bounce-slow'>
-                                <div className='relative'>
-                                    <div className='absolute inset-0 bg-primary/30 blur-2xl rounded-full scale-150 animate-pulse'></div>
-                                    <div className='absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 blur-xl rounded-full scale-125 animate-spin-slow'></div>
-                                    <Bot className='w-12 h-12 sm:w-16 sm:h-16 text-primary relative z-10' />
+                            {/* Enhanced logo animation */}
+                            <div className='flex justify-center mb-8 animate-float'>
+                                <div className='relative group cursor-pointer'>
+                                    <div className='absolute inset-0 bg-primary/30 blur-3xl rounded-full scale-150 animate-pulse'></div>
+                                    <div className='absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20 blur-2xl rounded-full scale-125 animate-spin-slow'></div>
+                                    <div className='relative z-10 p-4 bg-base-100/50 rounded-2xl backdrop-blur-sm border border-base-content/10 group-hover:scale-110 transition-transform duration-300'>
+                                        <Bot className='w-16 h-16 sm:w-20 sm:h-20 text-primary relative z-10 group-hover:rotate-12 transition-transform' />
+                                    </div>
                                 </div>
                             </div>
 
-                            <h1 className='mb-6'>
-                                <span className='block text-5xl sm:text-7xl font-bold mb-6 animate-slide-up bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-[1.2] sm:leading-[1.2] py-1'>
-                                    Your AI-Powered Academic Assistant
+                            <h1 className='mb-8'>
+                                <span className='block text-6xl sm:text-8xl font-bold mb-6 animate-slide-up bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-[1.2] sm:leading-[1.2] py-1'>
+                                    Your Academic Assistant
                                 </span>
-                                <span className='block text-2xl sm:text-4xl text-base-content/80 animate-slide-up-delayed leading-relaxed'>
-                                    Organize your courses, track assignments, and manage your academic schedule - all in one place
+                                <span className='block text-2xl sm:text-4xl text-base-content/80 animate-slide-up-delayed leading-relaxed max-w-3xl mx-auto'>
+                                    Transform your academic journey with intelligent organization and AI-powered insights
                                 </span>
                             </h1>
 
-                            <p className='py-8 text-base sm:text-xl animate-slide-up-delayed max-w-2xl mx-auto text-base-content/70 leading-relaxed'>
-                                Experience a smarter way to manage your academic life with our intuitive course organization system.
-                            </p>
-
-                            {/* Quick Feature Pills */}
-                            <div className='flex flex-wrap justify-center gap-3 mb-10 animate-slide-up-delayed'>
-                                <div className='badge badge-primary badge-outline gap-2 p-4 hover:bg-primary/10 transition-colors cursor-default group'>
-                                    <CheckCircle2 className='w-4 h-4 group-hover:scale-110 transition-transform' /> Free for Students
+                            {/* Enhanced feature pills */}
+                            <div className='flex flex-wrap justify-center gap-4 mb-12 animate-slide-up-delayed'>
+                                <div className='badge badge-primary badge-lg gap-2 p-4 hover:scale-110 hover:shadow-lg hover:shadow-primary/20 transition-all cursor-default group'>
+                                    <CheckCircle2 className='w-5 h-5 group-hover:rotate-12 transition-transform' /> Free for Students
                                 </div>
-                                <div className='badge badge-secondary badge-outline gap-2 p-4 hover:bg-secondary/10 transition-colors cursor-default group'>
-                                    <Sparkles className='w-4 h-4 group-hover:scale-110 transition-transform' /> Smart Organization
+                                <div className='badge badge-secondary badge-lg gap-2 p-4 hover:scale-110 hover:shadow-lg hover:shadow-secondary/20 transition-all cursor-default group'>
+                                    <Sparkles className='w-5 h-5 group-hover:rotate-12 transition-transform' /> Smart Organization
                                 </div>
-                                <div className='badge badge-accent badge-outline gap-2 p-4 hover:bg-accent/10 transition-colors cursor-default group'>
-                                    <Layout className='w-4 h-4 group-hover:scale-110 transition-transform' /> Beautiful Interface
+                                <div className='badge badge-accent badge-lg gap-2 p-4 hover:scale-110 hover:shadow-lg hover:shadow-accent/20 transition-all cursor-default group'>
+                                    <Layout className='w-5 h-5 group-hover:rotate-12 transition-transform' /> Beautiful Interface
                                 </div>
                             </div>
 
+                            {/* Enhanced CTA button */}
                             <div className='flex flex-col sm:flex-row gap-4 justify-center animate-slide-up-delayed'>
                                 <Link 
                                     to='/auth' 
-                                    className='btn btn-primary btn-lg gap-3 group relative overflow-hidden'
+                                    className='btn btn-primary btn-lg gap-3 group relative overflow-hidden px-8 hover:scale-105 transition-transform'
                                 >
-                                    <div className='absolute inset-0 bg-gradient-to-r from-primary/0 via-base-100/10 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'></div>
-                                    Get Started - It's Free
-                                    <ArrowRight className='w-5 h-5 group-hover:translate-x-1 transition-transform' />
+                                    <div className='absolute inset-0 bg-gradient-to-r from-primary/0 via-base-100/20 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'></div>
+                                    <span className='relative z-10 text-lg'>Get Started - It's Free</span>
+                                    <ArrowRight className='w-6 h-6 group-hover:translate-x-2 transition-transform relative z-10' />
                                 </Link>
                             </div>
                         </div>
                     </div>
 
-                    {/* Scroll Indicator */}
-                    <div className='absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-bounce-slow opacity-80 hover:opacity-100 transition-opacity cursor-pointer group'>
-                        <span className='text-sm font-medium text-base-content/70 group-hover:text-primary transition-colors'>Scroll to explore</span>
-                        <div className='relative flex justify-center items-center w-full'>
+                    {/* Enhanced scroll indicator */}
+                    <div className='absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 animate-float cursor-pointer group'>
+                        <span className='text-base font-medium bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent group-hover:scale-110 transition-transform'>
+                            Scroll to explore
+                        </span>
+                        <div className='relative flex justify-center items-center'>
                             <div className='relative'>
-                                <div className='w-8 h-8 rotate-45 border-b-2 border-r-2 border-base-content/30 group-hover:border-primary transition-colors'></div>
-                                <div className='absolute -top-4 left-0 w-8 h-8 rotate-45 border-b-2 border-r-2 border-base-content/30 group-hover:border-primary transition-colors opacity-50'></div>
-                                <div className='absolute -top-8 left-0 w-8 h-8 rotate-45 border-b-2 border-r-2 border-base-content/30 group-hover:border-primary transition-colors opacity-25'></div>
+                                <div className='w-8 h-8 rotate-45 border-b-2 border-r-2 border-primary/50 group-hover:border-primary transition-colors animate-bounce-slow'></div>
+                                <div className='absolute -top-4 left-0 w-8 h-8 rotate-45 border-b-2 border-r-2 border-primary/30 group-hover:border-primary/80 transition-colors animate-bounce-slow [animation-delay:150ms]'></div>
+                                <div className='absolute -top-8 left-0 w-8 h-8 rotate-45 border-b-2 border-r-2 border-primary/10 group-hover:border-primary/60 transition-colors animate-bounce-slow [animation-delay:300ms]'></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* How It Works Section */}
-                <div className='py-16 sm:py-24 px-4'>
-                    <div className='max-w-6xl mx-auto'>
-                        <div className='text-center mb-16'>
-                            <span className='text-primary font-semibold tracking-wider block mb-2'>GET STARTED</span>
-                            <h2 className='text-4xl sm:text-5xl font-bold mt-3 mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-tight sm:leading-tight px-2'>How It Works</h2>
-                            <p className='text-base sm:text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed px-4'>
-                                Get started in three simple steps and transform your academic journey
+                <div className='py-24 sm:py-32 px-4 relative overflow-hidden'>
+                    {/* Enhanced background effects */}
+                    <div className='absolute inset-0'>
+                        <div className='absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10'></div>
+                        <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.primary)_1px,transparent_0)] [background-size:32px_32px] opacity-[0.03]'></div>
+                        <div className='absolute w-[1000px] h-[1000px] -top-[20%] -left-[45%] bg-primary/5 rounded-full mix-blend-multiply filter blur-[96px] animate-blob'></div>
+                        <div className='absolute w-[1000px] h-[1000px] top-[60%] -right-[45%] bg-secondary/5 rounded-full mix-blend-multiply filter blur-[96px] animate-blob animation-delay-2000'></div>
+                    </div>
+
+                    <div className='max-w-6xl mx-auto relative'>
+                        <div className='text-center mb-20'>
+                            <div className='inline-block mb-4 relative group'>
+                                <span className='text-primary font-semibold tracking-wider block relative z-10 px-6 py-2'>
+                                    GET STARTED
+                                    <div className='absolute h-[2px] w-full bottom-0 left-0 bg-gradient-to-r from-transparent via-primary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out'></div>
+                                </span>
+                                <div className='absolute inset-0 bg-primary/5 rounded-lg blur-lg scale-0 group-hover:scale-100 transition-transform duration-500'></div>
+                            </div>
+                            
+                            <h2 className='text-5xl sm:text-6xl font-bold mt-6 mb-8 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-tight sm:leading-tight px-2 relative inline-block group'>
+                                How It Works
+                                <div className='absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500'></div>
+                            </h2>
+                            
+                            <p className='text-xl sm:text-2xl text-base-content/70 max-w-2xl mx-auto leading-relaxed px-4 animate-fade-in'>
+                                Transform your academic journey in three simple steps
                             </p>
                         </div>
-                        <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
-                            <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
-                                <div className='card-body items-center text-center relative'>
-                                    <div className='absolute top-4 right-4 text-4xl font-bold text-primary/20 group-hover:scale-125 transition-transform'>1</div>
-                                    <div className='w-16 h-16 mask mask-hexagon bg-primary/10 flex items-center justify-center mb-4'>
-                                        <Bot className='w-8 h-8 text-primary' />
+
+                        <div className='grid grid-cols-1 md:grid-cols-3 gap-12 relative'>
+                            {/* Connecting lines between cards with animation */}
+                            <div className='absolute top-1/2 left-0 w-full h-0.5 hidden md:block'>
+                                <div className='absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20'></div>
+                                <div className='absolute inset-0 bg-gradient-to-r from-primary/40 via-secondary/40 to-accent/40 w-0 animate-progress'></div>
+                            </div>
+                            
+                            {/* Step 1 */}
+                            <div className='card bg-base-100 shadow-xl hover:shadow-[0_0_25px_-5px_rgba(var(--primary-rgb),0.3)] transition-all duration-500 hover:-translate-y-2 group'>
+                                <div className='card-body items-center text-center relative p-8'>
+                                    {/* Animated number */}
+                                    <div className='absolute -top-6 right-6 w-14 h-14 rounded-2xl bg-base-100 shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden'>
+                                        <div className='text-3xl font-bold bg-gradient-to-br from-primary to-secondary bg-clip-text text-transparent relative z-10'>1</div>
+                                        <div className='absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 scale-0 group-hover:scale-100 transition-transform duration-500'></div>
                                     </div>
-                                    <h3 className='card-title group-hover:text-primary transition-colors'>Sign Up</h3>
-                                    <p className='text-base-content/70'>Create your free account to get started</p>
+                                    
+                                    {/* Enhanced icon container */}
+                                    <div className='relative mb-8 mt-4 group-hover:scale-110 transition-transform duration-500'>
+                                        <div className='absolute inset-0 bg-primary/20 rounded-3xl blur-2xl scale-150 animate-pulse'></div>
+                                        <div className='w-20 h-20 mask mask-hexagon bg-gradient-to-br from-primary/10 to-primary/30 flex items-center justify-center relative backdrop-blur-sm border border-primary/20'>
+                                            <Bot className='w-10 h-10 text-primary group-hover:rotate-12 transition-transform duration-500' />
+                                        </div>
+                                    </div>
+                                    
+                                    <h3 className='card-title text-2xl group-hover:text-primary transition-colors mb-4'>Quick Sign Up</h3>
+                                    <p className='text-base-content/70 text-lg'>Create your free account in seconds and unlock a world of academic possibilities</p>
                                 </div>
                             </div>
 
-                            <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
-                                <div className='card-body items-center text-center relative'>
-                                    <div className='absolute top-4 right-4 text-4xl font-bold text-secondary/20 group-hover:scale-125 transition-transform'>2</div>
-                                    <div className='w-16 h-16 mask mask-hexagon bg-secondary/10 flex items-center justify-center mb-4'>
-                                        <BookOpen className='w-8 h-8 text-secondary' />
+                            {/* Step 2 */}
+                            <div className='card bg-base-100 shadow-xl hover:shadow-[0_0_25px_-5px_rgba(var(--secondary-rgb),0.3)] transition-all duration-500 hover:-translate-y-2 group'>
+                                <div className='card-body items-center text-center relative p-8'>
+                                    {/* Animated number */}
+                                    <div className='absolute -top-6 right-6 w-14 h-14 rounded-2xl bg-base-100 shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden'>
+                                        <div className='text-3xl font-bold bg-gradient-to-br from-secondary to-accent bg-clip-text text-transparent relative z-10'>2</div>
+                                        <div className='absolute inset-0 bg-gradient-to-br from-secondary/10 to-accent/10 scale-0 group-hover:scale-100 transition-transform duration-500'></div>
                                     </div>
-                                    <h3 className='card-title group-hover:text-secondary transition-colors'>Add Your Courses</h3>
-                                    <p className='text-base-content/70'>Input your course details and schedules</p>
+                                    
+                                    {/* Enhanced icon container */}
+                                    <div className='relative mb-8 mt-4 group-hover:scale-110 transition-transform duration-500'>
+                                        <div className='absolute inset-0 bg-secondary/20 rounded-3xl blur-2xl scale-150 animate-pulse'></div>
+                                        <div className='w-20 h-20 mask mask-hexagon bg-gradient-to-br from-secondary/10 to-secondary/30 flex items-center justify-center relative backdrop-blur-sm border border-secondary/20'>
+                                            <BookOpen className='w-10 h-10 text-secondary group-hover:rotate-12 transition-transform duration-500' />
+                                        </div>
+                                    </div>
+                                    
+                                    <h3 className='card-title text-2xl group-hover:text-secondary transition-colors mb-4'>Add Your Courses</h3>
+                                    <p className='text-base-content/70 text-lg'>Effortlessly import your course schedule and watch as everything falls into place</p>
                                 </div>
                             </div>
 
-                            <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
-                                <div className='card-body items-center text-center relative'>
-                                    <div className='absolute top-4 right-4 text-4xl font-bold text-accent/20 group-hover:scale-125 transition-transform'>3</div>
-                                    <div className='w-16 h-16 mask mask-hexagon bg-accent/10 flex items-center justify-center mb-4'>
-                                        <Layout className='w-8 h-8 text-accent' />
+                            {/* Step 3 */}
+                            <div className='card bg-base-100 shadow-xl hover:shadow-[0_0_25px_-5px_rgba(var(--accent-rgb),0.3)] transition-all duration-500 hover:-translate-y-2 group'>
+                                <div className='card-body items-center text-center relative p-8'>
+                                    {/* Animated number */}
+                                    <div className='absolute -top-6 right-6 w-14 h-14 rounded-2xl bg-base-100 shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden'>
+                                        <div className='text-3xl font-bold bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent relative z-10'>3</div>
+                                        <div className='absolute inset-0 bg-gradient-to-br from-accent/10 to-primary/10 scale-0 group-hover:scale-100 transition-transform duration-500'></div>
                                     </div>
-                                    <h3 className='card-title group-hover:text-accent transition-colors'>Stay Organized</h3>
-                                    <p className='text-base-content/70'>Access your organized dashboard anytime</p>
+                                    
+                                    {/* Enhanced icon container */}
+                                    <div className='relative mb-8 mt-4 group-hover:scale-110 transition-transform duration-500'>
+                                        <div className='absolute inset-0 bg-accent/20 rounded-3xl blur-2xl scale-150 animate-pulse'></div>
+                                        <div className='w-20 h-20 mask mask-hexagon bg-gradient-to-br from-accent/10 to-accent/30 flex items-center justify-center relative backdrop-blur-sm border border-accent/20'>
+                                            <Layout className='w-10 h-10 text-accent group-hover:rotate-12 transition-transform duration-500' />
+                                        </div>
+                                    </div>
+                                    
+                                    <h3 className='card-title text-2xl group-hover:text-accent transition-colors mb-4'>Stay Organized</h3>
+                                    <p className='text-base-content/70 text-lg'>Experience the magic of an AI-powered system that keeps you ahead of deadlines</p>
                                 </div>
                             </div>
                         </div>
@@ -155,22 +222,78 @@ function Index() {
                 </div>
 
                 {/* Visual Demo Section */}
-                <div className='py-16 sm:py-24 px-4'>
-                    <div className='max-w-6xl mx-auto'>
-                        <div className='text-center mb-16'>
-                            <h2 className='text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent leading-tight sm:leading-tight px-2'>Beautiful & Intuitive Interface</h2>
-                            <p className='text-base sm:text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed px-4'>
+                <div className='py-24 sm:py-32 px-4 relative overflow-hidden'>
+                    {/* Enhanced background effects */}
+                    <div className='absolute inset-0'>
+                        <div className='absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-accent/10'></div>
+                        <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.secondary)_1px,transparent_0)] [background-size:32px_32px] opacity-[0.03]'></div>
+                        <div className='absolute w-[1000px] h-[1000px] -top-[20%] -right-[45%] bg-secondary/5 rounded-full mix-blend-multiply filter blur-[96px] animate-blob'></div>
+                        <div className='absolute w-[1000px] h-[1000px] top-[60%] -left-[45%] bg-accent/5 rounded-full mix-blend-multiply filter blur-[96px] animate-blob animation-delay-2000'></div>
+                    </div>
+
+                    <div className='max-w-6xl mx-auto relative'>
+                        <div className='text-center mb-20'>
+                            <div className='inline-block mb-4 relative group'>
+                                <span className='text-secondary font-semibold tracking-wider block relative z-10 px-6 py-2'>
+                                    INTERFACE
+                                    <div className='absolute h-[2px] w-full bottom-0 left-0 bg-gradient-to-r from-transparent via-secondary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out'></div>
+                                </span>
+                                <div className='absolute inset-0 bg-secondary/5 rounded-lg blur-lg scale-0 group-hover:scale-100 transition-transform duration-500'></div>
+                            </div>
+                            
+                            <h2 className='text-5xl sm:text-6xl font-bold mt-6 mb-8 bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent leading-tight sm:leading-tight px-2 relative inline-block group'>
+                                Beautiful & Intuitive Interface
+                                <div className='absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-secondary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500'></div>
+                            </h2>
+                            
+                            <p className='text-xl sm:text-2xl text-base-content/70 max-w-2xl mx-auto leading-relaxed px-4 animate-fade-in'>
                                 A clean, modern design that makes academic organization a pleasure
                             </p>
                         </div>
-                        <div className='mockup-browser border bg-base-300'>
+
+                        <div className='mockup-browser border bg-base-300 shadow-2xl group hover:shadow-[0_0_50px_-12px_rgba(var(--secondary-rgb),0.3)] transition-all duration-500'>
                             <div className='mockup-browser-toolbar'>
-                                <div className='input'>https://ivy-ai-assistant.com</div>
+                                <div className='input bg-base-200/50 text-base-content/70'>https://ivy-ai-assistant.com</div>
                             </div>
-                            <div className='flex justify-center px-4 py-16 bg-base-200'>
-                                <div className='flex flex-col items-center gap-4'>
-                                    <GraduationCap className='w-16 h-16 text-primary' />
-                                    <p className='text-xl'>Interface Preview Coming Soon</p>
+                            <div className='flex justify-center px-4 py-16 bg-base-200 relative overflow-hidden group-hover:bg-base-200/80 transition-colors duration-500'>
+                                {/* Background effects for the preview area */}
+                                <div className='absolute inset-0'>
+                                    <div className='absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-accent/5'></div>
+                                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.secondary)_1px,transparent_0)] [background-size:24px_24px] opacity-[0.02]'></div>
+                                </div>
+
+                                <div className='flex flex-col items-center gap-6 relative'>
+                                    <div className='relative group/icon'>
+                                        <div className='absolute inset-0 bg-secondary/20 rounded-full blur-2xl scale-150 animate-pulse'></div>
+                                        <div className='relative z-10 p-6 bg-base-100/50 rounded-2xl backdrop-blur-sm border border-base-content/10 group-hover/icon:scale-110 transition-transform duration-300'>
+                                            <GraduationCap className='w-20 h-20 text-secondary group-hover/icon:rotate-12 transition-transform duration-300' />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className='text-center'>
+                                        <h3 className='text-2xl font-bold mb-4 bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent'>
+                                            Interface Preview Coming Soon
+                                        </h3>
+                                        <p className='text-base-content/70 max-w-md mx-auto leading-relaxed'>
+                                            We're crafting a beautiful experience for you. Stay tuned!
+                                        </p>
+                                    </div>
+
+                                    {/* Preview features list */}
+                                    <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4'>
+                                        <div className='flex items-center gap-2 text-base-content/60'>
+                                            <CheckCircle2 className='w-4 h-4 text-secondary' />
+                                            <span>Modern Design</span>
+                                        </div>
+                                        <div className='flex items-center gap-2 text-base-content/60'>
+                                            <CheckCircle2 className='w-4 h-4 text-secondary' />
+                                            <span>Intuitive Layout</span>
+                                        </div>
+                                        <div className='flex items-center gap-2 text-base-content/60'>
+                                            <CheckCircle2 className='w-4 h-4 text-secondary' />
+                                            <span>Smart Features</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -262,35 +385,6 @@ function Index() {
                                             <span>Important dates</span>
                                         </li>
                                     </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Additional Features Section */}
-                <div className='py-16 sm:py-24 px-4'>
-                    <div className='max-w-6xl mx-auto'>
-                        <div className='text-center mb-16'>
-                            <span className='text-primary font-semibold tracking-wider'>MORE FEATURES</span>
-                            <h2 className='text-4xl sm:text-5xl font-bold mt-3 mb-6 bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent'>Packed with Powerful Features</h2>
-                            <p className='text-base sm:text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed'>
-                                Discover all the tools you need for academic success
-                            </p>
-                        </div>
-                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
-                            <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
-                                <div className='card-body items-center text-center'>
-                                    <Target className='w-8 h-8 text-primary mb-4 group-hover:scale-110 transition-transform' />
-                                    <h3 className='font-bold mb-2 group-hover:text-primary transition-colors'>Assignment Progress</h3>
-                                    <p className='text-sm text-base-content/70'>Track completion status and upcoming deadlines for all your assignments</p>
-                                </div>
-                            </div>
-                            <div className='card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group'>
-                                <div className='card-body items-center text-center'>
-                                    <Shield className='w-8 h-8 text-accent mb-4 group-hover:scale-110 transition-transform' />
-                                    <h3 className='font-bold mb-2 group-hover:text-accent transition-colors'>Privacy First</h3>
-                                    <p className='text-sm text-base-content/70'>Your data is always secure and private</p>
                                 </div>
                             </div>
                         </div>
