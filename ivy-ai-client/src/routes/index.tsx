@@ -12,18 +12,16 @@ function Index() {
             {/* Hero Section */}
             <div className='hero min-h-screen bg-base-200 relative overflow-hidden'>
                 {/* Enhanced animated background pattern */}
-                <div className='absolute inset-0 opacity-10'>
-                    {/* Larger animated blobs */}
-                    <div className='absolute w-96 sm:w-[600px] h-96 sm:h-[600px] top-1/4 -left-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob'></div>
-                    <div className='absolute w-96 sm:w-[600px] h-96 sm:h-[600px] top-1/4 -right-48 bg-secondary rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000'></div>
-                    <div className='absolute w-96 sm:w-[600px] h-96 sm:h-[600px] bottom-1/4 -left-48 bg-accent rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000'></div>
-                    <div className='absolute w-96 sm:w-[600px] h-96 sm:h-[600px] bottom-1/4 -right-48 bg-primary rounded-full mix-blend-multiply filter blur-xl animate-blob'></div>
+                <div className='absolute inset-0 opacity-20'>
+                    {/* Larger, more prominent animated blobs */}
+                    <div className='absolute w-[1000px] h-[1000px] top-1/4 -left-96 bg-primary/60 rounded-full mix-blend-multiply filter blur-3xl animate-blob'></div>
+                    <div className='absolute w-[1000px] h-[1000px] top-1/4 -right-96 bg-secondary/60 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000'></div>
+                    <div className='absolute w-[1000px] h-[1000px] bottom-1/4 left-1/3 bg-accent/60 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000'></div>
                 </div>
 
-                {/* Multiple layered grid patterns */}
-                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
-                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.primary)_1px,transparent_0)] [background-size:80px_80px] opacity-[0.01] animate-subtle-spin'></div>
-                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01] animate-subtle-spin-reverse'></div>
+                {/* Enhanced grid patterns */}
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:32px_32px] opacity-[0.03]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_0.5px,transparent_0.5px)] [background-size:32px_32px] opacity-[0.03] animate-subtle-spin'></div>
 
                 {/* Floating particles effect */}
                 <div className='absolute inset-0'>
@@ -100,15 +98,15 @@ function Index() {
             </div>
 
             {/* How It Works Section - Enhanced */}
-            <div className='py-16 sm:py-24 px-4 bg-base-200 relative overflow-hidden'>
-                {/* Enhanced background patterns */}
-                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
-                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
-                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
-                <div className='absolute inset-0 overflow-hidden'>
-                    <div className='absolute w-full h-[1px] bg-gradient-to-r from-transparent via-primary/10 to-transparent top-1/4 animate-slide-left'></div>
-                    <div className='absolute w-full h-[1px] bg-gradient-to-r from-transparent via-secondary/10 to-transparent top-3/4 animate-slide-right'></div>
+            <div className='py-16 sm:py-24 px-4 bg-base-200/95 relative overflow-hidden border-y border-base-300'>
+                {/* Enhanced background effects */}
+                <div className='absolute inset-0'>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-primary/20 blur-3xl -top-96 -left-96 animate-pulse'></div>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-secondary/20 blur-3xl -bottom-96 -right-96 animate-pulse animation-delay-2000'></div>
                 </div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_0.5px,transparent_0.5px)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-gradient-to-t from-base-200 via-transparent to-base-200 opacity-40'></div>
                 <div className='max-w-6xl mx-auto relative'>
                     <div className='text-center mb-16'>
                         <span className='text-primary font-semibold tracking-wider block mb-2'>GET STARTED</span>
@@ -155,15 +153,15 @@ function Index() {
             </div>
 
             {/* Visual Demo Section */}
-            <div className='py-16 sm:py-24 px-4 bg-base-100 relative overflow-hidden'>
-                {/* Enhanced background patterns */}
-                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
-                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
-                <div className='absolute inset-0 bg-[linear-gradient(-45deg,theme(colors.secondary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
-                <div className='absolute inset-0 overflow-hidden'>
-                    <div className='absolute w-[1px] h-full bg-gradient-to-b from-transparent via-primary/10 to-transparent left-1/4 animate-slide-down'></div>
-                    <div className='absolute w-[1px] h-full bg-gradient-to-b from-transparent via-secondary/10 to-transparent right-1/4 animate-slide-up'></div>
+            <div className='py-16 sm:py-24 px-4 bg-base-100/95 relative overflow-hidden border-b border-base-300'>
+                {/* Enhanced background effects */}
+                <div className='absolute inset-0'>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-secondary/20 blur-3xl -top-96 -right-96 animate-pulse'></div>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-primary/20 blur-3xl -bottom-96 -left-96 animate-pulse animation-delay-2000'></div>
                 </div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(-45deg,theme(colors.secondary)_0.5px,transparent_0.5px)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-gradient-to-b from-base-100 via-transparent to-base-100 opacity-40'></div>
                 <div className='max-w-6xl mx-auto relative'>
                     <div className='text-center mb-16'>
                         <h2 className='text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent leading-tight sm:leading-tight px-2'>Beautiful & Intuitive Interface</h2>
@@ -186,18 +184,16 @@ function Index() {
             </div>
 
             {/* Key Features Section - Enhanced */}
-            <div className='py-16 sm:py-24 px-4 bg-base-100 relative overflow-hidden'>
-                {/* Enhanced background patterns */}
-                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
-                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
-                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
-                
-                {/* Animated elements */}
+            <div className='py-16 sm:py-24 px-4 bg-base-100/95 relative overflow-hidden border-b border-base-300'>
+                {/* Enhanced background effects */}
                 <div className='absolute inset-0'>
-                    <div className='absolute w-64 h-64 rounded-full bg-primary/5 blur-3xl -top-32 -left-32 animate-pulse'></div>
-                    <div className='absolute w-64 h-64 rounded-full bg-secondary/5 blur-3xl -bottom-32 -right-32 animate-pulse animation-delay-2000'></div>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-accent/20 blur-3xl -top-96 -left-96 animate-pulse'></div>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-primary/20 blur-3xl -bottom-96 -right-96 animate-pulse animation-delay-2000'></div>
                 </div>
-
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.accent)_0.5px,transparent_0.5px)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-gradient-to-t from-base-100 via-transparent to-base-100 opacity-40'></div>
+                
                 <div className='max-w-6xl mx-auto relative'>
                     <div className='text-center mb-16'>
                         <span className='text-primary font-semibold tracking-wider block mb-3'>FEATURES</span>
@@ -288,18 +284,16 @@ function Index() {
             </div>
 
             {/* Additional Features Section */}
-            <div className='py-16 sm:py-24 px-4 bg-base-100 relative overflow-hidden'>
-                {/* Enhanced background patterns */}
-                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
-                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
-                <div className='absolute inset-0 bg-[linear-gradient(-45deg,theme(colors.secondary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
-                
-                {/* Animated elements */}
+            <div className='py-16 sm:py-24 px-4 bg-base-100/95 relative overflow-hidden border-b border-base-300'>
+                {/* Enhanced background effects */}
                 <div className='absolute inset-0'>
-                    <div className='absolute w-64 h-64 rounded-full bg-primary/5 blur-3xl -top-32 -right-32 animate-pulse'></div>
-                    <div className='absolute w-64 h-64 rounded-full bg-secondary/5 blur-3xl -bottom-32 -left-32 animate-pulse animation-delay-2000'></div>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-primary/20 blur-3xl -top-96 -right-96 animate-pulse'></div>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-secondary/20 blur-3xl -bottom-96 -left-96 animate-pulse animation-delay-2000'></div>
                 </div>
-
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(-45deg,theme(colors.primary)_0.5px,transparent_0.5px)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-gradient-to-b from-base-100 via-transparent to-base-100 opacity-40'></div>
+                
                 <div className='max-w-6xl mx-auto relative'>
                     <div className='text-center mb-16'>
                         <span className='text-primary font-semibold tracking-wider'>MORE FEATURES</span>
@@ -328,18 +322,16 @@ function Index() {
             </div>
 
             {/* Benefits Section - Enhanced */}
-            <div className='py-16 sm:py-24 px-4 bg-base-100 relative overflow-hidden'>
-                {/* Enhanced background patterns */}
-                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
-                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
-                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.accent)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
-                
-                {/* Animated elements */}
+            <div className='py-16 sm:py-24 px-4 bg-base-100/95 relative overflow-hidden border-b border-base-300'>
+                {/* Enhanced background effects */}
                 <div className='absolute inset-0'>
-                    <div className='absolute w-64 h-64 rounded-full bg-accent/5 blur-3xl -top-32 -left-32 animate-pulse'></div>
-                    <div className='absolute w-64 h-64 rounded-full bg-primary/5 blur-3xl -bottom-32 -right-32 animate-pulse animation-delay-2000'></div>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-secondary/20 blur-3xl -top-96 -left-96 animate-pulse'></div>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-accent/20 blur-3xl -bottom-96 -right-96 animate-pulse animation-delay-2000'></div>
                 </div>
-
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.secondary)_0.5px,transparent_0.5px)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-gradient-to-t from-base-100 via-transparent to-base-100 opacity-40'></div>
+                
                 <div className='max-w-6xl mx-auto relative'>
                     <div className='text-center mb-16'>
                         <span className='text-primary font-semibold tracking-wider'>BENEFITS</span>
@@ -377,18 +369,16 @@ function Index() {
             </div>
 
             {/* Newsletter Section - Enhanced */}
-            <div className='py-16 sm:py-24 px-4 bg-base-200 relative overflow-hidden'>
+            <div className='py-16 sm:py-24 px-4 bg-base-200/95 relative overflow-hidden border-b border-base-300'>
                 {/* Enhanced background effects */}
-                <div className='absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5'></div>
-                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:40px_40px] opacity-[0.02]'></div>
-                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_1px,transparent_0)] [background-size:60px_60px] opacity-[0.01]'></div>
-                
-                {/* Animated elements */}
                 <div className='absolute inset-0'>
-                    <div className='absolute w-64 h-64 rounded-full bg-primary/5 blur-3xl -top-32 -left-32 animate-pulse'></div>
-                    <div className='absolute w-64 h-64 rounded-full bg-secondary/5 blur-3xl -bottom-32 -right-32 animate-pulse animation-delay-2000'></div>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-primary/20 blur-3xl -top-96 -left-96 animate-pulse'></div>
+                    <div className='absolute w-[1000px] h-[1000px] rounded-full bg-secondary/20 blur-3xl -bottom-96 -right-96 animate-pulse animation-delay-2000'></div>
                 </div>
-
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,theme(colors.base.content)_1px,transparent_0)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-[linear-gradient(45deg,theme(colors.primary)_0.5px,transparent_0.5px)] [background-size:32px_32px] opacity-[0.02]'></div>
+                <div className='absolute inset-0 bg-gradient-to-b from-base-200 via-transparent to-base-200 opacity-40'></div>
+                
                 <div className='max-w-4xl mx-auto relative'>
                     <div className='card bg-base-100 shadow-2xl group'>
                         <div className='card-body p-8 sm:p-12'>
