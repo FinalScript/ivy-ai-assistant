@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as OnboardingImport } from './routes/onboarding'
 import { Route as DashboardImport } from './routes/dashboard'
 import { Route as CoursesImport } from './routes/courses'
+import { Route as CourseImport } from './routes/course'
 import { Route as AuthImport } from './routes/auth'
 import { Route as R404Import } from './routes/404'
 import { Route as IndexImport } from './routes/index'
@@ -37,6 +38,12 @@ const DashboardRoute = DashboardImport.update({
 const CoursesRoute = CoursesImport.update({
   id: '/courses',
   path: '/courses',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CourseRoute = CourseImport.update({
+  id: '/course',
+  path: '/course',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -95,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
+    '/course': {
+      id: '/course'
+      path: '/course'
+      fullPath: '/course'
+      preLoaderRoute: typeof CourseImport
+      parentRoute: typeof rootRoute
+    }
     '/courses': {
       id: '/courses'
       path: '/courses'
@@ -139,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/course': typeof CourseRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -150,6 +165,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/course': typeof CourseRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -162,6 +178,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/auth': typeof AuthRoute
+  '/course': typeof CourseRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -175,6 +192,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/auth'
+    | '/course'
     | '/courses'
     | '/dashboard'
     | '/onboarding'
@@ -185,6 +203,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/auth'
+    | '/course'
     | '/courses'
     | '/dashboard'
     | '/onboarding'
@@ -195,6 +214,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/auth'
+    | '/course'
     | '/courses'
     | '/dashboard'
     | '/onboarding'
@@ -207,6 +227,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
   AuthRoute: typeof AuthRoute
+  CourseRoute: typeof CourseRoute
   CoursesRoute: typeof CoursesRoute
   DashboardRoute: typeof DashboardRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -218,6 +239,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
   AuthRoute: AuthRoute,
+  CourseRoute: CourseRoute,
   CoursesRoute: CoursesRoute,
   DashboardRoute: DashboardRoute,
   OnboardingRoute: OnboardingRoute,
@@ -238,6 +260,7 @@ export const routeTree = rootRoute
         "/",
         "/404",
         "/auth",
+        "/course",
         "/courses",
         "/dashboard",
         "/onboarding",
@@ -253,6 +276,9 @@ export const routeTree = rootRoute
     },
     "/auth": {
       "filePath": "auth.tsx"
+    },
+    "/course": {
+      "filePath": "course.tsx"
     },
     "/courses": {
       "filePath": "courses.tsx"
