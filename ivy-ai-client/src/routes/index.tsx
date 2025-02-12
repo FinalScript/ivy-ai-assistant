@@ -43,7 +43,7 @@ function Index() {
                             <div className='text-left space-y-8 w-full'>
                                 <div className='space-y-6'>
                                     <h1>
-                                        <span className='block text-4xl sm:text-6xl font-bold animate-slide-up bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-[1.2] sm:leading-[1.2]'>
+                                        <span className='block text-4xl sm:text-6xl font-bold animate-slide-up dark:bg-gradient-to-r dark:from-primary dark:via-secondary dark:to-accent dark:text-transparent bg-clip-text  leading-[1.2] sm:leading-[1.2]'>
                                             Set Up Your Academic Planner in Minutes
                                         </span>
                                         <span className='block text-xl sm:text-xl font-medium mt-4 text-base-content/90'>
@@ -194,7 +194,7 @@ function Index() {
                                 <div className='absolute inset-0 bg-primary/5 rounded-lg blur-lg scale-0 group-hover:scale-100 transition-transform duration-500'></div>
                             </div>
 
-                            <h2 className='text-5xl sm:text-6xl font-bold mt-6 mb-8 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-tight sm:leading-tight px-2 relative inline-block group'>
+                            <h2 className='text-5xl sm:text-6xl font-bold mt-6 mb-8 dark:bg-gradient-to-r dark:from-primary dark:via-secondary dark:to-accent dark:text-transparent bg-clip-text leading-tight sm:leading-tight px-2 relative inline-block group'>
                                 How It Works
                                 <div className='absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500'></div>
                             </h2>
@@ -250,7 +250,7 @@ function Index() {
                                 <div className='card-body items-center text-center relative p-8'>
                                     {/* Animated number */}
                                     <div className='absolute top-3 right-3 w-14 h-14 rounded-2xl bg-base-100/50 backdrop-blur-sm shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden border border-base-content/5'>
-                                        <div className='text-3xl font-bold bg-gradient-to-br from-primary to-secondary bg-clip-text text-transparent relative z-10'>
+                                        <div className='text-3xl font-bold dark:bg-gradient-to-br dark:from-primary dark:to-secondary dark:text-transparent bg-clip-text relative z-10'>
                                             1
                                         </div>
                                         <div className='absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 scale-0 group-hover:scale-100 transition-transform duration-500'></div>
@@ -310,7 +310,7 @@ function Index() {
                                 <div className='card-body items-center text-center relative p-8'>
                                     {/* Animated number */}
                                     <div className='absolute top-3 right-3 w-14 h-14 rounded-2xl bg-base-100/50 backdrop-blur-sm shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden border border-base-content/5'>
-                                        <div className='text-3xl font-bold bg-gradient-to-br from-secondary to-accent bg-clip-text text-transparent relative z-10'>
+                                        <div className='text-3xl font-bold dark:bg-gradient-to-br dark:from-secondary dark:to-accent dark:text-transparent bg-clip-text relative z-10'>
                                             2
                                         </div>
                                         <div className='absolute inset-0 bg-gradient-to-br from-secondary/10 to-accent/10 scale-0 group-hover:scale-100 transition-transform duration-500'></div>
@@ -370,7 +370,7 @@ function Index() {
                                 <div className='card-body items-center text-center relative p-8'>
                                     {/* Animated number */}
                                     <div className='absolute top-3 right-3 w-14 h-14 rounded-2xl bg-base-100/50 backdrop-blur-sm shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden border border-base-content/5'>
-                                        <div className='text-3xl font-bold bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent relative z-10'>
+                                        <div className='text-3xl font-bold dark:bg-gradient-to-br dark:from-accent dark:to-primary dark:text-transparent bg-clip-text relative z-10'>
                                             3
                                         </div>
                                         <div className='absolute inset-0 bg-gradient-to-br from-accent/10 to-primary/10 scale-0 group-hover:scale-100 transition-transform duration-500'></div>
@@ -404,7 +404,7 @@ function Index() {
                                 <div className='absolute inset-0 bg-secondary/5 rounded-lg blur-lg scale-0 group-hover:scale-100 transition-transform duration-500'></div>
                             </div>
 
-                            <h2 className='text-5xl sm:text-6xl font-bold mt-6 mb-8 bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent leading-tight sm:leading-tight px-2 relative inline-block group'>
+                            <h2 className='text-5xl sm:text-6xl font-bold mt-6 mb-8 dark:bg-gradient-to-r dark:from-secondary dark:via-accent dark:to-primary dark:text-transparent bg-clip-text leading-tight sm:leading-tight px-2 relative inline-block group'>
                                 Beautiful & Intuitive Interface
                                 <div className='absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-secondary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500'></div>
                             </h2>
@@ -434,7 +434,7 @@ function Index() {
                                     </div>
 
                                     <div className='text-center'>
-                                        <h3 className='text-2xl font-bold mb-4 bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent'>
+                                        <h3 className='text-2xl font-bold mb-4 dark:bg-gradient-to-r dark:from-secondary dark:to-accent dark:text-transparent bg-clip-text'>
                                             Interface Preview Coming Soon
                                         </h3>
                                         <p className='text-base-content/70 max-w-md mx-auto leading-relaxed'>
@@ -468,7 +468,7 @@ function Index() {
                     <div className='max-w-6xl mx-auto'>
                         <div className='text-center mb-16'>
                             <span className='text-primary font-semibold tracking-wider block mb-3'>FEATURES</span>
-                            <h2 className='text-4xl sm:text-5xl font-bold mt-3 mb-8 bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent leading-[1.2] sm:leading-[1.2] py-1 px-4'>
+                            <h2 className='text-4xl sm:text-5xl font-bold mt-3 mb-8 dark:bg-gradient-to-r dark:from-accent dark:to-primary dark:text-transparent bg-clip-text leading-[1.2] sm:leading-[1.2] py-1 px-4'>
                                 Everything You Need to Conquer College
                             </h2>
                             <p className='text-base sm:text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed px-4'>
@@ -737,7 +737,7 @@ function Index() {
                                     </div>
 
                                     <div className='text-center mb-10'>
-                                        <h2 className='text-4xl sm:text-5xl font-bold mb-8 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-[1.2] sm:leading-[1.2] py-1 px-4'>
+                                        <h2 className='text-4xl sm:text-5xl font-bold mb-8 dark:bg-gradient-to-r dark:from-primary dark:via-secondary dark:to-accent dark:text-transparent bg-clip-text leading-[1.2] sm:leading-[1.2] py-1 px-4'>
                                             Ready to Transform<br />Your Student Life?
                                         </h2>
                                         <p className='text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed px-4'>
@@ -795,7 +795,7 @@ function Index() {
                                         <Bot className='w-10 h-10 text-primary transition-transform duration-300 group-hover:scale-110' />
                                         <div className='absolute inset-0 bg-primary/20 blur-xl rounded-full scale-150 animate-pulse'></div>
                                     </div>
-                                    <h3 className='font-bold text-2xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent'>
+                                    <h3 className='font-bold text-2xl dark:bg-gradient-to-r dark:from-primary dark:to-secondary dark:text-transparent bg-clip-text'>
                                         Ivy AI Assistant
                                     </h3>
                                 </div>
