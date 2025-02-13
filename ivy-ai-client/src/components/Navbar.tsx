@@ -10,11 +10,17 @@ export default function Navbar() {
 
     return (
         <div className='fixed top-0 left-0 right-0 z-50'>
-            <div className='navbar bg-base-100/70 backdrop-blur-lg border-b border-base-200/50 px-4 sm:px-8'>
+            <div className='navbar backdrop-blur-lg px-4 sm:px-10'>
                 <div className='navbar-start'>
-                    <Link to='/' className='flex items-center gap-2 hover:opacity-80 transition-opacity'>
-                        <Bot className='w-6 h-6' />
-                        <span className='font-bold text-lg'>Ivy AI</span>
+                    <Link to='/' className='flex items-center gap-3 hover:opacity-80 transition-opacity'>
+                        {/* Logo */}
+
+                        <div className='relative'>
+                            <div className='absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-150'></div>
+                            <Bot className='w-10 h-10 text-primary relative z-10' />
+                        </div>
+
+                        <span className='font-bold text-2xl'>Ivy AI</span>
                     </Link>
                 </div>
 
@@ -61,10 +67,7 @@ export default function Navbar() {
                                         </div>
                                     </div>
                                 </label>
-                                <ul
-                                    tabIndex={0}
-                                    className='menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52'
-                                >
+                                <ul tabIndex={0} className='menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52'>
                                     <li>
                                         <Link to='/dashboard' className='flex items-center gap-2'>
                                             <Calendar className='w-4 h-4' />
@@ -102,20 +105,14 @@ export default function Navbar() {
             {isMenuOpen && (
                 <div className='fixed inset-0 z-50 sm:hidden'>
                     {/* Backdrop */}
-                    <div
-                        className='absolute inset-0 bg-base-200/80 backdrop-blur-sm'
-                        onClick={() => setIsMenuOpen(false)}
-                    />
+                    <div className='absolute inset-0 bg-base-200/80 backdrop-blur-sm' onClick={() => setIsMenuOpen(false)} />
 
                     {/* Menu Content */}
                     <div className='absolute right-0 top-0 h-full w-64 bg-base-100/95 backdrop-blur-sm shadow-xl animate-slide-left'>
                         <div className='p-4'>
                             <div className='flex justify-between items-center mb-6'>
                                 <h3 className='font-bold text-lg'>Menu</h3>
-                                <button
-                                    className='btn btn-ghost btn-sm btn-circle'
-                                    onClick={() => setIsMenuOpen(false)}
-                                >
+                                <button className='btn btn-ghost btn-sm btn-circle' onClick={() => setIsMenuOpen(false)}>
                                     ✕
                                 </button>
                             </div>
@@ -140,16 +137,14 @@ export default function Navbar() {
                                     <Link
                                         to='/dashboard'
                                         className='flex items-center gap-2 p-2 hover:bg-base-200 rounded-lg'
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
+                                        onClick={() => setIsMenuOpen(false)}>
                                         <Calendar className='w-4 h-4' />
                                         <span>Dashboard</span>
                                     </Link>
                                     <Link
                                         to='/courses'
                                         className='flex items-center gap-2 p-2 hover:bg-base-200 rounded-lg'
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
+                                        onClick={() => setIsMenuOpen(false)}>
                                         <BookOpen className='w-4 h-4' />
                                         <span>Courses</span>
                                     </Link>
@@ -159,25 +154,16 @@ export default function Navbar() {
                                             signOut();
                                             setIsMenuOpen(false);
                                         }}
-                                        className='flex items-center gap-2 p-2 hover:bg-base-200 rounded-lg text-error w-full'
-                                    >
+                                        className='flex items-center gap-2 p-2 hover:bg-base-200 rounded-lg text-error w-full'>
                                         Sign out
                                     </button>
                                 </div>
                             ) : (
                                 <div className='space-y-2'>
-                                    <Link
-                                        to='/auth'
-                                        className='btn btn-ghost w-full'
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
+                                    <Link to='/auth' className='btn btn-ghost w-full' onClick={() => setIsMenuOpen(false)}>
                                         Sign In
                                     </Link>
-                                    <Link
-                                        to='/auth'
-                                        className='btn btn-primary w-full'
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
+                                    <Link to='/auth' className='btn btn-primary w-full' onClick={() => setIsMenuOpen(false)}>
                                         Get Started
                                     </Link>
                                 </div>
