@@ -150,7 +150,7 @@ function ReviewOutlines() {
 
     const handleConfirm = () => {
         // Navigate to the dashboard
-        navigate({ to: '/dashboard' });
+        navigate({ to: '/' });
     };
 
     if (isLoading) {

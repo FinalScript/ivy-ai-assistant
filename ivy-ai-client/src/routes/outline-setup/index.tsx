@@ -261,50 +261,35 @@ export function OutlineSetup() {
 
         return (
             <div className='card bg-base-100 shadow-xl backdrop-blur-lg bg-opacity-90'>
-                <div className='card-body p-4'>
+                <div className='card-body p-6'>
+                    {/* Course Header */}
                     <div className='flex items-center gap-3 mb-4'>
-                        <div className='w-10 h-10 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 flex items-center justify-center'>
-                            <Book className='w-5 h-5 text-primary' />
+                        <div className='w-12 h-12 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 flex items-center justify-center'>
+                            <Book className='w-6 h-6 text-primary' />
                         </div>
                         <div>
-                            <h3 className='font-bold'>{course.code}</h3>
-                            <p className='text-sm text-base-content/70'>{course.name}</p>
+                            <h3 className='text-lg font-bold'>{course.code}</h3>
+                            <p className='text-sm text-base-content/70 truncate max-w-[250px]'>{course.name}</p>
                         </div>
                     </div>
 
-                    {/* Drag and Drop Zone */}
-                    <div className='relative group'>
-                        <div
-                            className={`absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg blur-lg transition-all ${
-                                isDragActive ? 'blur-2xl' : 'blur-lg'
-                            }`}></div>
+                    {/* Upload Zone */}
+                    <div className='relative group mb-4'>
                         <div
                             {...getRootProps()}
-                            className={`relative border-2 border-dashed rounded-lg p-4 text-center backdrop-blur-sm transition-all cursor-pointer
+                            className={`relative border-2 border-dashed rounded-lg p-6 text-center backdrop-blur-sm transition-all cursor-pointer
                                 ${isDragActive ? 'border-primary bg-primary/5' : 'border-primary/30 hover:border-primary hover:bg-primary/5'}
                                 ${courseUpload.files.length >= MAX_FILES || processingOutlines ? 'opacity-50 cursor-not-allowed' : ''}`}>
                             <input {...getInputProps()} />
-                            <div className='flex flex-col items-center gap-3'>
-                                <div
-                                    className={`w-10 h-10 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 flex items-center justify-center transition-transform ${
-                                        isDragActive ? 'scale-110' : 'group-hover:scale-110'
-                                    }`}>
+                            <div className='flex flex-col items-center gap-2'>
+                                <div className='w-10 h-10 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 flex items-center justify-center'>
                                     <Upload className='w-5 h-5 text-primary group-hover:text-secondary transition-colors' />
                                 </div>
-                                <div className='space-y-1'>
-                                    {courseUpload.files.length >= MAX_FILES ? (
-                                        <p className='font-semibold text-sm text-base-content/70'>Maximum files reached</p>
-                                    ) : (
-                                        <>
-                                            <p className='font-semibold text-sm'>
-                                                {isDragActive ? 'Drop your files here' : 'Upload Course Outline'}
-                                            </p>
-                                            <p className='text-xs text-base-content/70'>
-                                                or <span className='text-primary font-medium'>click to browse</span>
-                                            </p>
-                                        </>
-                                    )}
-                                    <p className='text-xs text-base-content/50'>
+                                <div>
+                                    <p className='text-sm font-medium'>
+                                        {courseUpload.files.length >= MAX_FILES ? 'Maximum files reached' : 'Drop files here'}
+                                    </p>
+                                    <p className='text-xs text-base-content/50 mt-1'>
                                         {courseUpload.files.length}/{MAX_FILES} files • Max 5MB each
                                     </p>
                                 </div>
@@ -312,22 +297,22 @@ export function OutlineSetup() {
                         </div>
                     </div>
 
-                    {/* Uploaded Files List */}
-                    <div className='space-y-2 mt-3'>
+                    {/* File List */}
+                    <div className='space-y-2'>
                         {courseUpload.files.map((uploadedFile, index) => (
                             <div
                                 key={index}
                                 className='flex items-center justify-between p-3 bg-base-200/50 backdrop-blur-sm rounded-lg border border-base-300'>
-                                <div className='flex items-center gap-3'>
-                                    <div className='w-8 h-8 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 flex items-center justify-center overflow-hidden'>
+                                <div className='flex items-center gap-3 flex-1 min-w-0'>
+                                    <div className='w-8 h-8 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 flex items-center justify-center overflow-hidden flex-shrink-0'>
                                         {uploadedFile.preview ? (
                                             <img src={uploadedFile.preview} alt='Preview' className='w-full h-full object-cover' />
                                         ) : (
                                             getFileIcon(uploadedFile.file)
                                         )}
                                     </div>
-                                    <div>
-                                        <p className='font-medium text-sm'>{uploadedFile.file.name}</p>
+                                    <div className='min-w-0'>
+                                        <p className='font-medium text-sm truncate'>{uploadedFile.file.name}</p>
                                         <div className='flex items-center gap-2 text-xs text-base-content/70'>
                                             <span>{(uploadedFile.file.size / (1024 * 1024)).toFixed(1)} MB</span>
                                             <span className='w-1 h-1 rounded-full bg-base-content/30'></span>
@@ -342,19 +327,13 @@ export function OutlineSetup() {
                                                             : ''
                                                 }`}>
                                                 <Check className='w-3 h-3' />
-                                                {uploadedFile.status === 'uploading'
-                                                    ? 'Uploading...'
-                                                    : uploadedFile.status === 'processing'
-                                                      ? 'Processing...'
-                                                      : uploadedFile.status === 'error'
-                                                        ? uploadedFile.error
-                                                        : 'Ready'}
+                                                {uploadedFile.status}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                                 <button
-                                    className='btn btn-ghost btn-sm btn-circle'
+                                    className='btn btn-ghost btn-sm btn-circle flex-shrink-0'
                                     onClick={() => removeFile(course.code, index)}
                                     disabled={processingOutlines}>
                                     <X className='w-4 h-4 hover:text-error transition-colors' />
@@ -377,26 +356,7 @@ export function OutlineSetup() {
 
     return (
         <div className='min-h-screen bg-gradient-to-b from-base-200 to-base-300 pt-24 pb-8 px-4'>
-            {/* Temporary Review Page Button */}
-            <div className='fixed right-4 top-20 z-50'>
-                <button
-                    className='btn btn-secondary'
-                    onClick={() => {
-                        if (!courses.length) return;
-                        const coursesWithOutlines = courses.map(course => ({
-                            ...course,
-                            outline: `Sample outline for ${course.code}\n\nThis is a temporary outline for testing the review page layout and functionality.`
-                        }));
-                        // Store courses in sessionStorage before navigation
-                        sessionStorage.setItem('outlineReviewCourses', JSON.stringify(coursesWithOutlines));
-                        // Navigate after storing the data
-                        router.navigate({ to: '/outline-setup/review' });
-                    }}>
-                    View Review Page
-                </button>
-            </div>
-
-            <div className='max-w-4xl w-full mx-auto flex flex-col gap-10'>
+            <div className='max-w-6xl w-full mx-auto flex flex-col gap-10'>
                 {/* Header */}
                 <div className='flex flex-col items-center gap-3'>
                     <div className='flex items-center gap-3'>
@@ -419,20 +379,11 @@ export function OutlineSetup() {
                     </div>
                 )}
 
-                {/* Course Upload Cards */}
-                <div className='grid grid-cols-1 gap-4 w-full'>
-                    {courses.map((course) => {
-                        const courseUpload = courseUploads.find((cu) => cu.courseCode === course.code);
-                        if (!courseUpload) return null;
-                        return <CourseUploadCard key={course.code} course={course} courseUpload={courseUpload} />;
-                    })}
-                </div>
-
-                {/* Process Button */}
-                <div className='sticky bottom-6 flex justify-center'>
+                {/* Action Buttons */}
+                <div className='flex justify-center gap-4'>
                     <button
-                        className='btn btn-primary btn-wide h-12 shadow-lg hover:shadow-xl transition-all duration-200 
-                            hover:scale-[1.02] backdrop-blur-lg bg-primary/90'
+                        className='btn btn-primary btn-lg shadow-lg hover:shadow-xl transition-all duration-200 
+                            hover:scale-[1.02] backdrop-blur-lg bg-primary/90 px-8'
                         disabled={
                             courseUploads.every((cu) => cu.files.length === 0) ||
                             courseUploads.some((cu) => cu.files.some((f) => f.status === 'error' || f.status === 'uploading')) ||
@@ -450,6 +401,32 @@ export function OutlineSetup() {
                                 Process Outlines
                             </>
                         )}
+                    </button>
+                </div>
+
+                {/* Course Upload Cards */}
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6 w-full'>
+                    {courses.map((course) => {
+                        const courseUpload = courseUploads.find((cu) => cu.courseCode === course.code);
+                        if (!courseUpload) return null;
+                        return <CourseUploadCard key={course.code} course={course} courseUpload={courseUpload} />;
+                    })}
+                </div>
+
+                {/* Review Page Button */}
+                <div className='flex justify-center pb-8'>
+                    <button
+                        className='btn btn-outline btn-wide'
+                        onClick={() => {
+                            if (!courses.length) return;
+                            const coursesWithOutlines = courses.map(course => ({
+                                ...course,
+                                outline: `Sample outline for ${course.code}\n\nThis is a temporary outline for testing the review page layout and functionality.`
+                            }));
+                            sessionStorage.setItem('outlineReviewCourses', JSON.stringify(coursesWithOutlines));
+                            router.navigate({ to: '/outline-setup/review' });
+                        }}>
+                        Preview Course Outlines
                     </button>
                 </div>
             </div>
