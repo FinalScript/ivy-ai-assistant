@@ -37,7 +37,7 @@ export default function ThemeSwitcher() {
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme') as Theme;
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initialTheme = savedTheme || (systemPrefersDark ? 'dracula' : 'cupcake');
+        const initialTheme = savedTheme || (systemPrefersDark ? 'sunset' : 'cupcake');
 
         setTheme(initialTheme);
         document.documentElement.setAttribute('data-theme', initialTheme);
