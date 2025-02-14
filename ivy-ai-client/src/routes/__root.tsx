@@ -1,5 +1,4 @@
-import { createRootRoute, Outlet, redirect } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import { createRootRoute, Outlet } from '@tanstack/react-router';
 import Navbar from '../components/Navbar';
 
 function Root() {
@@ -7,7 +6,6 @@ function Root() {
         <>
             <Navbar />
             <Outlet />
-            <TanStackRouterDevtools />
         </>
     );
 }

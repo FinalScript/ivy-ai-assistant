@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { AlertCircle, Check, Clock, Edit3, Globe, MapPin, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Course } from '../../__generated__/graphql';
@@ -245,7 +245,7 @@ export const Route = createFileRoute('/timetable-setup/review')({
 });
 
 function ReviewCourses() {
-    const navigate = useNavigate();
+    const router = useRouter();
     const [courses, setCourses] = useState<Course[]>([]);
     const [hasErrors, setHasErrors] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -381,7 +381,15 @@ function ReviewCourses() {
             <div className='max-w-7xl mx-auto relative'>
                 <div className='flex justify-between items-center mb-8'>
                     <h2 className='text-3xl font-bold'>Review Your Courses</h2>
-                    <button className='btn btn-primary' onClick={handleConfirm} disabled={courses.length === 0 || hasErrors}>
+                    <button className='btn btn-primary' onClick={() => {
+                        router.navigate({
+                            to: '/outline-setup',
+                            state: {
+                                courses: courses,
+                            },
+                        } as any);
+                    }}
+                        disabled={courses.length === 0 || hasErrors}>
                         <Check className='w-5 h-5 mr-2' />
                         Confirm and Continue
                     </button>
