@@ -7,9 +7,7 @@ import { CourseEditModal } from '../../components/CourseEditModal';
 interface CourseCardProps {
     course: Course;
     onEdit: (courseId: string) => void;
-    onUploadOutline: (courseId: string) => void;
     onDelete: () => void;
-    hasOutline?: boolean;
     isDeleteDisabled?: boolean;
 }
 
@@ -35,7 +33,7 @@ const getMissingFields = (course: Course): string[] => {
     return missing;
 };
 
-const CourseCard = ({ course, onEdit, onUploadOutline, onDelete, hasOutline = false, isDeleteDisabled = false }: CourseCardProps) => {
+const CourseCard = ({ course, onEdit, onDelete, isDeleteDisabled = false }: CourseCardProps) => {
     const missingFields = getMissingFields(course);
     const needsEdits = missingFields.length > 0;
 
@@ -256,15 +254,6 @@ function ReviewCourses() {
     const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
     const [isNewCourse, setIsNewCourse] = useState(false);
     const [modalError, setModalError] = useState<string | null>(null);
-    // Counter for generating unique temporary IDs for new courses
-    const [tempIdCounter, setTempIdCounter] = useState(1);
-
-    // Generate a unique temporary ID for new courses
-    const generateTempId = () => {
-        const tempId = `NEW_COURSE_${tempIdCounter}`;
-        setTempIdCounter((prev) => prev + 1);
-        return tempId;
-    };
 
     // Get initial courses data from URL state
     useEffect(() => {
@@ -328,16 +317,6 @@ function ReviewCourses() {
         setOriginalCourseCode('');
         setIsNewCourse(false);
         setModalError(null);
-    };
-
-    const handleUploadOutline = (courseId: string) => {
-        // Handle uploading course outline
-        console.log('Upload outline for:', courseId);
-    };
-
-    const handleConfirm = () => {
-        // Handle confirmation and next steps
-        console.log('Confirming courses:', courses);
     };
 
     const handleDeleteCourse = (course: Course) => {
@@ -427,7 +406,6 @@ function ReviewCourses() {
                             key={course.code}
                             course={course}
                             onEdit={handleEditCourse}
-                            onUploadOutline={handleUploadOutline}
                             onDelete={() => handleDeleteCourse(course)}
                             isDeleteDisabled={courses.length <= 1}
                         />

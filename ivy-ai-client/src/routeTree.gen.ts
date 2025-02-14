@@ -19,7 +19,9 @@ import { Route as AuthImport } from './routes/auth'
 import { Route as R404Import } from './routes/404'
 import { Route as IndexImport } from './routes/index'
 import { Route as TimetableSetupIndexImport } from './routes/timetable-setup/index'
+import { Route as OutlineSetupIndexImport } from './routes/outline-setup/index'
 import { Route as TimetableSetupReviewImport } from './routes/timetable-setup/review'
+import { Route as OutlineSetupReviewImport } from './routes/outline-setup/review'
 
 // Create/Update Routes
 
@@ -71,9 +73,21 @@ const TimetableSetupIndexRoute = TimetableSetupIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const OutlineSetupIndexRoute = OutlineSetupIndexImport.update({
+  id: '/outline-setup/',
+  path: '/outline-setup/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const TimetableSetupReviewRoute = TimetableSetupReviewImport.update({
   id: '/timetable-setup/review',
   path: '/timetable-setup/review',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const OutlineSetupReviewRoute = OutlineSetupReviewImport.update({
+  id: '/outline-setup/review',
+  path: '/outline-setup/review',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -130,11 +144,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingImport
       parentRoute: typeof rootRoute
     }
+    '/outline-setup/review': {
+      id: '/outline-setup/review'
+      path: '/outline-setup/review'
+      fullPath: '/outline-setup/review'
+      preLoaderRoute: typeof OutlineSetupReviewImport
+      parentRoute: typeof rootRoute
+    }
     '/timetable-setup/review': {
       id: '/timetable-setup/review'
       path: '/timetable-setup/review'
       fullPath: '/timetable-setup/review'
       preLoaderRoute: typeof TimetableSetupReviewImport
+      parentRoute: typeof rootRoute
+    }
+    '/outline-setup/': {
+      id: '/outline-setup/'
+      path: '/outline-setup'
+      fullPath: '/outline-setup'
+      preLoaderRoute: typeof OutlineSetupIndexImport
       parentRoute: typeof rootRoute
     }
     '/timetable-setup/': {
@@ -157,7 +185,9 @@ export interface FileRoutesByFullPath {
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/outline-setup/review': typeof OutlineSetupReviewRoute
   '/timetable-setup/review': typeof TimetableSetupReviewRoute
+  '/outline-setup': typeof OutlineSetupIndexRoute
   '/timetable-setup': typeof TimetableSetupIndexRoute
 }
 
@@ -169,7 +199,9 @@ export interface FileRoutesByTo {
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/outline-setup/review': typeof OutlineSetupReviewRoute
   '/timetable-setup/review': typeof TimetableSetupReviewRoute
+  '/outline-setup': typeof OutlineSetupIndexRoute
   '/timetable-setup': typeof TimetableSetupIndexRoute
 }
 
@@ -182,7 +214,9 @@ export interface FileRoutesById {
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/outline-setup/review': typeof OutlineSetupReviewRoute
   '/timetable-setup/review': typeof TimetableSetupReviewRoute
+  '/outline-setup/': typeof OutlineSetupIndexRoute
   '/timetable-setup/': typeof TimetableSetupIndexRoute
 }
 
@@ -196,7 +230,9 @@ export interface FileRouteTypes {
     | '/courses'
     | '/dashboard'
     | '/onboarding'
+    | '/outline-setup/review'
     | '/timetable-setup/review'
+    | '/outline-setup'
     | '/timetable-setup'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -207,7 +243,9 @@ export interface FileRouteTypes {
     | '/courses'
     | '/dashboard'
     | '/onboarding'
+    | '/outline-setup/review'
     | '/timetable-setup/review'
+    | '/outline-setup'
     | '/timetable-setup'
   id:
     | '__root__'
@@ -218,7 +256,9 @@ export interface FileRouteTypes {
     | '/courses'
     | '/dashboard'
     | '/onboarding'
+    | '/outline-setup/review'
     | '/timetable-setup/review'
+    | '/outline-setup/'
     | '/timetable-setup/'
   fileRoutesById: FileRoutesById
 }
@@ -231,7 +271,9 @@ export interface RootRouteChildren {
   CoursesRoute: typeof CoursesRoute
   DashboardRoute: typeof DashboardRoute
   OnboardingRoute: typeof OnboardingRoute
+  OutlineSetupReviewRoute: typeof OutlineSetupReviewRoute
   TimetableSetupReviewRoute: typeof TimetableSetupReviewRoute
+  OutlineSetupIndexRoute: typeof OutlineSetupIndexRoute
   TimetableSetupIndexRoute: typeof TimetableSetupIndexRoute
 }
 
@@ -243,7 +285,9 @@ const rootRouteChildren: RootRouteChildren = {
   CoursesRoute: CoursesRoute,
   DashboardRoute: DashboardRoute,
   OnboardingRoute: OnboardingRoute,
+  OutlineSetupReviewRoute: OutlineSetupReviewRoute,
   TimetableSetupReviewRoute: TimetableSetupReviewRoute,
+  OutlineSetupIndexRoute: OutlineSetupIndexRoute,
   TimetableSetupIndexRoute: TimetableSetupIndexRoute,
 }
 
@@ -264,7 +308,9 @@ export const routeTree = rootRoute
         "/courses",
         "/dashboard",
         "/onboarding",
+        "/outline-setup/review",
         "/timetable-setup/review",
+        "/outline-setup/",
         "/timetable-setup/"
       ]
     },
@@ -289,8 +335,14 @@ export const routeTree = rootRoute
     "/onboarding": {
       "filePath": "onboarding.tsx"
     },
+    "/outline-setup/review": {
+      "filePath": "outline-setup/review.tsx"
+    },
     "/timetable-setup/review": {
       "filePath": "timetable-setup/review.tsx"
+    },
+    "/outline-setup/": {
+      "filePath": "outline-setup/index.tsx"
     },
     "/timetable-setup/": {
       "filePath": "timetable-setup/index.tsx"

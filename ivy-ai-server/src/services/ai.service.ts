@@ -17,7 +17,7 @@ export interface ExtractedCourseData {
   }[]
   sections: {
     section_id: string
-    instructor: {
+    instructor: {aq
       name: string
       email: string
       office: {
