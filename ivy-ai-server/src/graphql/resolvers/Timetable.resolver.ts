@@ -1,73 +1,10 @@
-import { AuthenticationError, UserInputError } from 'apollo-server-express'
-import { createCourse, deleteCourse, getCourseById, getCoursesByTerm, getCoursesByUserId, updateCourse } from '../../controllers/Course.controller'
-import { Course } from '../../db/schema/course.schema'
+import { AuthenticationError } from 'apollo-server-express'
 import { supabase } from '../../db/supabase'
 import { PROCESSING_STATUS_UPDATED, ProcessingUpdate, redisPubSub, updateProcessingStatus } from '../../services/redis.service'
-import { processTimetableFile, validateCourseData, transformToNewCourse } from '../../services/ai.service'
+import { processTimetableFile, validateCourseData } from '../../services/ai.service'
 import { Context } from '../context'
 
-interface CourseInput {
-  code: string
-  name: string
-  description?: string
-  term: string
-  assessments: {
-    title: string
-    type: string
-    due_date: string
-    description: string
-    weight?: number
-    status: string
-    location?: string
-  }[]
-  sections: {
-    section_id: string
-    instructor: {
-      name: string
-      email: string
-      office: {
-        location: string
-        hours: {
-          day: string
-          start_time: string
-          end_time: string
-          location: string
-        }[]
-      }
-    }
-    schedule: {
-      day: string
-      start_time: string
-      end_time: string
-      location: string
-      type: string
-      is_rescheduled: boolean
-    }[]
-  }[]
-}
-
 export const TimetableResolver = {
-  Query: {
-    myCourses: async (_: unknown, __: unknown, { user }: Context): Promise<Course[]> => {
-      if (!user) throw new AuthenticationError('Not authenticated')
-      return getCoursesByUserId(user.id)
-    },
-
-    course: async (_: unknown, { id }: { id: string }, { user }: Context): Promise<Course | null> => {
-      if (!user) throw new AuthenticationError('Not authenticated')
-      const course = await getCourseById(id)
-      if (!course || course.userId !== user.id) {
-        throw new UserInputError('Course not found')
-      }
-      return course
-    },
-
-    coursesByTerm: async (_: unknown, { term }: { term: string }, { user }: Context): Promise<Course[]> => {
-      if (!user) throw new AuthenticationError('Not authenticated')
-      return getCoursesByTerm(user.id, term)
-    }
-  },
-
   Mutation: {
     processTimetable: async (_: unknown, { fileIds }: { fileIds: string[] }, { user }: Context) => {
       if (!user) throw new AuthenticationError('Not authenticated')
@@ -146,38 +83,6 @@ export const TimetableResolver = {
           courses: []
         }
       }
-    },
-
-    addCourse: async (_: unknown, { input }: { input: CourseInput }, { user }: Context): Promise<Course> => {
-      if (!user) throw new AuthenticationError('Not authenticated')
-      return createCourse({ ...input, userId: user.id })
-    },
-
-    updateCourse: async (_: unknown, { id, input }: { id: string, input: CourseInput }, { user }: Context): Promise<Course> => {
-      if (!user) throw new AuthenticationError('Not authenticated')
-
-      const existingCourse = await getCourseById(id)
-      if (!existingCourse || existingCourse.userId !== user.id) {
-        throw new UserInputError('Course not found')
-      }
-
-      const updatedCourse = await updateCourse(id, input)
-      if (!updatedCourse) {
-        throw new Error('Failed to update course')
-      }
-
-      return updatedCourse
-    },
-
-    deleteCourse: async (_: unknown, { id }: { id: string }, { user }: Context): Promise<boolean> => {
-      if (!user) throw new AuthenticationError('Not authenticated')
-
-      const existingCourse = await getCourseById(id)
-      if (!existingCourse || existingCourse.userId !== user.id) {
-        throw new UserInputError('Course not found')
-      }
-
-      return deleteCourse(id)
     }
   },
 

@@ -81,15 +81,15 @@ interface Section {
 
 export const courses = pgTable('courses', {
   id: uuid('id').defaultRandom().primaryKey(),
-  code: text('code').notNull(),
-  name: text('name').notNull(),
-  description: text('description'),
-  term: text('term').notNull(),
-  assessments: jsonb('assessments').$type<Assessment[]>(),
-  sections: jsonb('sections').$type<Section[]>(),
   userId: uuid('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  code: text('code').notNull(),
+  name: text('name').notNull(),
+  description: text('description'),
+  term: text('term'),
+  assessments: jsonb('assessments').$type<Assessment[]>().notNull().default([]),
+  sections: jsonb('sections').$type<Section[]>().notNull().default([]),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow()
 })
